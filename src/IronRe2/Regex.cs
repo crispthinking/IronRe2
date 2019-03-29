@@ -61,6 +61,24 @@ namespace IronRe2
         public int FindNamedCapture(string name) =>
             Re2Ffi.cre2_find_named_capturing_groups(_rawHandle, name);
 
+        /// <summary>
+        /// Easy IsMatch
+        /// <para>Checks if the given pattern exists in the given haystack</para>
+        /// </summary>
+        /// <param name="pattern">The regular expression to search for</param>
+        /// <param name="haystack">The text to find the pattern in</param>
+        /// <returns>True if the pattern matches in the given text</returns>
+        public static bool IsMatch(string pattern, string haystack)
+        {
+            var patternBytes = Encoding.UTF8.GetBytes(pattern);
+            var hayBytes = Encoding.UTF8.GetBytes(haystack);
+            var matchOffset = Re2Ffi.cre2_easy_match(
+                patternBytes, patternBytes.Length,
+                hayBytes, hayBytes.Length,
+                Array.Empty<Re2Ffi.cre2_string_t>(), 0);
+            return matchOffset != 0;
+        }
+
         public void Dispose() => Dispose(true);
 
         private void Dispose(bool disposing)

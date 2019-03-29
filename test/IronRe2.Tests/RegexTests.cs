@@ -61,5 +61,16 @@ namespace IronRe2.Tests
             Assert.Equal(2, fooCaptureId);
             Assert.Equal(-1, invalidCaptureId);
         }
+
+        [Fact]
+        public void RegexEasymatch()
+        {
+            Assert.True(Regex.IsMatch(".+", "hello world"));
+            Assert.True(Regex.IsMatch("hello", "hello world"));
+            Assert.True(Regex.IsMatch("world", "hello world"));
+            Assert.True(Regex.IsMatch(@"\s+", "hello world"));
+            Assert.False(Regex.IsMatch(".", ""));
+            Assert.False(Regex.IsMatch("invalid", "i'm Ok"));
+        }
     }
 }
