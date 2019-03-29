@@ -5,9 +5,31 @@
     "tasks": [
         {
             "label": "build",
-            "command": "./build.sh",
+            "command": "dotnet",
             "type": "shell",
-            "group": "build",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "args": [
+                "build"
+            ],
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "test",
+            "command": "dotnet",
+            "type": "shell",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "args": [
+                "test"
+            ],
             "presentation": {
                 "reveal": "silent"
             },

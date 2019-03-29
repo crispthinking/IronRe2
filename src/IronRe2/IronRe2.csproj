@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="IronRe2-Batteries.OSX" Version="0.1.0-pullrequest0001-0015" />
+    <PackageReference Include="IronRe2-Batteries.Linux" Version="0.1.0-pullrequest0001-0015" />
+    <PackageReference Include="IronRe2-Batteries.Windows" Version="0.1.0-pullrequest0001-0015" />
+  </ItemGroup>
+</Project>
