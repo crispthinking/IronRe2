@@ -47,8 +47,7 @@ namespace IronRe2
          ** ----------------------------------------------------------------- */
 
         public struct cre2_string_t {
-            [MarshalAs(UnmanagedType.LPStr)]
-            public string data;
+            public IntPtr data;
             public IntPtr length; 
         };
 
@@ -123,7 +122,7 @@ namespace IronRe2
         public static extern cre2_regexp_t_ptr cre2_new(
             byte[] pattern,
             int pattern_len,
-			cre2_options_t_ptr opt);
+            cre2_options_t_ptr opt);
 
         [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
         public static extern void cre2_delete(cre2_regexp_t_ptr re);
@@ -147,6 +146,49 @@ namespace IronRe2
         [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
         public static extern IntPtr cre2_error_string(cre2_regexp_t_ptr re);
         [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
-        public static extern void cre2_error_arg(cre2_regexp_t_ptr re, [MarshalAs(UnmanagedType.LPStruct)]cre2_string_t arg);
+        public static extern void cre2_error_arg(
+            cre2_regexp_t_ptr re,
+            [MarshalAs(UnmanagedType.LPStruct)]cre2_string_t arg);
+
+
+        /** --------------------------------------------------------------------
+         ** Main matching functions.
+         ** ----------------------------------------------------------------- */
+
+         public enum cre2_anchor_t {
+            CRE2_UNANCHORED   = 1,
+            CRE2_ANCHOR_START = 2,
+            CRE2_ANCHOR_BOTH  = 3
+        }
+
+        public struct cre2_range_t {
+            /// <summary>
+            /// inclusive start index for bytevector
+            /// </summary>
+            public long start;
+
+            /// <summary>
+            /// exclusive end index for bytevector
+            /// </summary>
+            public long past;
+        }
+
+
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern int cre2_match(cre2_regexp_t_ptr re,
+            byte[] text, int textlen,
+            int startpos, int endpos, cre2_anchor_t anchor,
+            cre2_string_t[] match, int nmatch);
+
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern int cre2_easy_match(
+            byte[] pattern, int pattern_len,
+			byte[] text, int text_len,
+			cre2_string_t[] match, int nmatch);
+
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern void cre2_strings_to_ranges(
+            byte[] text, cre2_range_t[] ranges,
+            cre2_string_t[] strings, int nmatch);
     }
 }
