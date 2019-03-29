@@ -17,5 +17,10 @@ This repository is under development. There are still many things TODO:
  [ ] - Update README to include example usage
  [ ] - Create some benchmarks with BenchmarkDotNet
 
+## License
+
+This repository is distributed under [the MIT license][mit-license].
+
  [re2]: https://github.com/google/re2
  [batteries]: https://github.com/crispthinking/IronRure-Batteries
+ [mit-license]: https://opensource.org/licenses/MIT
