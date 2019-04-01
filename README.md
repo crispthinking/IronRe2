@@ -13,6 +13,9 @@ This repository is under development. There are still many things TODO:
 
  [x] - Provide [pre-built pacakges][batteries] containing the native RE2 code
  [ ] - Provide a managed wrapper of the RE2 classes
+    [ ] - Regex - wrapping base pattern matches
+    [ ] - RegexSet - wrapping regex set operations
+    [ ] - Options - wrapping options object
  [ ] - Setup a CI pipeline to produce packages
  [ ] - Update README to include example usage
  [ ] - Create some benchmarks with BenchmarkDotNet

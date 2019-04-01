@@ -1,6 +1,7 @@
 using System;
 using Xunit;
 using IronRe2;
+using System.Collections.Generic;
 
 namespace IronRe2.Tests
 {
@@ -63,17 +64,21 @@ namespace IronRe2.Tests
         }
 
         [Theory]
-        [InlineData(".+", "hello world", true)]
-        [InlineData("hello", "hello world", true)]
-        [InlineData("world", "hello world", true)]
-        [InlineData(@"\s+", "hello world", true)]
-        [InlineData(".", "", false)]
-        [InlineData("invalid", "i'm Ok", false)]
+        [MemberData(nameof(IsMatchData))]
         public void RegexEasyIsMatch(string pattern, string haystack, bool match)
         {
             Assert.Equal(match, Regex.IsMatch(pattern, haystack));
         }
 
+        [Theory]
+        [MemberData(nameof(IsMatchData))]
+        public void RegexIsMatch(string pattern, string haystack, bool match)
+        {
+            using (var re = new Regex(pattern))
+            {
+                Assert.Equal(match, re.IsMatch(haystack));
+            }
+        }
         
         [Theory]
         [InlineData(@".+", "hello world", 0, 11)]
@@ -95,6 +100,16 @@ namespace IronRe2.Tests
             {
                 Assert.False(match.Matched);
             }
+        }
+
+        public static IEnumerable<object[]> IsMatchData()
+        {
+            yield return new object[] { ".+", "hello world", true };
+            yield return new object[] { "hello", "hello world", true };
+            yield return new object[] { "world", "hello world", true };
+            yield return new object[] { @"\s+", "hello world", true };
+            yield return new object[] { ".", "", false };
+            yield return new object[] { "invalid", "i'm Ok", false };
         }
     }
 }
