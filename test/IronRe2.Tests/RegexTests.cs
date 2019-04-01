@@ -62,15 +62,39 @@ namespace IronRe2.Tests
             Assert.Equal(-1, invalidCaptureId);
         }
 
-        [Fact]
-        public void RegexEasymatch()
+        [Theory]
+        [InlineData(".+", "hello world", true)]
+        [InlineData("hello", "hello world", true)]
+        [InlineData("world", "hello world", true)]
+        [InlineData(@"\s+", "hello world", true)]
+        [InlineData(".", "", false)]
+        [InlineData("invalid", "i'm Ok", false)]
+        public void RegexEasyIsMatch(string pattern, string haystack, bool match)
         {
-            Assert.True(Regex.IsMatch(".+", "hello world"));
-            Assert.True(Regex.IsMatch("hello", "hello world"));
-            Assert.True(Regex.IsMatch("world", "hello world"));
-            Assert.True(Regex.IsMatch(@"\s+", "hello world"));
-            Assert.False(Regex.IsMatch(".", ""));
-            Assert.False(Regex.IsMatch("invalid", "i'm Ok"));
+            Assert.Equal(match, Regex.IsMatch(pattern, haystack));
+        }
+
+        
+        [Theory]
+        [InlineData(@".+", "hello world", 0, 11)]
+        [InlineData(@"\b[^\s]+\b", "hello world", 0, 5)]
+        [InlineData(@"\b[^\s]+\b$", "hello world", 6, 11)]
+        [InlineData(@".\b", "foo bar", 2, 3)]
+        [InlineData(@"b", "foo bar", 4, 5)]
+        [InlineData(@"b", "nothing to see here", -1, -1)]
+        public void RegexEasyFind(string pattern, string haystack, int start, int end)
+        {
+            var match = Regex.Find(pattern, haystack);
+            if (start != -1)
+            {
+                Assert.True(match.Matched);
+                Assert.Equal(start, match.Start);
+                Assert.Equal(end, match.End);
+            }
+            else
+            {
+                Assert.False(match.Matched);
+            }
         }
     }
 }
