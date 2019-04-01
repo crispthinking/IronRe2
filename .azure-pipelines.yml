@@ -25,7 +25,7 @@ jobs:
   pool:
     vmImage: 'vs2017-win2016'
   steps:
-  - script: .\build.ps1 -target=CI-pack
+  - powershell: .\build.ps1  -target=CI-pack
   - task: PublishTestResults@2
     condition: always()
     inputs:
