@@ -7,13 +7,23 @@
             "label": "build",
             "command": "dotnet",
             "type": "shell",
+            "group": "build",
+            "args": [
+                "build"
+            ],
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "cakebuild",
+            "command": "./build.sh",
+            "type": "shell",
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
-            "args": [
-                "build"
-            ],
             "presentation": {
                 "reveal": "silent"
             },
