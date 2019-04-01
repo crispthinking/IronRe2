@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 
 namespace IronRe2
 {
@@ -10,7 +11,7 @@ namespace IronRe2
     public class Regex : IDisposable
     {
         // Raw handle to the unmanaged regex object
-        private readonly IntPtr _rawHandle;
+        private IntPtr _rawHandle;
 
         public Regex(string pattern)
         {
@@ -27,7 +28,6 @@ namespace IronRe2
         ~Regex()
         {
             Dispose(false);
-            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -60,6 +60,25 @@ namespace IronRe2
         /// <returns>The capture group index, or -1 if no named group exists</returns>
         public int FindNamedCapture(string name) =>
             Re2Ffi.cre2_find_named_capturing_groups(_rawHandle, name);
+
+        /// <summary>
+        /// Checks if the pattern matches somewhere in the given
+        /// <paramref name="haystack" />.
+        /// </summary>
+        /// <param name="haystack">The text to find the pattern in</param>
+        /// <returns>True if the pattern matches, false otherwise.</returns>
+        public bool IsMatch(string haystack)
+        {
+            var hayBytes = Encoding.UTF8.GetBytes(haystack);
+            var captures = Array.Empty<Re2Ffi.cre2_string_t>();
+            var matchResult = Re2Ffi.cre2_match(
+                _rawHandle,
+                hayBytes, hayBytes.Length,
+                0, hayBytes.Length,
+                Re2Ffi.cre2_anchor_t.CRE2_UNANCHORED,
+                captures, 0);
+            return matchResult == 1;
+        }
 
         /// <summary>
         /// Easy IsMatch
@@ -130,7 +149,12 @@ namespace IronRe2
 
         private void Dispose(bool disposing)
         {
-            Re2Ffi.cre2_delete(_rawHandle);
+            var handle = Interlocked.Exchange(ref _rawHandle, IntPtr.Zero);
+            if (handle != IntPtr.Zero)
+            {
+                Re2Ffi.cre2_delete(_rawHandle);
+            }
+            GC.SuppressFinalize(this);
         }
     }
 }
