@@ -81,12 +81,7 @@ namespace IronRe2.Tests
         }
         
         [Theory]
-        [InlineData(@".+", "hello world", 0, 11)]
-        [InlineData(@"\b[^\s]+\b", "hello world", 0, 5)]
-        [InlineData(@"\b[^\s]+\b$", "hello world", 6, 11)]
-        [InlineData(@".\b", "foo bar", 2, 3)]
-        [InlineData(@"b", "foo bar", 4, 5)]
-        [InlineData(@"b", "nothing to see here", -1, -1)]
+        [MemberData(nameof(FindData))]
         public void RegexEasyFind(string pattern, string haystack, int start, int end)
         {
             var match = Regex.Find(pattern, haystack);
@@ -102,6 +97,26 @@ namespace IronRe2.Tests
             }
         }
 
+        [Theory]
+        [MemberData(nameof(FindData))]
+        public void RegexFind(string pattern, string haystack, int start, int end)
+        {
+            using (var re = new Regex(pattern))
+            {
+                var match = re.Find(haystack);
+                if (start != -1)
+                {
+                    Assert.True(match.Matched);
+                    Assert.Equal(start, match.Start);
+                    Assert.Equal(end, match.End);
+                }
+                else
+                {
+                    Assert.False(match.Matched);
+                }
+            }
+        }
+
         public static IEnumerable<object[]> IsMatchData()
         {
             yield return new object[] { ".+", "hello world", true };
@@ -110,6 +125,16 @@ namespace IronRe2.Tests
             yield return new object[] { @"\s+", "hello world", true };
             yield return new object[] { ".", "", false };
             yield return new object[] { "invalid", "i'm Ok", false };
+        }
+
+        public static IEnumerable<object[]> FindData()
+        {
+            yield return new object[] { @".+", "hello world", 0, 11 };
+            yield return new object[] { @"\b[^\s]+\b", "hello world", 0, 5 };
+            yield return new object[] { @"\b[^\s]+\b$", "hello world", 6, 11 };
+            yield return new object[] { @".\b", "foo bar", 2, 3 };
+            yield return new object[] { @"b", "foo bar", 4, 5 };
+            yield return new object[] { @"b", "nothing to see here", -1, -1 };
         }
     }
 }

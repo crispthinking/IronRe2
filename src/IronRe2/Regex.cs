@@ -71,6 +71,7 @@ namespace IronRe2
         {
             var hayBytes = Encoding.UTF8.GetBytes(haystack);
             var captures = Array.Empty<Re2Ffi.cre2_string_t>();
+            // TODO: Support anchor as a parameter
             var matchResult = Re2Ffi.cre2_match(
                 _rawHandle,
                 hayBytes, hayBytes.Length,
@@ -78,6 +79,48 @@ namespace IronRe2
                 Re2Ffi.cre2_anchor_t.CRE2_UNANCHORED,
                 captures, 0);
             return matchResult == 1;
+        }
+
+        /// <summary>
+        ///  Find the pattern and return the extent of the match
+        /// </summary>
+        /// <param name="haystack">The string to search for the pattern</param>
+        /// <returns>The match data</returns>
+        public Match Find(string haystack)
+        {
+            var hayBytes = Encoding.UTF8.GetBytes(haystack);
+            var captures = new [] {
+                new Re2Ffi.cre2_string_t()
+            };
+            var pin = GCHandle.Alloc(hayBytes);
+            try
+            {
+                // TODO: Support anchor as a parameter
+                var matchResult = Re2Ffi.cre2_match(
+                    _rawHandle,
+                    hayBytes, hayBytes.Length,
+                    0, hayBytes.Length,
+                    Re2Ffi.cre2_anchor_t.CRE2_UNANCHORED,
+                    captures, 1);
+                if (matchResult != 1)
+                {
+                    return Match.Empty;
+                }
+
+                // Convert the captured strings to array indices while we still
+                // have the haystack pinned. We can't have the haystack move
+                // between the `_match` and `_strings_to_ranges` call otherwise
+                // the pointer arithmetic it does will be invalidated.
+                var ranges = new [] {
+                    new Re2Ffi.cre2_range_t()
+                };
+                Re2Ffi.cre2_strings_to_ranges(hayBytes, ranges, captures, 1);
+                return new Match(ranges[0]);
+            }
+            finally
+            {
+                pin.Free();
+            }
         }
 
         /// <summary>
