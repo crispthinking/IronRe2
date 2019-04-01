@@ -72,11 +72,58 @@ namespace IronRe2
         {
             var patternBytes = Encoding.UTF8.GetBytes(pattern);
             var hayBytes = Encoding.UTF8.GetBytes(haystack);
-            var matchOffset = Re2Ffi.cre2_easy_match(
+            var captures = Array.Empty<Re2Ffi.cre2_string_t>();
+            var matchResult = Re2Ffi.cre2_easy_match(
                 patternBytes, patternBytes.Length,
                 hayBytes, hayBytes.Length,
-                Array.Empty<Re2Ffi.cre2_string_t>(), 0);
-            return matchOffset != 0;
+                captures, 0);
+            return matchResult == 1;
+        }
+
+        /// <summary>
+        /// Easy Find
+        /// <para>Finds the extent of the match of <paramref name="pattern" /> in
+        /// the given <paramref name="haystack" />. To check if a given pattern
+        /// matches without needing to find the rage use <see cref="IsMatch" />.
+        /// </para>
+        /// </summary>
+        /// <param name="pattern">The regular expression to search for</param>
+        /// <param name="haystack">The text to find the pattern in</param>
+        /// <returns>A match object summarising the match result</returns>
+        public static Match Find(string pattern, string haystack)
+        {
+            var patternBytes = Encoding.UTF8.GetBytes(pattern);
+            var hayBytes = Encoding.UTF8.GetBytes(haystack);
+            var captures = new [] {
+                new Re2Ffi.cre2_string_t()
+            };
+            var pin = GCHandle.Alloc(hayBytes);
+            try
+            {
+                var matchResult = Re2Ffi.cre2_easy_match(
+                    patternBytes, patternBytes.Length,
+                    hayBytes, hayBytes.Length,
+                    captures, 1
+                );
+                if (matchResult != 1)
+                {
+                    return Match.Empty;
+                }
+
+                // Convert the captured strings to array indices while we still
+                // have the haystack pinned. We can't have the haystack move
+                // between the `_match` and `_strings_to_ranges` call otherwise
+                // the pointer arithmetic it does will be invalidated.
+                var ranges = new [] {
+                    new Re2Ffi.cre2_range_t()
+                };
+                Re2Ffi.cre2_strings_to_ranges(hayBytes, ranges, captures, 1);
+                return new Match(ranges[0]);
+            }
+            finally
+            {
+                pin.Free();
+            }
         }
 
         public void Dispose() => Dispose(true);

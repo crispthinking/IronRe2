@@ -46,9 +46,10 @@ namespace IronRe2
          ** Precompiled regular expressions.
          ** ----------------------------------------------------------------- */
 
+        [StructLayout(LayoutKind.Sequential)]
         public struct cre2_string_t {
             public IntPtr data;
-            public IntPtr length; 
+            public int length;
         };
 
         /// <summary>
@@ -120,7 +121,7 @@ namespace IronRe2
         /* construction and destruction */
         [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
         public static extern cre2_regexp_t_ptr cre2_new(
-            byte[] pattern,
+            [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=1)]byte[] pattern,
             int pattern_len,
             cre2_options_t_ptr opt);
 
@@ -161,6 +162,7 @@ namespace IronRe2
             CRE2_ANCHOR_BOTH  = 3
         }
 
+        [StructLayout(LayoutKind.Sequential)]
         public struct cre2_range_t {
             /// <summary>
             /// inclusive start index for bytevector
@@ -173,22 +175,30 @@ namespace IronRe2
             public long past;
         }
 
-
+        /// <returns>
+        /// 0  for  no  match, 1 for  successful matching
+        /// </returns>
         [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
         public static extern int cre2_match(cre2_regexp_t_ptr re,
-            byte[] text, int textlen,
+            [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=1)]byte[] text, int textlen,
             int startpos, int endpos, cre2_anchor_t anchor,
-            cre2_string_t[] match, int nmatch);
+            [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=6)]cre2_string_t[] match, int nmatch);
 
+        /// <returns>
+        /// 0  for  no  match, 1 for  successful
+        /// matching, 2 for wrong regexp
+        /// </returns>
         [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
         public static extern int cre2_easy_match(
-            byte[] pattern, int pattern_len,
-			byte[] text, int text_len,
-			cre2_string_t[] match, int nmatch);
+            [MarshalAs(UnmanagedType.LPArray, SizeParamIndex=1)]byte[] pattern, int pattern_len,
+			[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=3)]byte[] text, int text_len,
+			[Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=5)]cre2_string_t[] match, int nmatch);
 
         [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
         public static extern void cre2_strings_to_ranges(
-            byte[] text, cre2_range_t[] ranges,
-            cre2_string_t[] strings, int nmatch);
+            [In, MarshalAs(UnmanagedType.LPArray)]byte[] text,
+            [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=3)]cre2_range_t[] ranges,
+            [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=3)]cre2_string_t[] strings,
+            int nmatch);
     }
 }
