@@ -138,9 +138,9 @@ namespace IronRe2.Tests
             Assert.True(captures[1].Matched);
             Assert.Equal(0, captures[1].Start);
             Assert.Equal(5, captures[1].End);
-            Assert.True(captures[1].Matched);
-            Assert.Equal(6, captures[1].Start);
-            Assert.Equal(11, captures[1].End);
+            Assert.True(captures[2].Matched);
+            Assert.Equal(6, captures[2].Start);
+            Assert.Equal(11, captures[2].End);
         }
 
         [Fact]
