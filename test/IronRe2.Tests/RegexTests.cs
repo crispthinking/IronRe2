@@ -12,9 +12,10 @@ namespace IronRe2.Tests
         {
             var ex = Assert.Throws<RegexCompilationException>(() =>
             {
-                new Regex("(");
+                new Regex("foo (bar");
             });
             Assert.Contains("missing )", ex.Message);
+            Assert.Equal("foo (bar", ex.OffendingPortion);
         }
 
         [Fact]
