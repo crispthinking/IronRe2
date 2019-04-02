@@ -7,15 +7,16 @@ namespace IronRe2
         /// <summary>
         /// Get the version string from the native code
         /// </summary>
-        public static string VersionString => Marshal.PtrToStringAnsi(Re2Ffi.cre2_version_string());
+        public static string VersionString =>
+            Marshal.PtrToStringAnsi(Re2Ffi.cre2_version_string());
 
         /// <summary>
         ///  Get the Numerical version, packed as a tuple.
         /// </summary>
-        public static (int age, int current, int revision) Version => (
-            (int)Re2Ffi.cre2_version_interface_age(),
+        public static (int current, int revision, int age) Version => (
             (int)Re2Ffi.cre2_version_interface_current(),
-            (int)Re2Ffi.cre2_version_interface_revision()
+            (int)Re2Ffi.cre2_version_interface_revision(),
+            (int)Re2Ffi.cre2_version_interface_age()
         );
     }
 }

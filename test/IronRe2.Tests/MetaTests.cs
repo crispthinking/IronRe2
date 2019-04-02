@@ -26,9 +26,9 @@ namespace IronRe2.Tests
             var version = Meta.Version;
         
         //Then
-            Assert.Equal(0, version.age);
             Assert.Equal(0, version.current);
             Assert.Equal(0, version.revision);
+            Assert.Equal(0, version.age);
         }
     }
 }

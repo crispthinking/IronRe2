@@ -19,6 +19,9 @@
         {
             "label": "cakebuild",
             "command": "./build.sh",
+            "windows": {
+              "command": ".\\build.ps1"
+            },
             "type": "shell",
             "group": {
                 "kind": "build",
@@ -33,12 +36,28 @@
             "label": "test",
             "command": "dotnet",
             "type": "shell",
+            "group": "test",
+            "args": [
+                "test"
+            ],
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "caketest",
+            "command": "./build.sh",
+            "windows": {
+              "command": ".\\build.ps1"
+            },
+            "type": "shell",
             "group": {
                 "kind": "test",
                 "isDefault": true
             },
             "args": [
-                "test"
+                "-target=Test"
             ],
             "presentation": {
                 "reveal": "silent"
