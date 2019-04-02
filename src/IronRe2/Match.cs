@@ -15,9 +15,19 @@ namespace IronRe2
 
         internal Match(Re2Ffi.cre2_range_t range)
         {
-            Matched = true;
-            Start = range.start;
-            End = range.past;
+            // If the indexes on the range are invalid then we didn't match
+            if (range.start < 0 || range.past < 0)
+            {
+                Matched = false;
+                Start = -1;
+                End = -1;
+            }
+            else
+            {
+                Matched = true;
+                Start = range.start;
+                End = range.past;
+            }
         }
 
         /// <summary>

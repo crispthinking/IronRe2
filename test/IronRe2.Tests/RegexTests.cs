@@ -117,6 +117,54 @@ namespace IronRe2.Tests
             }
         }
 
+        [Fact]
+        public void FindWithCaptures()
+        {
+            var pattern = @"(?P<h>hello) (?P<w>world)";
+            var re = new Regex(pattern);
+
+
+            var captures = re.Captures("hello world");
+
+
+            Assert.Equal(3, captures.Length);
+            Assert.True(captures.Matched);
+            Assert.Equal(0, captures.Start);
+            Assert.Equal(11, captures.End);
+            Assert.True(captures[0].Matched);
+            Assert.Equal(0, captures[0].Start);
+            Assert.Equal(11, captures[0].End);
+            Assert.True(captures[1].Matched);
+            Assert.Equal(0, captures[1].Start);
+            Assert.Equal(5, captures[1].End);
+            Assert.True(captures[1].Matched);
+            Assert.Equal(6, captures[1].Start);
+            Assert.Equal(11, captures[1].End);
+        }
+
+        [Fact]
+        public void FindWithOptionalCaptures()
+        {
+            var pattern = @" (.)(.)? ";
+            var re = new Regex(pattern);
+
+            var captures = re.Captures(" a ");
+
+            Assert.Equal(3, captures.Length);
+            Assert.True(captures.Matched);
+            Assert.Equal(0, captures.Start);
+            Assert.Equal(3, captures.End);
+            Assert.True(captures[0].Matched);
+            Assert.Equal(0, captures[0].Start);
+            Assert.Equal(3, captures[0].End);
+            Assert.True(captures[1].Matched);
+            Assert.Equal(1, captures[1].Start);
+            Assert.Equal(2, captures[1].End);
+            Assert.False(captures[2].Matched);
+            Assert.Equal(-1, captures[2].Start);
+            Assert.Equal(-1, captures[2].End);
+        }
+
         public static IEnumerable<object[]> IsMatchData()
         {
             yield return new object[] { ".+", "hello world", true };

@@ -88,10 +88,20 @@ namespace IronRe2
         /// <returns>The match data</returns>
         public Match Find(string haystack)
         {
+            var ranges = RawMatch(haystack, 1);
+            return (ranges.Length != 1) ? Match.Empty : new Match(ranges[0]);
+        }
+
+        public Captures Captures(string haystack)
+        {
+            var ranges = RawMatch(haystack, CaptureGroupCount + 1);
+            return (ranges.Length == 0) ? IronRe2.Captures.Empty : new Captures(ranges);
+        }
+
+        private Re2Ffi.cre2_range_t[] RawMatch(string haystack, int numCaptures)
+        {
             var hayBytes = Encoding.UTF8.GetBytes(haystack);
-            var captures = new [] {
-                new Re2Ffi.cre2_string_t()
-            };
+            var captures = new Re2Ffi.cre2_string_t[numCaptures];
             var pin = GCHandle.Alloc(hayBytes);
             try
             {
@@ -101,21 +111,19 @@ namespace IronRe2
                     hayBytes, hayBytes.Length,
                     0, hayBytes.Length,
                     Re2Ffi.cre2_anchor_t.CRE2_UNANCHORED,
-                    captures, 1);
+                    captures, captures.Length);
                 if (matchResult != 1)
                 {
-                    return Match.Empty;
+                    return Array.Empty<Re2Ffi.cre2_range_t>();
                 }
 
                 // Convert the captured strings to array indices while we still
                 // have the haystack pinned. We can't have the haystack move
                 // between the `_match` and `_strings_to_ranges` call otherwise
                 // the pointer arithmetic it does will be invalidated.
-                var ranges = new [] {
-                    new Re2Ffi.cre2_range_t()
-                };
-                Re2Ffi.cre2_strings_to_ranges(hayBytes, ranges, captures, 1);
-                return new Match(ranges[0]);
+                var ranges = new Re2Ffi.cre2_range_t[captures.Length];
+                Re2Ffi.cre2_strings_to_ranges(hayBytes, ranges, captures, captures.Length);
+                return ranges;
             }
             finally
             {
