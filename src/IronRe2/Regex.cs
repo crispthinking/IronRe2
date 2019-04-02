@@ -1,23 +1,26 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
 
 namespace IronRe2
 {
     /// <summary>
     /// The main regular expression class
     /// </summary>
-    public class Regex : IDisposable
+    public class Regex : UnmanagedResource
     {
-        // Raw handle to the unmanaged regex object
-        private IntPtr _rawHandle;
 
         public Regex(string pattern)
+            : base(Compile(Encoding.UTF8.GetBytes(pattern)))
         {
-            var patternBytes = Encoding.UTF8.GetBytes(pattern);
-            _rawHandle = Compile(patternBytes);
         }
+
+        /// <summary>
+        /// Called by <see cref="UnmanagedResource" /> whe the resource goes out
+        /// of scope.
+        /// </summary>
+        /// <param name="re">The handle to the regex to free</param>
+        protected override void Free(IntPtr re) => Re2Ffi.cre2_delete(re);
 
         /// <summary>
         /// Compile the regular expression
@@ -50,11 +53,6 @@ namespace IronRe2
             return handle;
         }
 
-        ~Regex()
-        {
-            Dispose(false);
-        }
-
         /// <summary>
         ///  Get the pattern for this regex instance
         /// </summary>
@@ -62,7 +60,7 @@ namespace IronRe2
         {
             get
             {
-                var pattern = Re2Ffi.cre2_pattern(_rawHandle);
+                var pattern = Re2Ffi.cre2_pattern(RawHandle);
                 return Marshal.PtrToStringAnsi(pattern);
             }
         }
@@ -70,13 +68,13 @@ namespace IronRe2
         /// <summary>
         ///  Get the size of the compiled automata
         /// </summary>
-        public int ProgramSize => Re2Ffi.cre2_program_size(_rawHandle);
+        public int ProgramSize => Re2Ffi.cre2_program_size(RawHandle);
 
         /// <summary>
         ///  Get the number of capture groups in this pattern
         /// </summary>
         public int CaptureGroupCount =>
-            Re2Ffi.cre2_num_capturing_groups(_rawHandle);
+            Re2Ffi.cre2_num_capturing_groups(RawHandle);
         
         /// <summary>
         ///  Find a capture group index by name
@@ -84,7 +82,7 @@ namespace IronRe2
         /// <param name="name">The named capture to search for</param>
         /// <returns>The capture group index, or -1 if no named group exists</returns>
         public int FindNamedCapture(string name) =>
-            Re2Ffi.cre2_find_named_capturing_groups(_rawHandle, name);
+            Re2Ffi.cre2_find_named_capturing_groups(RawHandle, name);
 
         /// <summary>
         /// Checks if the pattern matches somewhere in the given
@@ -98,7 +96,7 @@ namespace IronRe2
             var captures = Array.Empty<Re2Ffi.cre2_string_t>();
             // TODO: Support anchor as a parameter
             var matchResult = Re2Ffi.cre2_match(
-                _rawHandle,
+                RawHandle,
                 hayBytes, hayBytes.Length,
                 0, hayBytes.Length,
                 Re2Ffi.cre2_anchor_t.CRE2_UNANCHORED,
@@ -146,7 +144,7 @@ namespace IronRe2
             {
                 // TODO: Support anchor as a parameter
                 var matchResult = Re2Ffi.cre2_match(
-                    _rawHandle,
+                    RawHandle,
                     hayBytes, hayBytes.Length,
                     0, hayBytes.Length,
                     Re2Ffi.cre2_anchor_t.CRE2_UNANCHORED,
@@ -234,18 +232,6 @@ namespace IronRe2
             {
                 pin.Free();
             }
-        }
-
-        public void Dispose() => Dispose(true);
-
-        private void Dispose(bool disposing)
-        {
-            var handle = Interlocked.Exchange(ref _rawHandle, IntPtr.Zero);
-            if (handle != IntPtr.Zero)
-            {
-                Re2Ffi.cre2_delete(_rawHandle);
-            }
-            GC.SuppressFinalize(this);
         }
     }
 }
