@@ -32,6 +32,19 @@ namespace IronRe2.Tests
         }
 
         [Fact]
+        public void RegexCreateWithOptions()
+        {
+        //Given
+            var regex = new Regex(@"\n", new Options { NeverNewline = true });
+
+        //When
+            var match = regex.IsMatch("foo\nbar");
+
+        //Then
+            Assert.False(match);
+        }
+
+        [Fact]
         public void RegexCreateEsposesProgramSize()
         {
         //Given

@@ -9,9 +9,41 @@ namespace IronRe2
     /// </summary>
     public class Regex : UnmanagedResource
     {
-
+        /// <summary>
+        /// Create a regular expression from a given pattern
+        /// </summary>
+        /// <param name="pattern">The pattern to match</param>
         public Regex(string pattern)
-            : base(Compile(Encoding.UTF8.GetBytes(pattern)))
+            : this(Encoding.UTF8.GetBytes(pattern))
+        {
+        }
+
+        /// <summary>
+        /// Create a regular expression from a given pattern, encoded as UTF8
+        /// </summary>
+        /// <param name="pattern">The pattern to match, as bytes</param>
+        public Regex(byte[] pattern)
+            : base(Compile(pattern, null))
+        {
+        }
+
+        /// <summary>
+        /// Create a regular expression from a given pattern
+        /// </summary>
+        /// <param name="pattern">The pattern to match</param>
+        /// <param name="options">The compilation options to use</param>
+        public Regex(string pattern, Options options)
+            : this(Encoding.UTF8.GetBytes(pattern), options)
+        {
+        }
+
+        /// <summary>
+        /// Create a regular expression from a given pattern, encoded as UTF8
+        /// </summary>
+        /// <param name="pattern">The pattern to match, as bytes</param>
+        /// <param name="options">The compilation options to use</param>
+        public Regex(byte[] pattern, Options options)
+            : base(Compile(pattern, options))
         {
         }
 
@@ -28,14 +60,19 @@ namespace IronRe2
         /// <param name="patternBytes">
         /// The regex pattern, as a UTF-8 byte array
         /// </param>
+        /// <param name="opts">
+        /// The regex compilation options, or <c>null</c> to use the default
+        /// </param>
         /// <returns>
         /// The raw handle to the Regex, or throws on compilation failure
         /// </returns>
-        private static IntPtr Compile(byte[] patternBytes)
+        private static IntPtr Compile(byte[] patternBytes, Options opts)
         {
-            // TODO: Pass in proper options structure here.
             var handle = Re2Ffi.cre2_new(
-                patternBytes, patternBytes.Length, IntPtr.Zero);
+                patternBytes, patternBytes.Length,
+                opts?.RawHandle ?? IntPtr.Zero);
+            
+            // Check to see if there was an error compiling this expression
             var errorCode = Re2Ffi.cre2_error_code(handle);
             if (errorCode != Re2Ffi.cre2_error_code_t.CRE2_NO_ERROR)
             {
