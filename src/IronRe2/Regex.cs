@@ -30,6 +30,7 @@ namespace IronRe2
         /// </returns>
         private static IntPtr Compile(byte[] patternBytes)
         {
+            // TODO: Pass in proper options structure here.
             var handle = Re2Ffi.cre2_new(
                 patternBytes, patternBytes.Length, IntPtr.Zero);
             var errorCode = Re2Ffi.cre2_error_code(handle);
