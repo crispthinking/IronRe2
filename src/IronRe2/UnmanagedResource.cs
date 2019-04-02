@@ -23,7 +23,7 @@ namespace IronRe2
         /// <summary>
         /// Get the handle to the underlying resource
         /// </summary>
-        protected IntPtr RawHandle => _rawHandle;
+        internal IntPtr RawHandle => _rawHandle;
 
         /// <summary>
         ///  Free the resource
