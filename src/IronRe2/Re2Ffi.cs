@@ -149,7 +149,7 @@ namespace IronRe2
         [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
         public static extern void cre2_error_arg(
             cre2_regexp_t_ptr re,
-            [MarshalAs(UnmanagedType.LPStruct)]cre2_string_t arg);
+            [In, Out]ref cre2_string_t arg);
 
 
         /** --------------------------------------------------------------------

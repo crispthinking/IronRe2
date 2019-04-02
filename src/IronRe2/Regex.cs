@@ -16,13 +16,37 @@ namespace IronRe2
         public Regex(string pattern)
         {
             var patternBytes = Encoding.UTF8.GetBytes(pattern);
-            _rawHandle = Re2Ffi.cre2_new(patternBytes, patternBytes.Length, IntPtr.Zero);
-            if (Re2Ffi.cre2_error_code(_rawHandle) != Re2Ffi.cre2_error_code_t.CRE2_NO_ERROR)
+            _rawHandle = Compile(patternBytes);
+        }
+
+        /// <summary>
+        /// Compile the regular expression
+        /// </summary>
+        /// <param name="patternBytes">
+        /// The regex pattern, as a UTF-8 byte array
+        /// </param>
+        /// <returns>
+        /// The raw handle to the Regex, or throws on compilation failure
+        /// </returns>
+        private static IntPtr Compile(byte[] patternBytes)
+        {
+            var handle = Re2Ffi.cre2_new(
+                patternBytes, patternBytes.Length, IntPtr.Zero);
+            var errorCode = Re2Ffi.cre2_error_code(handle);
+            if (errorCode != Re2Ffi.cre2_error_code_t.CRE2_NO_ERROR)
             {
-                var errorString = Re2Ffi.cre2_error_string(_rawHandle);
+                var errorString = Re2Ffi.cre2_error_string(handle);
                 var error = Marshal.PtrToStringAnsi(errorString);
-                throw new RegexCompilationException(error);
+                var errorArg = new Re2Ffi.cre2_string_t();
+                Re2Ffi.cre2_error_arg(handle, ref errorArg);
+                var offendingPortion = Marshal.PtrToStringAnsi(
+                    errorArg.data, errorArg.length);
+                // need to clean up the regex
+                Re2Ffi.cre2_delete(handle);
+                throw new RegexCompilationException(error, offendingPortion);
             }
+
+            return handle;
         }
 
         ~Regex()
@@ -95,9 +119,23 @@ namespace IronRe2
         public Captures Captures(string haystack)
         {
             var ranges = RawMatch(haystack, CaptureGroupCount + 1);
-            return (ranges.Length == 0) ? IronRe2.Captures.Empty : new Captures(ranges);
+            return (ranges.Length == 0) ?
+                IronRe2.Captures.Empty : new Captures(ranges);
         }
 
+        /// <summary>
+        /// Managed wrapper around the raw match API.
+        /// <para>From the RE2 docs for the underlying function:
+        /// Don't ask for more match information than you will use:
+        /// runs much faster with nsubmatch == 1 than nsubmatch > 1, and
+        /// runs even faster if nsubmatch == 0.
+        /// Doesn't make sense to use nsubmatch > 1 + NumberOfCapturingGroups(),
+        /// but will be handled correctly.
+        /// </para>
+        /// </summary>
+        /// <param name="haystack">The string to match the pattern against</param>
+        /// <param name="numCaptures">The number of match groups to return</param>
+        /// <returns></returns>
         private Re2Ffi.cre2_range_t[] RawMatch(string haystack, int numCaptures)
         {
             var hayBytes = Encoding.UTF8.GetBytes(haystack);
@@ -122,7 +160,8 @@ namespace IronRe2
                 // between the `_match` and `_strings_to_ranges` call otherwise
                 // the pointer arithmetic it does will be invalidated.
                 var ranges = new Re2Ffi.cre2_range_t[captures.Length];
-                Re2Ffi.cre2_strings_to_ranges(hayBytes, ranges, captures, captures.Length);
+                Re2Ffi.cre2_strings_to_ranges(
+                    hayBytes, ranges, captures, captures.Length);
                 return ranges;
             }
             finally

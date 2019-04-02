@@ -6,9 +6,15 @@ namespace IronRe2
 {
     public class RegexCompilationException : Exception
     {
-        public RegexCompilationException(string message)
+        /// <summary>
+        /// Get the offending portion of the regular expression being compiled
+        /// </summary>
+        public string OffendingPortion { get; }
+
+        public RegexCompilationException(string message, string badBit)
             : base(message)
         {
+            OffendingPortion = badBit;
         }
     }
 }
