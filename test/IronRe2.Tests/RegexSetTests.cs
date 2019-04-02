@@ -22,6 +22,29 @@ namespace IronRe2.Tests
         }
 
         [Fact]
+        public void CreateSetWithOptions()
+        {
+        //Given
+            var set = new RegexSet(new [] {
+                "()",
+                "[]",
+                "."
+            }, new Options{
+                Literal = true,
+            });
+        
+        //When
+            var parenMatches = set.Match("I have some () in");
+            var dotMatches = set.Match("I am the container of a . dot");
+            var bland = set.Match("boring");
+
+        //Then
+            Assert.True(parenMatches.Matched);
+            Assert.True(dotMatches.Matched);
+            Assert.False(bland.Matched);
+        }
+
+        [Fact]
         public void RegexSetThrowsWithInvalidPattern()
         {
             var ex = Assert.Throws<RegexCompilationException>(() =>
