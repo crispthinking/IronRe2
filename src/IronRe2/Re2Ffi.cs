@@ -40,40 +40,72 @@ namespace IronRe2
          ** Regular expressions configuration options.
          ** ----------------------------------------------------------------- */
 
-        // TODO: Add FFI defnitions for the `cre2_opt_*` functions
+        public enum cre2_encoding_t {
+           CRE2_UNKNOWN  = 0,    /* should never happen */
+           CRE2_UTF8 = 1,
+           CRE2_Latin1   = 2
+        }
+
 
         [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
         public static extern  cre2_options_t_ptr cre2_opt_new();
         [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
         public static extern  void cre2_opt_delete(cre2_options_t_ptr opt);
 
-//      cre2_decl void cre2_opt_set_posix_syntax    (cre2_options_t *opt, int flag);
-//      cre2_decl void cre2_opt_set_longest_match   (cre2_options_t *opt, int flag);
-//      cre2_decl void cre2_opt_set_log_errors      (cre2_options_t *opt, int flag);
-//      cre2_decl void cre2_opt_set_literal     (cre2_options_t *opt, int flag);
-//      cre2_decl void cre2_opt_set_never_nl        (cre2_options_t *opt, int flag);
-//      cre2_decl void cre2_opt_set_dot_nl      (cre2_options_t *opt, int flag);
-//      cre2_decl void cre2_opt_set_never_capture   (cre2_options_t *opt, int flag);
-//      cre2_decl void cre2_opt_set_case_sensitive  (cre2_options_t *opt, int flag);
-//      cre2_decl void cre2_opt_set_perl_classes    (cre2_options_t *opt, int flag);
-//      cre2_decl void cre2_opt_set_word_boundary   (cre2_options_t *opt, int flag);
-//      cre2_decl void cre2_opt_set_one_line        (cre2_options_t *opt, int flag);
-//      cre2_decl void cre2_opt_set_max_mem     (cre2_options_t *opt, int64_t m);
-//      cre2_decl void cre2_opt_set_encoding        (cre2_options_t *opt, cre2_encoding_t enc);
-//      
-//      cre2_decl int cre2_opt_posix_syntax     (cre2_options_t *opt);
-//      cre2_decl int cre2_opt_longest_match        (cre2_options_t *opt);
-//      cre2_decl int cre2_opt_log_errors       (cre2_options_t *opt);
-//      cre2_decl int cre2_opt_literal          (cre2_options_t *opt);
-//      cre2_decl int cre2_opt_never_nl         (cre2_options_t *opt);
-//      cre2_decl int cre2_opt_dot_nl           (cre2_options_t *opt);
-//      cre2_decl int cre2_opt_never_capture        (cre2_options_t *opt);
-//      cre2_decl int cre2_opt_case_sensitive       (cre2_options_t *opt);
-//      cre2_decl int cre2_opt_perl_classes     (cre2_options_t *opt);
-//      cre2_decl int cre2_opt_word_boundary        (cre2_options_t *opt);
-//      cre2_decl int cre2_opt_one_line         (cre2_options_t *opt);
-//      cre2_decl int64_t cre2_opt_max_mem      (cre2_options_t *opt);
-//      cre2_decl cre2_encoding_t cre2_opt_encoding (cre2_options_t *opt);
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern void cre2_opt_set_posix_syntax    (cre2_options_t_ptr opt, int flag);
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern void cre2_opt_set_longest_match   (cre2_options_t_ptr opt, int flag);
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern void cre2_opt_set_log_errors      (cre2_options_t_ptr opt, int flag);
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern void cre2_opt_set_literal     (cre2_options_t_ptr opt, int flag);
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern void cre2_opt_set_never_nl        (cre2_options_t_ptr opt, int flag);
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern void cre2_opt_set_dot_nl      (cre2_options_t_ptr opt, int flag);
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern void cre2_opt_set_never_capture   (cre2_options_t_ptr opt, int flag);
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern void cre2_opt_set_case_sensitive  (cre2_options_t_ptr opt, int flag);
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern void cre2_opt_set_perl_classes    (cre2_options_t_ptr opt, int flag);
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern void cre2_opt_set_word_boundary   (cre2_options_t_ptr opt, int flag);
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern void cre2_opt_set_one_line        (cre2_options_t_ptr opt, int flag);
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern void cre2_opt_set_max_mem     (cre2_options_t_ptr opt, [MarshalAs(UnmanagedType.I8)]long m);
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern void cre2_opt_set_encoding        (cre2_options_t_ptr opt, cre2_encoding_t enc);
+     
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern int cre2_opt_posix_syntax     (cre2_options_t_ptr opt);
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern int cre2_opt_longest_match        (cre2_options_t_ptr opt);
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern int cre2_opt_log_errors       (cre2_options_t_ptr opt);
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern int cre2_opt_literal          (cre2_options_t_ptr opt);
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern int cre2_opt_never_nl         (cre2_options_t_ptr opt);
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern int cre2_opt_dot_nl           (cre2_options_t_ptr opt);
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern int cre2_opt_never_capture        (cre2_options_t_ptr opt);
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern int cre2_opt_case_sensitive       (cre2_options_t_ptr opt);
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern int cre2_opt_perl_classes     (cre2_options_t_ptr opt);
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern int cre2_opt_word_boundary        (cre2_options_t_ptr opt);
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern int cre2_opt_one_line         (cre2_options_t_ptr opt);
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        [return:MarshalAs(UnmanagedType.I8)]
+        public static extern long cre2_opt_max_mem      (cre2_options_t_ptr opt);
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern cre2_encoding_t cre2_opt_encoding (cre2_options_t_ptr opt);
 
         /** --------------------------------------------------------------------
          ** Precompiled regular expressions.
@@ -279,6 +311,5 @@ namespace IronRe2
         public static extern UIntPtr cre2_set_match(
             cre2_set_t_ptr set, byte[] text, UIntPtr text_len,
             [Out, MarshalAs(UnmanagedType.LPArray)]int[] match, UIntPtr match_len);
-        
     }
 }

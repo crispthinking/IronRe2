@@ -14,29 +14,39 @@ namespace IronRe2
     ///   matches a given search text in a single pass.
     /// </para>
     /// </summary>
-    public class RegexSet : IDisposable
+    public class RegexSet : UnmanagedResource
     {
-        private IntPtr _rawHandle;
-
         /// <summary>
         /// Create a new regex set containing the given patterns
         /// </summary>
         /// <param name="patterns">The patterns to include in the set</param>
         public RegexSet(IEnumerable<string> patterns)
+            : this(patterns.Select(Encoding.UTF8.GetBytes).ToArray())
+        {}
+
+        /// <summary>
+        /// Create a new regex set containing the given byte patterns
+        /// </summary>
+        /// <param name="patterns">The patterns to include in the set, as UTF8</param>
+        public RegexSet(IReadOnlyCollection<byte[]> patterns)
+            : base(CompileSet(patterns))
         {
-            var patternsAsBytes = patterns
-                .Select(Encoding.UTF8.GetBytes)
-                .ToArray();
-            _rawHandle = CompileSet(patternsAsBytes);
-            Count = patternsAsBytes.Length;
+            Count = patterns.Count;
         }
+
+        /// <summary>
+        /// Called by <see cref="UnmanagedResource" /> whe the resource goes out
+        /// of scope.
+        /// </summary>
+        /// <param name="r">The handle to the regex set to free</param>
+        protected override void Free(IntPtr r) => Re2Ffi.cre2_set_delete(r);
 
         /// <summary>
         ///  Compile a given set of patterns to a raw regex set handle
         /// </summary>
         /// <param name="patternsAsBytes">The collection of patterns</param>
         /// <returns>The raw set handle or throws an exception</returns>
-        private IntPtr CompileSet(IReadOnlyCollection<byte[]> patternsAsBytes)
+        private static IntPtr CompileSet(IReadOnlyCollection<byte[]> patternsAsBytes)
         {
             // FIXME: Stop leaking this options and pass in proper options here
             var fudge = Re2Ffi.cre2_opt_new();
@@ -70,36 +80,27 @@ namespace IronRe2
             return handle;
         }
 
-        
-        ~RegexSet()
-        {
-            Dispose(false);
-        }
-        
+        /// <summary>
+        /// Returns the number of patterns in this set
+        /// </summary>
         public int Count {get;}
 
+        /// <summary>
+        /// Match the patterns against he given search text and return
+        /// information about the matching patterns.
+        /// </summary>
+        /// <param name="haystack">The text to search</param>
+        /// <returns>An object representing the state of the matches</returns>
         public SetMatch Match(string haystack)
         {
             var hayBytes = Encoding.UTF8.GetBytes(haystack);
             var matchIndices = new int[Count];
             var matchCount = Re2Ffi.cre2_set_match(
-                _rawHandle,
+                RawHandle,
                 hayBytes, new UIntPtr((uint)hayBytes.Length),
                 matchIndices, new UIntPtr((uint)matchIndices.Length));
             Array.Resize(ref matchIndices, (int)matchCount);
             return new SetMatch(matchCount, matchIndices);
-        }
-
-        public void Dispose() => Dispose(true);
-
-        private void Dispose(bool disposing)
-        {
-            var handle = Interlocked.Exchange(ref _rawHandle, IntPtr.Zero);
-            if (handle != IntPtr.Zero)
-            {
-                Re2Ffi.cre2_delete(_rawHandle);
-            }
-            GC.SuppressFinalize(this);
         }
     }
 }
