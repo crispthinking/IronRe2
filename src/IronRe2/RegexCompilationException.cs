@@ -16,5 +16,9 @@ namespace IronRe2
         {
             OffendingPortion = badBit;
         }
+
+        public RegexCompilationException(string message) : base(message)
+        {
+        }
     }
 }

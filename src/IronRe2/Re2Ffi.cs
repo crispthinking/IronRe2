@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 
 using cre2_regexp_t_ptr = System.IntPtr;
+using cre2_set_t_ptr = System.IntPtr;
 using cre2_options_t_ptr = System.IntPtr;
 
 namespace IronRe2
@@ -35,12 +36,44 @@ namespace IronRe2
         public static extern IntPtr cre2_version_interface_age();
 
 
-
         /** --------------------------------------------------------------------
          ** Regular expressions configuration options.
          ** ----------------------------------------------------------------- */
 
         // TODO: Add FFI defnitions for the `cre2_opt_*` functions
+
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern  cre2_options_t_ptr cre2_opt_new();
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern  void cre2_opt_delete(cre2_options_t_ptr opt);
+
+//      cre2_decl void cre2_opt_set_posix_syntax    (cre2_options_t *opt, int flag);
+//      cre2_decl void cre2_opt_set_longest_match   (cre2_options_t *opt, int flag);
+//      cre2_decl void cre2_opt_set_log_errors      (cre2_options_t *opt, int flag);
+//      cre2_decl void cre2_opt_set_literal     (cre2_options_t *opt, int flag);
+//      cre2_decl void cre2_opt_set_never_nl        (cre2_options_t *opt, int flag);
+//      cre2_decl void cre2_opt_set_dot_nl      (cre2_options_t *opt, int flag);
+//      cre2_decl void cre2_opt_set_never_capture   (cre2_options_t *opt, int flag);
+//      cre2_decl void cre2_opt_set_case_sensitive  (cre2_options_t *opt, int flag);
+//      cre2_decl void cre2_opt_set_perl_classes    (cre2_options_t *opt, int flag);
+//      cre2_decl void cre2_opt_set_word_boundary   (cre2_options_t *opt, int flag);
+//      cre2_decl void cre2_opt_set_one_line        (cre2_options_t *opt, int flag);
+//      cre2_decl void cre2_opt_set_max_mem     (cre2_options_t *opt, int64_t m);
+//      cre2_decl void cre2_opt_set_encoding        (cre2_options_t *opt, cre2_encoding_t enc);
+//      
+//      cre2_decl int cre2_opt_posix_syntax     (cre2_options_t *opt);
+//      cre2_decl int cre2_opt_longest_match        (cre2_options_t *opt);
+//      cre2_decl int cre2_opt_log_errors       (cre2_options_t *opt);
+//      cre2_decl int cre2_opt_literal          (cre2_options_t *opt);
+//      cre2_decl int cre2_opt_never_nl         (cre2_options_t *opt);
+//      cre2_decl int cre2_opt_dot_nl           (cre2_options_t *opt);
+//      cre2_decl int cre2_opt_never_capture        (cre2_options_t *opt);
+//      cre2_decl int cre2_opt_case_sensitive       (cre2_options_t *opt);
+//      cre2_decl int cre2_opt_perl_classes     (cre2_options_t *opt);
+//      cre2_decl int cre2_opt_word_boundary        (cre2_options_t *opt);
+//      cre2_decl int cre2_opt_one_line         (cre2_options_t *opt);
+//      cre2_decl int64_t cre2_opt_max_mem      (cre2_options_t *opt);
+//      cre2_decl cre2_encoding_t cre2_opt_encoding (cre2_options_t *opt);
 
         /** --------------------------------------------------------------------
          ** Precompiled regular expressions.
@@ -200,5 +233,52 @@ namespace IronRe2
             [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=3)]cre2_range_t[] ranges,
             [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=3)]cre2_string_t[] strings,
             int nmatch);
+
+        /** --------------------------------------------------------------------
+         ** Set match.
+         ** ----------------------------------------------------------------- */
+
+        /// <summary>
+        /// RE2::Set constructor
+        /// </summary>
+        
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern cre2_set_t_ptr cre2_set_new(cre2_options_t_ptr opt, cre2_anchor_t anchor);
+        /// <summary>
+        /// RE2::Set destructor
+        /// </summary>
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern void      cre2_set_delete(cre2_set_t_ptr set);
+        /// <summary>
+        /// Add a regex to the set. If invalid: store error message in error buffer.
+        /// Returns the index associated to this regex, -1 on error
+        /// </summary>
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern int cre2_set_add(
+            cre2_set_t_ptr set,
+            [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=2)]byte[] pattern, UIntPtr pattern_len,
+            [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=4)]byte[] error, UIntPtr error_len);
+        /// <summary>
+        /// Add pattern without NULL byte. Discard error message.
+        /// Returns the index associated to this regex, -1 on error
+        /// </summary>
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern int cre2_set_add_simple(
+            cre2_set_t_ptr set, [MarshalAs(UnmanagedType.LPStr)]string pattern);
+        /// <summary>
+        /// Compile the regex set into a DFA. Must be called after add and before match.
+        /// Returns 1 on success, 0 on error
+        /// </summary>
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern int cre2_set_compile(cre2_set_t_ptr set);
+        /// <summary>
+        /// Match the set of regex against text and store indices of matching regexes in match array.
+        /// Returns the number of regexes which match.
+        /// </summary>
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern UIntPtr cre2_set_match(
+            cre2_set_t_ptr set, byte[] text, UIntPtr text_len,
+            [Out, MarshalAs(UnmanagedType.LPArray)]int[] match, UIntPtr match_len);
+        
     }
 }
