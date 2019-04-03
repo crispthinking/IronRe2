@@ -148,15 +148,17 @@ namespace IronRe2
         /// <returns>The match data</returns>
         public Match Find(string haystack)
         {
-            var ranges = RawMatch(haystack, 1);
-            return (ranges.Length != 1) ? Match.Empty : new Match(ranges[0]);
+            var hayBytes = Encoding.UTF8.GetBytes(haystack);
+            var ranges = RawMatch(hayBytes, 1);
+            return (ranges.Length != 1) ? Match.Empty : new Match(hayBytes, ranges[0]);
         }
 
         public Captures Captures(string haystack)
         {
-            var ranges = RawMatch(haystack, CaptureGroupCount + 1);
+            var hayBytes = Encoding.UTF8.GetBytes(haystack);
+            var ranges = RawMatch(hayBytes, CaptureGroupCount + 1);
             return (ranges.Length == 0) ?
-                IronRe2.Captures.Empty : new Captures(ranges);
+                IronRe2.Captures.Empty : new Captures(hayBytes, ranges);
         }
 
         /// <summary>
@@ -169,12 +171,11 @@ namespace IronRe2
         /// but will be handled correctly.
         /// </para>
         /// </summary>
-        /// <param name="haystack">The string to match the pattern against</param>
+        /// <param name="hayBytes">The string to match the pattern against</param>
         /// <param name="numCaptures">The number of match groups to return</param>
         /// <returns></returns>
-        private Re2Ffi.cre2_range_t[] RawMatch(string haystack, int numCaptures)
+        private Re2Ffi.cre2_range_t[] RawMatch(byte[] hayBytes, int numCaptures)
         {
-            var hayBytes = Encoding.UTF8.GetBytes(haystack);
             var captures = new Re2Ffi.cre2_string_t[numCaptures];
             var pin = GCHandle.Alloc(hayBytes);
             try
@@ -263,7 +264,7 @@ namespace IronRe2
                     new Re2Ffi.cre2_range_t()
                 };
                 Re2Ffi.cre2_strings_to_ranges(hayBytes, ranges, captures, 1);
-                return new Match(ranges[0]);
+                return new Match(hayBytes, ranges[0]);
             }
             finally
             {
