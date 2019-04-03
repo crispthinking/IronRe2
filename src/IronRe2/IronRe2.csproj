@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="IronRe2-Batteries.OSX" Version="0.1.0-pullrequest0001-0024" />
-    <PackageReference Include="IronRe2-Batteries.Linux" Version="0.1.0-pullrequest0001-0024" />
-    <PackageReference Include="IronRe2-Batteries.Windows" Version="0.1.0-pullrequest0001-0024" />
+    <PackageReference Include="IronRe2-Batteries.OSX" Version="0.1.0-pullrequest0001-0025" />
+    <PackageReference Include="IronRe2-Batteries.Linux" Version="0.1.0-pullrequest0001-0025" />
+    <PackageReference Include="IronRe2-Batteries.Windows" Version="0.1.0-pullrequest0001-0025" />
   </ItemGroup>
 </Project>
