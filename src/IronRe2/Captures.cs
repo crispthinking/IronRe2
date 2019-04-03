@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace IronRe2
 {
-    public class Captures : Match, IEnumerable<Match>
+    public class Captures : Match, IReadOnlyList<Match>
     {
         private Re2Ffi.cre2_range_t[] _ranges;
 
@@ -12,8 +12,8 @@ namespace IronRe2
         {
         }
 
-        internal Captures(Re2Ffi.cre2_range_t[] ranges)
-            : base(ranges[0])
+        internal Captures(byte[] haystack, Re2Ffi.cre2_range_t[] ranges)
+            : base(haystack, ranges[0])
         {
             _ranges = ranges;
         }
@@ -21,16 +21,16 @@ namespace IronRe2
         /// <summary>
         /// Access the match at the given capture group index
         /// </summary>
-        public Match this[int index] => new Match(_ranges[index]);
+        public Match this[int index] => new Match(_haystack, _ranges[index]);
 
         /// <summary>
         /// Returns the number of groups in this set of captures.
         /// </summary>
-        public int Length => _ranges.Length;
+        public int Count => _ranges.Length;
 
         public IEnumerator<Match> GetEnumerator()
         {
-            var len = Length;
+            var len = Count;
             for (int i = 0; i < len; i++)
             {
                 yield return this[i];

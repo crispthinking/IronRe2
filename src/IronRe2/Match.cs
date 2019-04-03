@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace IronRe2
 {
     /// <summary>
@@ -8,13 +10,16 @@ namespace IronRe2
     /// </summary>
     public class Match
     {
+        protected readonly byte[] _haystack;
+
         internal Match()
         {
             Matched = false;
         }
 
-        internal Match(Re2Ffi.cre2_range_t range)
+        internal Match(byte[] haystack, Re2Ffi.cre2_range_t range)
         {
+            _haystack = haystack;
             // If the indexes on the range are invalid then we didn't match
             if (range.start < 0 || range.past < 0)
             {
@@ -44,6 +49,13 @@ namespace IronRe2
         ///  If the pattern matched the end index of the match, in bytes.
         /// </summary>
         public long End { get; }
+
+        /// <summary>
+        /// Get the text for this match
+        /// </summary>
+        public string ExtractedText => Matched ?
+            Encoding.UTF8.GetString(_haystack, (int)Start, (int)(End - Start)):
+            string.Empty;
 
         /// <summary>
         ///  A singleton match which represents all empty matches
