@@ -14,18 +14,7 @@ jobs:
   pool:
     vmImage: 'macOS-10.13'
   steps:
-  - script: ./build.sh -target=CI
-  - task: PublishTestResults@2
-    condition: always()
-    inputs:
-      testRunner: VSTest
-      testResultsFiles: '**/*.trx'
-
-- job: Windows
-  pool:
-    vmImage: 'vs2017-win2016'
-  steps:
-  - powershell: .\build.ps1  -target=CI-pack
+  - script: ./build.sh -target=CI-pack
   - task: PublishTestResults@2
     condition: always()
     inputs:
@@ -33,4 +22,15 @@ jobs:
       testResultsFiles: '**/*.trx'
   - task: PublishBuildArtifacts@1
     inputs:
-      pathtoPublish: bin/artifacts/
+      pathtoPublish: Artifacts/
+
+- job: Windows
+  pool:
+    vmImage: 'vs2017-win2016'
+  steps:
+  - powershell: .\build.ps1  -target=CI
+  - task: PublishTestResults@2
+    condition: always()
+    inputs:
+      testRunner: VSTest
+      testResultsFiles: '**/*.trx'
