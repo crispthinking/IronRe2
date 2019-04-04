@@ -17,7 +17,7 @@ namespace IronRe2
             Matched = false;
         }
 
-        internal Match(byte[] haystack, Re2Ffi.cre2_range_t range)
+        internal Match(byte[] haystack, ByteRange range)
         {
             _haystack = haystack;
             // If the indexes on the range are invalid then we didn't match

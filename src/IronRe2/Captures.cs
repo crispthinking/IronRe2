@@ -5,14 +5,14 @@ namespace IronRe2
 {
     public class Captures : Match, IReadOnlyList<Match>
     {
-        private Re2Ffi.cre2_range_t[] _ranges;
+        private ByteRange[] _ranges;
 
         internal Captures()
             : base()
         {
         }
 
-        internal Captures(byte[] haystack, Re2Ffi.cre2_range_t[] ranges)
+        internal Captures(byte[] haystack, ByteRange[] ranges)
             : base(haystack, ranges[0])
         {
             _ranges = ranges;
