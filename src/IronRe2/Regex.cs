@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -174,10 +175,10 @@ namespace IronRe2
         /// <param name="hayBytes">The string to match the pattern against</param>
         /// <param name="numCaptures">The number of match groups to return</param>
         /// <returns></returns>
-        private Re2Ffi.cre2_range_t[] RawMatch(byte[] hayBytes, int numCaptures)
+        private ByteRange[] RawMatch(byte[] hayBytes, int numCaptures)
         {
             var captures = new Re2Ffi.cre2_string_t[numCaptures];
-            var pin = GCHandle.Alloc(hayBytes);
+            var pin = GCHandle.Alloc(hayBytes, GCHandleType.Pinned);
             try
             {
                 // TODO: Support anchor as a parameter
@@ -189,22 +190,39 @@ namespace IronRe2
                     captures, captures.Length);
                 if (matchResult != 1)
                 {
-                    return Array.Empty<Re2Ffi.cre2_range_t>();
+                    return Array.Empty<ByteRange>();
                 }
 
                 // Convert the captured strings to array indices while we still
                 // have the haystack pinned. We can't have the haystack move
-                // between the `_match` and `_strings_to_ranges` call otherwise
-                // the pointer arithmetic it does will be invalidated.
-                var ranges = new Re2Ffi.cre2_range_t[captures.Length];
-                Re2Ffi.cre2_strings_to_ranges(
-                    hayBytes, ranges, captures, captures.Length);
-                return ranges;
+                // between the `_match` and the conversion to byte ranges
+                // otherwise the pointer arithmetic we do will be invalidated.
+                return StringsToRanges(captures, pin.AddrOfPinnedObject());
             }
             finally
             {
                 pin.Free();
             }
+        }
+
+        /// <summary>
+        /// cre2 Strings to Byte Ranges
+        /// </summary>
+        /// <param name="captures">The captures to convert to byte ranges</param>
+        /// <param name="hayBasePtr">The base pointer of the search text.</param>
+        /// <returns>An array of offsets into the haystack corresponding to the input strings</returns>
+        private static ByteRange[] StringsToRanges(Re2Ffi.cre2_string_t[] captures, IntPtr hayBasePtr)
+        {
+            var hayBase = hayBasePtr.ToInt64();
+            var ranges = new ByteRange[captures.Length];
+            for (int i = 0; i < ranges.Length; i++)
+            {
+                var c = captures[i];
+                var start = c.data.ToInt64() - hayBase;
+                ranges[i].start = start;
+                ranges[i].past = start + c.length;
+            }
+            return ranges;
         }
 
         /// <summary>
@@ -243,7 +261,7 @@ namespace IronRe2
             var captures = new [] {
                 new Re2Ffi.cre2_string_t()
             };
-            var pin = GCHandle.Alloc(hayBytes);
+            var pin = GCHandle.Alloc(hayBytes, GCHandleType.Pinned);
             try
             {
                 var matchResult = Re2Ffi.cre2_easy_match(
@@ -258,12 +276,9 @@ namespace IronRe2
 
                 // Convert the captured strings to array indices while we still
                 // have the haystack pinned. We can't have the haystack move
-                // between the `_match` and `_strings_to_ranges` call otherwise
-                // the pointer arithmetic it does will be invalidated.
-                var ranges = new [] {
-                    new Re2Ffi.cre2_range_t()
-                };
-                Re2Ffi.cre2_strings_to_ranges(hayBytes, ranges, captures, 1);
+                // between the `_match` and the conversion to byte ranges
+                // otherwise the pointer arithmetic we do will be invalidated.
+                var ranges = StringsToRanges(captures, pin.AddrOfPinnedObject());
                 return new Match(hayBytes, ranges[0]);
             }
             finally

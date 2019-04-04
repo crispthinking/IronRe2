@@ -227,19 +227,6 @@ namespace IronRe2
             CRE2_ANCHOR_BOTH  = 3
         }
 
-        [StructLayout(LayoutKind.Sequential)]
-        public struct cre2_range_t {
-            /// <summary>
-            /// inclusive start index for bytevector
-            /// </summary>
-            public long start;
-
-            /// <summary>
-            /// exclusive end index for bytevector
-            /// </summary>
-            public long past;
-        }
-
         /// <returns>
         /// 0  for  no  match, 1 for  successful matching
         /// </returns>
@@ -259,12 +246,6 @@ namespace IronRe2
 			[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=3)]byte[] text, int text_len,
 			[Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=5)]cre2_string_t[] match, int nmatch);
 
-        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
-        public static extern void cre2_strings_to_ranges(
-            [In, MarshalAs(UnmanagedType.LPArray)]byte[] text,
-            [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=3)]cre2_range_t[] ranges,
-            [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=3)]cre2_string_t[] strings,
-            int nmatch);
 
         /** --------------------------------------------------------------------
          ** Set match.
