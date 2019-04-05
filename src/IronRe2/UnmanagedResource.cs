@@ -6,7 +6,7 @@ namespace IronRe2
     public abstract class UnmanagedResource : IDisposable
     {
         
-        // Raw handle to the unmanaged regex object
+        // Raw handle to the underlying unmanaged resource
         private IntPtr _rawHandle;
 
         protected UnmanagedResource(IntPtr rawHandle)
@@ -14,7 +14,6 @@ namespace IronRe2
             _rawHandle = rawHandle;
         }
         
-
         ~UnmanagedResource()
         {
             Dispose(false);
@@ -31,7 +30,6 @@ namespace IronRe2
         /// <param name="handle">The handle to free</param>
         protected abstract void Free(IntPtr handle);
 
-        
         public void Dispose() => Dispose(true);
 
         private void Dispose(bool disposing)
