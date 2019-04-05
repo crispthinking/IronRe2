@@ -154,6 +154,17 @@ namespace IronRe2
             return (ranges.Length != 1) ? Match.Empty : new Match(hayBytes, ranges[0]);
         }
 
+        /// <summary>
+        /// Find with Captures
+        /// <para>
+        /// This is the most expensive of the match options but provides the
+        /// richest information about the match. The returned
+        /// <see cref="IronRe2.Captures" /> object contains the match position
+        /// of each of the regex's capturing groups.
+        /// </para>
+        /// </summary>
+        /// <param name="haystack">The string to search for the pattern</param>
+        /// <returns>The captures data</returns>
         public Captures Captures(string haystack)
         {
             var hayBytes = Encoding.UTF8.GetBytes(haystack);
