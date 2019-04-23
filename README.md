@@ -86,14 +86,14 @@ using (var re = new Regex(@"(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})"))
 
 This repository is under development. There are still many things TODO:
 
- [x] - Provide [pre-built pacakges][batteries] containing the native RE2 code
- [x] - Provide a managed wrapper of the RE2 classes
-    [x] - Regex - wrapping base pattern matches
-    [x] - RegexSet - wrapping regex set operations
-    [x] - Options - wrapping options object
- [x] - Setup a CI pipeline to produce packages
- [x] - Update README to include example usage
- [ ] - Create some benchmarks with BenchmarkDotNet
+ * [x] - Provide [pre-built pacakges][batteries] containing the native RE2 code
+ * [x] - Provide a managed wrapper of the RE2 classes
+    * [x] - Regex - wrapping base pattern matches
+    * [x] - RegexSet - wrapping regex set operations
+    * [x] - Options - wrapping options object
+ * [x] - Setup a CI pipeline to produce packages
+ * [x] - Update README to include example usage
+ * [ ] - Create some benchmarks with BenchmarkDotNet
 
 ## License
 
