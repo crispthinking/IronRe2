@@ -100,5 +100,5 @@ This repository is under development. There are still many things TODO:
 This repository is distributed under [the MIT license][mit-license].
 
  [re2]: https://github.com/google/re2
- [batteries]: https://github.com/crispthinking/IronRure-Batteries
+ [batteries]: https://github.com/crispthinking/IronRe2-Batteries
  [mit-license]: https://opensource.org/licenses/MIT
