@@ -23,7 +23,7 @@ namespace IronRe2
         /// Create a regular expression from a given pattern, encoded as UTF8
         /// </summary>
         /// <param name="pattern">The pattern to match, as bytes</param>
-        public Regex(byte[] pattern)
+        public Regex(ReadOnlySpan<byte> pattern)
             : base(Compile(pattern, null))
         {
         }
@@ -43,7 +43,7 @@ namespace IronRe2
         /// </summary>
         /// <param name="pattern">The pattern to match, as bytes</param>
         /// <param name="options">The compilation options to use</param>
-        public Regex(byte[] pattern, Options options)
+        public Regex(ReadOnlySpan<byte> pattern, Options options)
             : base(Compile(pattern, options))
         {
         }
@@ -67,10 +67,10 @@ namespace IronRe2
         /// <returns>
         /// The raw handle to the Regex, or throws on compilation failure
         /// </returns>
-        private static IntPtr Compile(byte[] patternBytes, Options opts)
+        private static IntPtr Compile(ReadOnlySpan<byte> patternBytes, Options opts)
         {
             var handle = Re2Ffi.cre2_new(
-                patternBytes, patternBytes.Length,
+                in MemoryMarshal.GetReference(patternBytes), patternBytes.Length,
                 opts?.RawHandle ?? IntPtr.Zero);
             
             // Check to see if there was an error compiling this expression
