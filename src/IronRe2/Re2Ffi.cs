@@ -186,7 +186,7 @@ namespace IronRe2
         /* construction and destruction */
         [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
         public static extern cre2_regexp_t_ptr cre2_new(
-            [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=1)]byte[] pattern,
+            in byte pattern,
             int pattern_len,
             cre2_options_t_ptr opt);
 
