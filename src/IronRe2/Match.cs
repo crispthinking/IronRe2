@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 
 namespace IronRe2
@@ -10,14 +11,14 @@ namespace IronRe2
     /// </summary>
     public class Match
     {
-        protected readonly byte[] _haystack;
+        protected readonly ReadOnlyMemory<byte> _haystack;
 
         internal Match()
         {
             Matched = false;
         }
 
-        internal Match(byte[] haystack, ByteRange range)
+        internal Match(ReadOnlyMemory<byte> haystack, ByteRange range)
         {
             _haystack = haystack;
             // If the indexes on the range are invalid then we didn't match
@@ -53,9 +54,22 @@ namespace IronRe2
         /// <summary>
         /// Get the text for this match
         /// </summary>
-        public string ExtractedText => Matched ?
-            Encoding.UTF8.GetString(_haystack, (int)Start, (int)(End - Start)):
-            string.Empty;
+        public unsafe string ExtractedText
+        {
+            get
+            {
+                if (!Matched)
+                {
+                    return string.Empty;
+                }
+
+                var haySlice = _haystack.Span.Slice((int)Start, (int)(End - Start));
+                fixed (byte* haySlicePtr = haySlice)
+                {
+                    return Encoding.UTF8.GetString(haySlicePtr, haySlice.Length);
+                }
+            }
+        }
 
         /// <summary>
         ///  A singleton match which represents all empty matches
