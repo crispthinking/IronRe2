@@ -58,7 +58,7 @@ namespace IronRe2
         {
             get
             {
-                if (!Matched)
+                if (!Matched || Start == End)
                 {
                     return string.Empty;
                 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -162,23 +163,76 @@ namespace IronRe2
         /// </summary>
         /// <param name="haystack">The string to search for the pattern</param>
         /// <returns>The match data</returns>
-        public Match Find(string haystack)
+        public Match Find(string haystack) => Find(haystack, 0);
+
+        /// <summary>
+        /// Find the pattern starting at the given offset and return the extent
+        /// of the match
+        /// </summary>
+        /// <param name="haystack">The string to search for the pattern</param>
+        /// <param name="offset">The offset to start the search at</param>
+        /// <returns>The match data for the match</returns>
+        public Match Find(string haystack, int offset)
         {
             var hayBytes = Encoding.UTF8.GetBytes(haystack);
-            return Find(hayBytes);
+            return Find(hayBytes, offset);
         }
-
 
         /// <summary>
         ///  Find the pattern and return the extent of the match
         /// </summary>
-        /// <param name="haystack">The string to search for the pattern</param>
+        /// <param name="hayBytes">The string to search for the pattern</param>
         /// <returns>The match data</returns>
-        public Match Find(ReadOnlyMemory<byte> hayBytes)
+        public Match Find(ReadOnlyMemory<byte> hayBytes) => Find(hayBytes, 0);
+
+        /// <summary>
+        /// Find the pattern starting at the given offset and return the extent
+        /// of the match
+        /// </summary>
+        /// <param name="hayBytes">The string to search for the pattern</param>
+        /// <param name="offset">The offset to start the search at</param>
+        /// <returns>The match data for the match</returns>
+        public Match Find(ReadOnlyMemory<byte> hayBytes, int offset)
         {
-            var ranges = RawMatch(hayBytes.Span, 1);
+            var ranges = RawMatch(hayBytes.Span, offset, 1);
             return (ranges.Length != 1) ?
                 Match.Empty : new Match(hayBytes, ranges[0]);
+        }
+
+        /// <summary>
+        /// Find all Non-Overlapping Occurrences of the Pattern
+        /// </summary>
+        /// <param name="haystack">The string to search for the pattern</param>
+        /// <returns>An enumerable of the matches</returns>
+        public IEnumerable<Match> FindAll(string haystack)
+        {
+            var hayBytes = Encoding.UTF8.GetBytes(haystack);
+            return FindAll(hayBytes);
+        }
+
+        /// <summary>
+        /// Find all Non-Overlapping Occurrences of the Pattern
+        /// </summary>
+        /// <param name="haystack">The string to search for the pattern</param>
+        /// <returns>An enumerable of the matches</returns>
+        public IEnumerable<Match> FindAll(ReadOnlyMemory<byte> haystack)
+        {
+            var offset = 0;
+            Match match = null;
+            while (true)
+            {
+                match = Find(haystack, offset);
+                if (match.Matched)
+                {
+                    offset = match.Start == match.End ?
+                        (int)match.End + 1 : (int)match.End;
+                    yield return match;
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
 
         /// <summary>
@@ -211,7 +265,7 @@ namespace IronRe2
         /// <returns>The captures data</returns>
         public Captures Captures(ReadOnlyMemory<byte> haystack)
         {
-            var ranges = RawMatch(haystack.Span, CaptureGroupCount + 1);
+            var ranges = RawMatch(haystack.Span, 0, CaptureGroupCount + 1);
             return (ranges.Length == 0) ?
                 IronRe2.Captures.Empty : new Captures(haystack, ranges);
         }
@@ -227,20 +281,20 @@ namespace IronRe2
         /// </para>
         /// </summary>
         /// <param name="hayBytes">The string to match the pattern against</param>
+        /// <param name="startByteIndex">The byte offset to start at</param>
         /// <param name="numCaptures">The number of match groups to return</param>
-        /// <returns></returns>
+        /// <returns>An array of byte ranges for the captures</returns>
         private unsafe ByteRange[] RawMatch(
-            ReadOnlySpan<byte> hayBytes, int numCaptures)
+            ReadOnlySpan<byte> hayBytes, int startByteIndex, int numCaptures)
         {
             var captures = new Re2Ffi.cre2_string_t[numCaptures];
             fixed (byte* pinnedHayBytes = hayBytes)
             {
-
                 // TODO: Support anchor as a parameter
                 var matchResult = Re2Ffi.cre2_match(
                     RawHandle,
                     pinnedHayBytes, hayBytes.Length,
-                    0, hayBytes.Length,
+                    startByteIndex, hayBytes.Length,
                     Re2Ffi.cre2_anchor_t.CRE2_UNANCHORED,
                     captures, captures.Length);
                 if (matchResult != 1)
