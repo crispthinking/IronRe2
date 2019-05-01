@@ -290,7 +290,7 @@ namespace IronRe2
         /// </summary>
         [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
         public static extern UIntPtr cre2_set_match(
-            cre2_set_t_ptr set, byte[] text, UIntPtr text_len,
+            cre2_set_t_ptr set, in byte text, UIntPtr text_len,
             [Out, MarshalAs(UnmanagedType.LPArray)]int[] match, UIntPtr match_len);
     }
 }

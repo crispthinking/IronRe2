@@ -140,10 +140,21 @@ namespace IronRe2
         public SetMatch Match(string haystack)
         {
             var hayBytes = Encoding.UTF8.GetBytes(haystack);
+            return Match(hayBytes);
+        }
+
+        /// <summary>
+        /// Match the patterns against he given search text and return
+        /// information about the matching patterns.
+        /// </summary>
+        /// <param name="haystack">The text to search</param>
+        /// <returns>An object representing the state of the matches</returns>
+        public SetMatch Match(ReadOnlySpan<byte> haystack)
+        {
             var matchIndices = new int[Count];
             var matchCount = Re2Ffi.cre2_set_match(
                 RawHandle,
-                hayBytes, new UIntPtr((uint)hayBytes.Length),
+                in MemoryMarshal.GetReference(haystack), new UIntPtr((uint)haystack.Length),
                 matchIndices, new UIntPtr((uint)matchIndices.Length));
             Array.Resize(ref matchIndices, (int)matchCount);
             return new SetMatch(matchCount, matchIndices);
