@@ -288,10 +288,23 @@ namespace IronRe2
         {
             var patternBytes = Encoding.UTF8.GetBytes(pattern);
             var hayBytes = Encoding.UTF8.GetBytes(haystack);
+            return IsMatch(patternBytes, hayBytes);
+        }
+
+        /// <summary>
+        /// Easy IsMatch
+        /// <para>Checks if the given pattern exists in the given haystack</para>
+        /// </summary>
+        /// <param name="pattern">The regular expression to search for</param>
+        /// <param name="haystack">The text to find the pattern in</param>
+        /// <returns>True if the pattern matches in the given text</returns>
+        public static bool IsMatch(
+            ReadOnlySpan<byte> pattern, ReadOnlySpan<byte> haystack)
+        {
             var captures = Array.Empty<Re2Ffi.cre2_string_t>();
             var matchResult = Re2Ffi.cre2_easy_match(
-                patternBytes, patternBytes.Length,
-                hayBytes, hayBytes.Length,
+                in MemoryMarshal.GetReference(pattern), pattern.Length,
+                in MemoryMarshal.GetReference(haystack), haystack.Length,
                 captures, 0);
             return matchResult == 1;
         }
@@ -310,15 +323,31 @@ namespace IronRe2
         {
             var patternBytes = Encoding.UTF8.GetBytes(pattern);
             var hayBytes = Encoding.UTF8.GetBytes(haystack);
+            return Find(patternBytes, hayBytes);
+        }
+
+        /// <summary>
+        /// Easy Find
+        /// <para>Finds the extent of the match of <paramref name="pattern" /> in
+        /// the given <paramref name="haystack" />. To check if a given pattern
+        /// matches without needing to find the rage use <see cref="IsMatch" />.
+        /// </para>
+        /// </summary>
+        /// <param name="pattern">The regular expression to search for</param>
+        /// <param name="haystack">The text to find the pattern in</param>
+        /// <returns>A match object summarising the match result</returns>
+        public unsafe static Match Find(
+            ReadOnlySpan<byte> pattern, ReadOnlyMemory<byte> haystack)
+        {
             var captures = new [] {
                 new Re2Ffi.cre2_string_t()
             };
-            var pin = GCHandle.Alloc(hayBytes, GCHandleType.Pinned);
-            try
+
+            using (var pin = haystack.Pin())
             {
                 var matchResult = Re2Ffi.cre2_easy_match(
-                    patternBytes, patternBytes.Length,
-                    hayBytes, hayBytes.Length,
+                    in MemoryMarshal.GetReference(pattern), pattern.Length,
+                    haystack.Span[0], haystack.Length,
                     captures, 1
                 );
                 if (matchResult != 1)
@@ -330,12 +359,8 @@ namespace IronRe2
                 // have the haystack pinned. We can't have the haystack move
                 // between the `_match` and the conversion to byte ranges
                 // otherwise the pointer arithmetic we do will be invalidated.
-                var ranges = StringsToRanges(captures, pin.AddrOfPinnedObject());
-                return new Match(hayBytes, ranges[0]);
-            }
-            finally
-            {
-                pin.Free();
+                var ranges = StringsToRanges(captures, new IntPtr(pin.Pointer));
+                return new Match(haystack, ranges[0]);
             }
         }
     }
