@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -12,7 +13,7 @@ namespace IronRe2
         {
         }
 
-        internal Captures(byte[] haystack, ByteRange[] ranges)
+        internal Captures(ReadOnlyMemory<byte> haystack, ByteRange[] ranges)
             : base(haystack, ranges[0])
         {
             _ranges = ranges;
