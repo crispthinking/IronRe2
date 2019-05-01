@@ -242,8 +242,8 @@ namespace IronRe2
         /// </returns>
         [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
         public static extern int cre2_easy_match(
-            [MarshalAs(UnmanagedType.LPArray, SizeParamIndex=1)]byte[] pattern, int pattern_len,
-			[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=3)]byte[] text, int text_len,
+            in byte pattern, int pattern_len,
+            in byte text, int text_len,
 			[Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=5)]cre2_string_t[] match, int nmatch);
 
 
