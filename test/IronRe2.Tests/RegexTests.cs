@@ -94,6 +94,18 @@ namespace IronRe2.Tests
                 Assert.Equal(match, re.IsMatch(haystack));
             }
         }
+
+        [Theory]
+        [MemberData(nameof(IsMatchData))]
+        public void RegexBytesIsMatch(string p, string h, bool match)
+        {
+            var pattern = Encoding.UTF8.GetBytes(p);
+            var haystack = Encoding.UTF8.GetBytes(h);
+            using (var re = new Regex(pattern))
+            {
+                Assert.Equal(match, re.IsMatch(haystack));
+            }
+        }
         
         [Theory]
         [MemberData(nameof(FindData))]
