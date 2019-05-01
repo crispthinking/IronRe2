@@ -1,3 +1,4 @@
+using System.Text;
 using Xunit;
 
 namespace IronRe2.Tests
@@ -45,6 +46,29 @@ namespace IronRe2.Tests
         }
 
         [Fact]
+        public void CreateSetWithBytesOptions()
+        {
+        //Given
+            var set = new RegexSet(new [] {
+                Encoding.UTF8.GetBytes("()"),
+                Encoding.UTF8.GetBytes("[]"),
+                Encoding.UTF8.GetBytes("."),
+            }, new Options{
+                Literal = true,
+            });
+        
+        //When
+            var parenMatches = set.Match("I have some () in");
+            var dotMatches = set.Match("I am the container of a . dot");
+            var bland = set.Match("boring");
+
+        //Then
+            Assert.True(parenMatches.Matched);
+            Assert.True(dotMatches.Matched);
+            Assert.False(bland.Matched);
+        }
+
+        [Fact]
         public void RegexSetThrowsWithInvalidPattern()
         {
             var ex = Assert.Throws<RegexCompilationException>(() =>
@@ -70,6 +94,31 @@ namespace IronRe2.Tests
         
         //When
             var matches = set.Match("I have 1 date: 1969-07-11");    
+        
+        //Then
+            Assert.True(matches.Matched);
+            Assert.Equal(3, matches.MatchCount);
+            Assert.Collection(
+                matches.MatchingPatterns,
+                p => Assert.Equal(0, p),
+                p => Assert.Equal(1, p),
+                p => Assert.Equal(2, p));
+        }
+
+
+        [Fact]
+        public void RegexSetMatchWithBytes()
+        {
+        //Given
+            var set = new RegexSet(new [] {
+                @"\w+", // words
+                @"\d+", // digits
+                @"\d{4}-\d{2}-\d{2}", // dates 
+            });
+        
+        //When
+            var matches = set.Match(
+                Encoding.UTF8.GetBytes("I have 1 date: 1969-07-11"));    
         
         //Then
             Assert.True(matches.Matched);
