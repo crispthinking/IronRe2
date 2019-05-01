@@ -246,10 +246,24 @@ namespace IronRe2
         /// </summary>
         /// <param name="haystack">The string to search for the pattern</param>
         /// <returns>The captures data</returns>
-        public Captures Captures(string haystack)
+        public Captures Captures(string haystack) => Captures(haystack, 0);
+
+        /// <summary>
+        /// Find with Captures, starting from a given offset
+        /// <para>
+        /// This is the most expensive of the match options but provides the
+        /// richest information about the match. The returned
+        /// <see cref="IronRe2.Captures" /> object contains the match position
+        /// of each of the regex's capturing groups.
+        /// </para>
+        /// </summary>
+        /// <param name="haystack">The string to search for the pattern</param>
+        /// <param name="offset">The offest to start searching from</param>
+        /// <returns>The captures data</returns>
+        public Captures Captures(string haystack, int offset)
         {
             var hayBytes = Encoding.UTF8.GetBytes(haystack);
-            return Captures(hayBytes);
+            return Captures(hayBytes, offset);
         }
 
         /// <summary>
@@ -263,11 +277,62 @@ namespace IronRe2
         /// </summary>
         /// <param name="haystack">The string to search for the pattern</param>
         /// <returns>The captures data</returns>
-        public Captures Captures(ReadOnlyMemory<byte> haystack)
+        public Captures Captures(ReadOnlyMemory<byte> haystack) =>
+            Captures(haystack, 0);
+        
+        /// <summary>
+        /// Find with Captures, starting from a given offset
+        /// <para>
+        /// This is the most expensive of the match options but provides the
+        /// richest information about the match. The returned
+        /// <see cref="IronRe2.Captures" /> object contains the match position
+        /// of each of the regex's capturing groups.
+        /// </para>
+        /// </summary>
+        /// <param name="haystack">The string to search for the pattern</param>
+        /// <param name="offset">The offest to start searching from</param>
+        /// <returns>The captures data</returns>
+        public Captures Captures(ReadOnlyMemory<byte> haystack, int offset)
         {
-            var ranges = RawMatch(haystack.Span, 0, CaptureGroupCount + 1);
+            var ranges = RawMatch(haystack.Span, offset, CaptureGroupCount + 1);
             return (ranges.Length == 0) ?
                 IronRe2.Captures.Empty : new Captures(haystack, ranges);
+        }
+
+        /// <summary>
+        /// Find all the non-overlapping sets of captures in the given text.
+        /// </summary>
+        /// <param name="haystack">The string to search for the pattern</param>
+        /// <returns>An iterator of the captures at each match location</returns>
+        public IEnumerable<Captures> CaptureAll(string haystack)
+        {
+            var hayBytes = Encoding.UTF8.GetBytes(haystack);
+            return CaptureAll(hayBytes);
+        }
+
+        /// <summary>
+        /// Find all the non-overlapping sets of captures in the given text.
+        /// </summary>
+        /// <param name="haystack">The string to search for the pattern</param>
+        /// <returns>An iterator of the captures at each match location</returns>
+        public IEnumerable<Captures> CaptureAll(ReadOnlyMemory<byte> haystack)
+        {
+            var offset = 0;
+            Captures caps = null;
+            while (true)
+            {
+                caps = Captures(haystack, offset);
+                if (caps.Matched)
+                {
+                    offset = caps.Start == caps.End ?
+                        (int)caps.End + 1 : (int)caps.End;
+                    yield return caps;
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
 
         /// <summary>

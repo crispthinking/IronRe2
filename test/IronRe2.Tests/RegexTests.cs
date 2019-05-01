@@ -301,7 +301,6 @@ namespace IronRe2.Tests
             Assert.Equal(-1, captures[2].End);
         }
 
-
         [Fact]
         public void CapturesWithExtractedText()
         {
@@ -328,6 +327,36 @@ namespace IronRe2.Tests
                 // capture group indices can be looked up by name with th `Regex`
                 Assert.True(captures[re.FindNamedCapture("day")].Matched);
             }
+        }
+
+        [Fact]
+        public void CapturesAllReturnsAllMatches()
+        {
+            var re = new Regex(@"(\w+) (\w+)");
+
+
+            var captures = new List<Captures>(re.CaptureAll("a bee too CD"));
+
+
+            // We are looking for non-overlapping matches so we don't expect
+            // a match on `bee too`.
+            Assert.Collection(captures,
+                c =>
+                {
+                    Assert.True(c.Matched);
+                    Assert.Equal(0, c.Start);
+                    Assert.Equal(5, c.End);
+                    Assert.Equal("a", c[1].ExtractedText);
+                    Assert.Equal("bee", c[2].ExtractedText);
+                },
+                c =>
+                {
+                    Assert.True(c.Matched);
+                    Assert.Equal(6, c.Start);
+                    Assert.Equal(12, c.End);
+                    Assert.Equal("too", c[1].ExtractedText);
+                    Assert.Equal("CD", c[2].ExtractedText);
+                });
         }
 
         public static IEnumerable<object[]> IsMatchData()
