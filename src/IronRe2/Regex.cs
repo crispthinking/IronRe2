@@ -195,9 +195,25 @@ namespace IronRe2
         public Captures Captures(string haystack)
         {
             var hayBytes = Encoding.UTF8.GetBytes(haystack);
-            var ranges = RawMatch(hayBytes, CaptureGroupCount + 1);
+            return Captures(hayBytes);
+        }
+
+        /// <summary>
+        /// Find with Captures
+        /// <para>
+        /// This is the most expensive of the match options but provides the
+        /// richest information about the match. The returned
+        /// <see cref="IronRe2.Captures" /> object contains the match position
+        /// of each of the regex's capturing groups.
+        /// </para>
+        /// </summary>
+        /// <param name="haystack">The string to search for the pattern</param>
+        /// <returns>The captures data</returns>
+        public Captures Captures(ReadOnlyMemory<byte> haystack)
+        {
+            var ranges = RawMatch(haystack.Span, CaptureGroupCount + 1);
             return (ranges.Length == 0) ?
-                IronRe2.Captures.Empty : new Captures(hayBytes, ranges);
+                IronRe2.Captures.Empty : new Captures(haystack, ranges);
         }
 
         /// <summary>

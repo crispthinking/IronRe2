@@ -193,6 +193,32 @@ namespace IronRe2.Tests
         }
 
         [Fact]
+        public void FindWithCapturesBytes()
+        {
+            var pattern = @"(?P<h>hello) (?P<w>world)";
+            var re = new Regex(Encoding.UTF8.GetBytes(pattern));
+
+
+            var captures = re.Captures(
+                Encoding.UTF8.GetBytes("hello world"));
+
+
+            Assert.Equal(3, captures.Count);
+            Assert.True(captures.Matched);
+            Assert.Equal(0, captures.Start);
+            Assert.Equal(11, captures.End);
+            Assert.True(captures[0].Matched);
+            Assert.Equal(0, captures[0].Start);
+            Assert.Equal(11, captures[0].End);
+            Assert.True(captures[1].Matched);
+            Assert.Equal(0, captures[1].Start);
+            Assert.Equal(5, captures[1].End);
+            Assert.True(captures[2].Matched);
+            Assert.Equal(6, captures[2].Start);
+            Assert.Equal(11, captures[2].End);
+        }
+
+        [Fact]
         public void FindWithOptionalCaptures()
         {
             var pattern = @" (.)(.)? ";
