@@ -168,6 +168,66 @@ namespace IronRe2.Tests
         }
 
         [Fact]
+        public void RegexFindAll()
+        {
+            var re = new Regex(@"\b\w+\b");
+
+            var matches = new List<Match>(re.FindAll("hello world"));
+
+            Assert.Collection(matches,
+                m => {
+                    Assert.Equal(0, m.Start);
+                    Assert.Equal(5, m.End);
+                    Assert.Equal("hello", m.ExtractedText);
+                },
+                m => {
+                    Assert.Equal(6, m.Start);
+                    Assert.Equal(11, m.End);
+                    Assert.Equal("world", m.ExtractedText);
+                });
+        }
+
+        [Fact(Timeout=2)]
+        public void RegexFindAllWithZeroSizedMatch()
+        {
+            var re = new Regex(@"\b");
+
+            var matches = new List<Match>(re.FindAll(" fizz 9 buzz "));
+
+            Assert.Collection(matches,
+                m => {
+                    Assert.Equal(1, m.Start);
+                    Assert.Equal(1, m.End);
+                    Assert.Equal("", m.ExtractedText);
+                },
+                m => {
+                    Assert.Equal(5, m.Start);
+                    Assert.Equal(5, m.End);
+                    Assert.Equal("", m.ExtractedText);
+                },
+                m => {
+                    Assert.Equal(6, m.Start);
+                    Assert.Equal(6, m.End);
+                    Assert.Equal("", m.ExtractedText);
+                },
+                m => {
+                    Assert.Equal(7, m.Start);
+                    Assert.Equal(7, m.End);
+                    Assert.Equal("", m.ExtractedText);
+                },
+                m => {
+                    Assert.Equal(8, m.Start);
+                    Assert.Equal(8, m.End);
+                    Assert.Equal("", m.ExtractedText);
+                },
+                m => {
+                    Assert.Equal(12, m.Start);
+                    Assert.Equal(12, m.End);
+                    Assert.Equal("", m.ExtractedText);
+                });
+        }
+
+        [Fact]
         public void FindWithCaptures()
         {
             var pattern = @"(?P<h>hello) (?P<w>world)";
