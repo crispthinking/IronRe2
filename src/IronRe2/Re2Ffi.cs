@@ -231,8 +231,8 @@ namespace IronRe2
         /// 0  for  no  match, 1 for  successful matching
         /// </returns>
         [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
-        public static extern int cre2_match(cre2_regexp_t_ptr re,
-            [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=1)]byte[] text, int textlen,
+        public static unsafe extern int cre2_match(cre2_regexp_t_ptr re,
+            byte* text, int textlen,
             int startpos, int endpos, cre2_anchor_t anchor,
             [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=6)]cre2_string_t[] match, int nmatch);
 

@@ -128,18 +128,22 @@ namespace IronRe2
         /// </summary>
         /// <param name="haystack">The text to find the pattern in</param>
         /// <returns>True if the pattern matches, false otherwise.</returns>
-        public bool IsMatch(string haystack)
+        public unsafe bool IsMatch(string haystack)
         {
             var hayBytes = Encoding.UTF8.GetBytes(haystack);
             var captures = Array.Empty<Re2Ffi.cre2_string_t>();
-            // TODO: Support anchor as a parameter
-            var matchResult = Re2Ffi.cre2_match(
-                RawHandle,
-                hayBytes, hayBytes.Length,
-                0, hayBytes.Length,
-                Re2Ffi.cre2_anchor_t.CRE2_UNANCHORED,
-                captures, 0);
-            return matchResult == 1;
+            
+            fixed (byte* pinnedHayBytes = hayBytes)
+            {
+                // TODO: Support anchor as a parameter
+                var matchResult = Re2Ffi.cre2_match(
+                    RawHandle,
+                    pinnedHayBytes, hayBytes.Length,
+                    0, hayBytes.Length,
+                    Re2Ffi.cre2_anchor_t.CRE2_UNANCHORED,
+                    captures, 0);
+                return matchResult == 1;
+            }
         }
 
         /// <summary>
@@ -150,7 +154,18 @@ namespace IronRe2
         public Match Find(string haystack)
         {
             var hayBytes = Encoding.UTF8.GetBytes(haystack);
-            var ranges = RawMatch(hayBytes, 1);
+            return Find(hayBytes);
+        }
+
+
+        /// <summary>
+        ///  Find the pattern and return the extent of the match
+        /// </summary>
+        /// <param name="haystack">The string to search for the pattern</param>
+        /// <returns>The match data</returns>
+        public Match Find(ReadOnlyMemory<byte> hayBytes)
+        {
+            var ranges = RawMatch(hayBytes.Span, 1);
             return (ranges.Length != 1) ? Match.Empty : new Match(hayBytes, ranges[0]);
         }
 
@@ -186,16 +201,16 @@ namespace IronRe2
         /// <param name="hayBytes">The string to match the pattern against</param>
         /// <param name="numCaptures">The number of match groups to return</param>
         /// <returns></returns>
-        private ByteRange[] RawMatch(byte[] hayBytes, int numCaptures)
+        private unsafe ByteRange[] RawMatch(ReadOnlySpan<byte> hayBytes, int numCaptures)
         {
             var captures = new Re2Ffi.cre2_string_t[numCaptures];
-            var pin = GCHandle.Alloc(hayBytes, GCHandleType.Pinned);
-            try
+            fixed (byte* pinnedHayBytes = hayBytes)
             {
+
                 // TODO: Support anchor as a parameter
                 var matchResult = Re2Ffi.cre2_match(
                     RawHandle,
-                    hayBytes, hayBytes.Length,
+                    pinnedHayBytes, hayBytes.Length,
                     0, hayBytes.Length,
                     Re2Ffi.cre2_anchor_t.CRE2_UNANCHORED,
                     captures, captures.Length);
@@ -208,11 +223,7 @@ namespace IronRe2
                 // have the haystack pinned. We can't have the haystack move
                 // between the `_match` and the conversion to byte ranges
                 // otherwise the pointer arithmetic we do will be invalidated.
-                return StringsToRanges(captures, pin.AddrOfPinnedObject());
-            }
-            finally
-            {
-                pin.Free();
+                return StringsToRanges(captures, new IntPtr(pinnedHayBytes));
             }
         }
 

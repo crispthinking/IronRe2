@@ -2,6 +2,7 @@ using System;
 using Xunit;
 using IronRe2;
 using System.Collections.Generic;
+using System.Text;
 
 namespace IronRe2.Tests
 {
@@ -115,6 +116,29 @@ namespace IronRe2.Tests
         [MemberData(nameof(FindData))]
         public void RegexFind(string pattern, string haystack, int start, int end)
         {
+            using (var re = new Regex(pattern))
+            {
+                var match = re.Find(haystack);
+                if (start != -1)
+                {
+                    Assert.True(match.Matched);
+                    Assert.Equal(start, match.Start);
+                    Assert.Equal(end, match.End);
+                }
+                else
+                {
+                    Assert.False(match.Matched);
+                }
+            }
+        }
+
+
+        [Theory]
+        [MemberData(nameof(FindData))]
+        public void RegexByteFind(string p, string h, int start, int end)
+        {
+            var pattern = Encoding.UTF8.GetBytes(p);
+            var haystack = Encoding.UTF8.GetBytes(h);
             using (var re = new Regex(pattern))
             {
                 var match = re.Find(haystack);
