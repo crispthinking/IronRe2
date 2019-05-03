@@ -212,6 +212,7 @@ namespace IronRe2
         [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
         public static extern cre2_named_groups_iter_t_ptr cre2_named_groups_iter_new(cre2_regexp_t_ptr re);
         [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        [return: MarshalAs(UnmanagedType.I1)]
         public static unsafe extern bool cre2_named_groups_iter_next(cre2_named_groups_iter_t_ptr iter, out char * name, out int index);
         [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
         public static extern void cre2_named_groups_iter_delete(cre2_named_groups_iter_t_ptr iter);
