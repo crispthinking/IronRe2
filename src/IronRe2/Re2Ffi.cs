@@ -6,6 +6,7 @@ using System.Reflection;
 using cre2_regexp_t_ptr = System.IntPtr;
 using cre2_set_t_ptr = System.IntPtr;
 using cre2_options_t_ptr = System.IntPtr;
+using cre2_named_groups_iter_t_ptr = System.IntPtr;
 
 namespace IronRe2
 {
@@ -206,6 +207,14 @@ namespace IronRe2
             cre2_regexp_t_ptr re, [MarshalAs(UnmanagedType.LPStr)]string name);
         [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
         public static extern int cre2_program_size(cre2_regexp_t_ptr re);
+
+
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern cre2_named_groups_iter_t_ptr cre2_named_groups_iter_new(cre2_regexp_t_ptr re);
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static unsafe extern bool cre2_named_groups_iter_next(cre2_named_groups_iter_t_ptr iter, out char * name, out int index);
+        [DllImport("cre2", CallingConvention=CallingConvention.Cdecl)]
+        public static extern void cre2_named_groups_iter_delete(cre2_named_groups_iter_t_ptr iter);
 
 
         /* invalidated by further re use */
