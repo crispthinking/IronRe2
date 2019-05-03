@@ -7,10 +7,10 @@ namespace IronRe2.Tests
         [Fact]
         public void OptionsCreateHasDefaultValues()
         {
-        //Given
+            //Given
             var options = new Options();
 
-        //Then
+            //Then
             Assert.False(options.PosixSyntax);
             Assert.False(options.LongestMatch);
             Assert.True(options.LogErrors);
@@ -25,17 +25,17 @@ namespace IronRe2.Tests
             Assert.False(options.OneLine);
 
             Assert.Equal(RegexEncoding.Utf8, options.Encoding);
-            Assert.Equal(8<<20, options.MaxMemory);
+            Assert.Equal(8 << 20, options.MaxMemory);
         }
 
 
         [Fact]
         public void OptionsSetValuesStoresValues()
         {
-        //Given
+            //Given
             var options = new Options();
-        
-        //When
+
+            //When
             options.PosixSyntax = true;
             options.LongestMatch = true;
             options.LogErrors = false;
@@ -50,7 +50,7 @@ namespace IronRe2.Tests
             options.Encoding = RegexEncoding.Latin1;
             options.MaxMemory = 700;
 
-        //Then
+            //Then
             Assert.True(options.PosixSyntax);
             Assert.True(options.LongestMatch);
             Assert.False(options.LogErrors);

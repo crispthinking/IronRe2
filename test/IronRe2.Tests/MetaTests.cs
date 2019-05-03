@@ -8,24 +8,24 @@ namespace IronRe2.Tests
         [Fact]
         public void MetaGetVersionString()
         {
-        //Given
-        
-        //When
+            //Given
+
+            //When
             var version = Meta.VersionString;
-        
-        //Then
+
+            //Then
             Assert.Equal("0.0.0", version);
         }
 
         [Fact]
         public void MetaGetVersion()
         {
-        //Given
-        
-        //When
+            //Given
+
+            //When
             var version = Meta.Version;
-        
-        //Then
+
+            //Then
             Assert.Equal(0, version.current);
             Assert.Equal(0, version.revision);
             Assert.Equal(0, version.age);

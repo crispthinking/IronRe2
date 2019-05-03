@@ -37,7 +37,7 @@ namespace IronRe2
                 yield return this[i];
             }
         }
-        
+
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         /// <summary>

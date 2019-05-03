@@ -129,7 +129,7 @@ namespace IronRe2
         /// <summary>
         /// Returns the number of patterns in this set
         /// </summary>
-        public int Count {get;}
+        public int Count { get; }
 
         /// <summary>
         /// Match the patterns against he given search text and return

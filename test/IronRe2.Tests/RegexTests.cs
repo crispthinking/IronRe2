@@ -23,41 +23,41 @@ namespace IronRe2.Tests
         [Fact]
         public void RegexCreateWithPatternExposesPattern()
         {
-        //Given
+            //Given
             var regex = new Regex(".+");
 
-        //When
+            //When
             var pattern = regex.Pattern;
 
-        //Then
+            //Then
             Assert.Equal(".+", pattern);
         }
 
         [Fact]
         public void RegexCreateWithOptions()
         {
-        //Given
+            //Given
             var regex = new Regex(@"\n", new Options { NeverNewline = true });
 
-        //When
+            //When
             var match = regex.IsMatch("foo\nbar");
 
-        //Then
+            //Then
             Assert.False(match);
         }
 
         [Fact]
         public void RegexCreateEsposesProgramSize()
         {
-        //Given
+            //Given
             var helloRe = new Regex("hello world");
             var emptyRe = new Regex("");
 
-        //When
+            //When
             var helloSize = helloRe.ProgramSize;
             var emptySize = emptyRe.ProgramSize;
 
-        //Then
+            //Then
             Assert.Equal(15, helloSize);
             Assert.Equal(4, emptySize);
         }
@@ -65,15 +65,15 @@ namespace IronRe2.Tests
         [Fact]
         public void RegexCreateExposesCaptureGroupInfo()
         {
-        //Given
+            //Given
             var regex = new Regex("(.+) (?P<foo>.*)");
 
-        //When
+            //When
             var numCaptures = regex.CaptureGroupCount;
             var fooCaptureId = regex.FindNamedCapture("foo");
             var invalidCaptureId = regex.FindNamedCapture("bar");
-        
-        //Then
+
+            //Then
             Assert.Equal(2, numCaptures);
             Assert.Equal(2, fooCaptureId);
             Assert.Equal(-1, invalidCaptureId);
@@ -107,7 +107,7 @@ namespace IronRe2.Tests
                 Assert.Equal(match, re.IsMatch(haystack));
             }
         }
-        
+
         [Theory]
         [MemberData(nameof(FindData))]
         public void RegexEasyFind(string pattern, string haystack, int start, int end)
@@ -176,19 +176,21 @@ namespace IronRe2.Tests
             var matches = new List<Match>(re.FindAll("hello world"));
 
             Assert.Collection(matches,
-                m => {
+                m =>
+                {
                     Assert.Equal(0, m.Start);
                     Assert.Equal(5, m.End);
                     Assert.Equal("hello", m.ExtractedText);
                 },
-                m => {
+                m =>
+                {
                     Assert.Equal(6, m.Start);
                     Assert.Equal(11, m.End);
                     Assert.Equal("world", m.ExtractedText);
                 });
         }
 
-        [Fact(Timeout=2)]
+        [Fact(Timeout = 2)]
         public void RegexFindAllWithZeroSizedMatch()
         {
             var re = new Regex(@"\b");
@@ -196,32 +198,38 @@ namespace IronRe2.Tests
             var matches = new List<Match>(re.FindAll(" fizz 9 buzz "));
 
             Assert.Collection(matches,
-                m => {
+                m =>
+                {
                     Assert.Equal(1, m.Start);
                     Assert.Equal(1, m.End);
                     Assert.Equal("", m.ExtractedText);
                 },
-                m => {
+                m =>
+                {
                     Assert.Equal(5, m.Start);
                     Assert.Equal(5, m.End);
                     Assert.Equal("", m.ExtractedText);
                 },
-                m => {
+                m =>
+                {
                     Assert.Equal(6, m.Start);
                     Assert.Equal(6, m.End);
                     Assert.Equal("", m.ExtractedText);
                 },
-                m => {
+                m =>
+                {
                     Assert.Equal(7, m.Start);
                     Assert.Equal(7, m.End);
                     Assert.Equal("", m.ExtractedText);
                 },
-                m => {
+                m =>
+                {
                     Assert.Equal(8, m.Start);
                     Assert.Equal(8, m.End);
                     Assert.Equal("", m.ExtractedText);
                 },
-                m => {
+                m =>
+                {
                     Assert.Equal(12, m.Start);
                     Assert.Equal(12, m.End);
                     Assert.Equal("", m.ExtractedText);
@@ -307,23 +315,26 @@ namespace IronRe2.Tests
         public void CaptureNamesReturnesExpectedNames()
         {
             var re = new Regex(@"(unnamed_cap): (?P<year>\d{4})-(?P<month>\d{2})(-)(?P<day>\d{2})");
-            
+
 
             var namedCaps = re.NamedCaptures()
                 .OrderBy(cap => cap.Index)
                 .ToList();
 
-            
+
             Assert.Collection(namedCaps,
-                c => {
+                c =>
+                {
                     Assert.Equal("year", c.Name);
                     Assert.Equal(2, c.Index);
                 },
-                c => {
+                c =>
+                {
                     Assert.Equal("month", c.Name);
                     Assert.Equal(3, c.Index);
                 },
-                c => {
+                c =>
+                {
                     Assert.Equal("day", c.Name);
                     Assert.Equal(5, c.Index);
                 });
@@ -347,7 +358,7 @@ namespace IronRe2.Tests
                 Assert.True(captures[1].Matched);
                 Assert.Equal(37, captures[1].Start);
                 Assert.Equal(41, captures[1].End);
-                
+
                 /// As well as the UTF-8 indices the extracted text is available
                 Assert.True(captures[2].Matched);
                 Assert.Equal("06", captures[2].ExtractedText);
