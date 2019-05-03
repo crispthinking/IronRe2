@@ -3,6 +3,7 @@ using Xunit;
 using IronRe2;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace IronRe2.Tests
 {
@@ -299,6 +300,33 @@ namespace IronRe2.Tests
             Assert.False(captures[2].Matched);
             Assert.Equal(-1, captures[2].Start);
             Assert.Equal(-1, captures[2].End);
+        }
+
+
+        [Fact]
+        public void CaptureNamesReturnesExpectedNames()
+        {
+            var re = new Regex(@"(unnamed_cap): (?P<year>\d{4})-(?P<month>\d{2})(-)(?P<day>\d{2})");
+            
+
+            var namedCaps = re.NamedCaptures()
+                .OrderBy(cap => cap.Index)
+                .ToList();
+
+            
+            Assert.Collection(namedCaps,
+                c => {
+                    Assert.Equal("year", c.Name);
+                    Assert.Equal(2, c.Index);
+                },
+                c => {
+                    Assert.Equal("month", c.Name);
+                    Assert.Equal(3, c.Index);
+                },
+                c => {
+                    Assert.Equal("day", c.Name);
+                    Assert.Equal(5, c.Index);
+                });
         }
 
         [Fact]

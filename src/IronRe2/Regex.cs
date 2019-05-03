@@ -236,6 +236,15 @@ namespace IronRe2
         }
 
         /// <summary>
+        /// Get an Iterator over the Named Captures in the Pattern
+        /// </summary>
+        /// <returns>An enumerable of the named capture groups</returns>
+        public IEnumerable<NamedCaptureGroup> NamedCaptures()
+        {
+            return new NamedCaptureEnumerable(this);
+        }
+
+        /// <summary>
         /// Find with Captures
         /// <para>
         /// This is the most expensive of the match options but provides the
