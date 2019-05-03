@@ -5,7 +5,7 @@ namespace IronRe2
 {
     public abstract class UnmanagedResource : IDisposable
     {
-        
+
         // Raw handle to the underlying unmanaged resource
         private IntPtr _rawHandle;
 
@@ -13,7 +13,7 @@ namespace IronRe2
         {
             _rawHandle = rawHandle;
         }
-        
+
         ~UnmanagedResource()
         {
             Dispose(false);

@@ -73,7 +73,7 @@ namespace IronRe2
             var handle = Re2Ffi.cre2_new(
                 in MemoryMarshal.GetReference(patternBytes), patternBytes.Length,
                 opts?.RawHandle ?? IntPtr.Zero);
-            
+
             // Check to see if there was an error compiling this expression
             var errorCode = Re2Ffi.cre2_error_code(handle);
             if (errorCode != Re2Ffi.cre2_error_code_t.CRE2_NO_ERROR)
@@ -114,7 +114,7 @@ namespace IronRe2
         /// </summary>
         public int CaptureGroupCount =>
             Re2Ffi.cre2_num_capturing_groups(RawHandle);
-        
+
         /// <summary>
         ///  Find a capture group index by name
         /// </summary>
@@ -144,7 +144,7 @@ namespace IronRe2
         public unsafe bool IsMatch(ReadOnlySpan<byte> haystack)
         {
             var captures = Array.Empty<Re2Ffi.cre2_string_t>();
-            
+
             fixed (byte* hayBytesPtr = haystack)
             {
                 // TODO: Support anchor as a parameter
@@ -288,7 +288,7 @@ namespace IronRe2
         /// <returns>The captures data</returns>
         public Captures Captures(ReadOnlyMemory<byte> haystack) =>
             Captures(haystack, 0);
-        
+
         /// <summary>
         /// Find with Captures, starting from a given offset
         /// <para>
@@ -467,7 +467,7 @@ namespace IronRe2
         public unsafe static Match Find(
             ReadOnlySpan<byte> pattern, ReadOnlyMemory<byte> haystack)
         {
-            var captures = new [] {
+            var captures = new[] {
                 new Re2Ffi.cre2_string_t()
             };
 
