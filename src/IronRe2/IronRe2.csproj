@@ -9,7 +9,9 @@
   <ItemGroup>
     <PackageReference Include="IronRe2-Batteries.OSX" Version="0.2.1" />
     <PackageReference Include="IronRe2-Batteries.Linux" Version="0.2.1" />
-    <PackageReference Include="IronRe2-Batteries.Windows" Version="0.2.1" />
+    <PackageReference Include="IronRe2-Batteries.Windows" Version="0.2.1">
+      <PrivateAssets>none</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="System.Memory" Version="4.5.2" />
   </ItemGroup>
 </Project>
