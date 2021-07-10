@@ -9,7 +9,7 @@ namespace IronRe2
     /// <summary>
     /// The main regular expression class
     /// </summary>
-    public class Regex : UnmanagedResource
+    public class Regex : UnmanagedResource<RegexHandle>
     {
         /// <summary>
         /// Create a regular expression from a given pattern
@@ -50,13 +50,6 @@ namespace IronRe2
         }
 
         /// <summary>
-        /// Called by <see cref="UnmanagedResource" /> whe the resource goes out
-        /// of scope.
-        /// </summary>
-        /// <param name="re">The handle to the regex to free</param>
-        protected override void Free(IntPtr re) => Re2Ffi.cre2_delete(re);
-
-        /// <summary>
         /// Compile the regular expression
         /// </summary>
         /// <param name="patternBytes">
@@ -68,12 +61,12 @@ namespace IronRe2
         /// <returns>
         /// The raw handle to the Regex, or throws on compilation failure
         /// </returns>
-        private static IntPtr Compile(ReadOnlySpan<byte> patternBytes, Options opts)
+        private static RegexHandle Compile(ReadOnlySpan<byte> patternBytes, Options opts)
         {
             var handle = Re2Ffi.cre2_new(
                 in MemoryMarshal.GetReference(patternBytes), patternBytes.Length,
-                opts?.RawHandle ?? IntPtr.Zero);
-
+                opts?.RawHandle ?? new OptionsHandle());
+            
             // Check to see if there was an error compiling this expression
             var errorCode = Re2Ffi.cre2_error_code(handle);
             if (errorCode != Re2Ffi.cre2_error_code_t.CRE2_NO_ERROR)
@@ -85,7 +78,7 @@ namespace IronRe2
                 var offendingPortion = Marshal.PtrToStringAnsi(
                     errorArg.data, errorArg.length);
                 // need to clean up the regex
-                Re2Ffi.cre2_delete(handle);
+                handle.Dispose();
                 throw new RegexCompilationException(error, offendingPortion);
             }
 

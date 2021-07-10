@@ -8,16 +8,11 @@ namespace IronRe2
     /// <summary>
     /// Enumerator for walking an interator of named capture groups.
     /// </summary>
-    internal class NamedCaptureEnumerator : UnmanagedResource, IEnumerator<NamedCaptureGroup>
+    internal class NamedCaptureEnumerator : UnmanagedResource<NamedCaptureIteratorHandle>, IEnumerator<NamedCaptureGroup>
     {
         public NamedCaptureEnumerator(Regex regex)
             : base(Re2Ffi.cre2_named_groups_iter_new(regex.RawHandle))
         {
-        }
-
-        protected override void Free(IntPtr handle)
-        {
-            Re2Ffi.cre2_named_groups_iter_delete(handle);
         }
 
 

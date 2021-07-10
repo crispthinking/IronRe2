@@ -3,10 +3,10 @@ using System.Runtime.InteropServices;
 using System.IO;
 using System.Reflection;
 
-using cre2_regexp_t_ptr = System.IntPtr;
-using cre2_set_t_ptr = System.IntPtr;
-using cre2_options_t_ptr = System.IntPtr;
-using cre2_named_groups_iter_t_ptr = System.IntPtr;
+using cre2_regexp_t_ptr = IronRe2.RegexHandle;
+using cre2_set_t_ptr = IronRe2.RegexSetHandle;
+using cre2_options_t_ptr = IronRe2.OptionsHandle;
+using cre2_named_groups_iter_t_ptr = IronRe2.NamedCaptureIteratorHandle;
 
 namespace IronRe2
 {
@@ -52,7 +52,7 @@ namespace IronRe2
         [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
         public static extern cre2_options_t_ptr cre2_opt_new();
         [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void cre2_opt_delete(cre2_options_t_ptr opt);
+        public static extern void cre2_opt_delete(IntPtr opt);
 
         [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
         public static extern void cre2_opt_set_posix_syntax(cre2_options_t_ptr opt, int flag);
@@ -195,7 +195,7 @@ namespace IronRe2
             cre2_options_t_ptr opt);
 
         [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void cre2_delete(cre2_regexp_t_ptr re);
+        public static extern void cre2_delete(IntPtr re);
 
 
         /* regular expression inspection */
@@ -218,7 +218,7 @@ namespace IronRe2
         [return: MarshalAs(UnmanagedType.I1)]
         public static unsafe extern bool cre2_named_groups_iter_next(cre2_named_groups_iter_t_ptr iter, out char* name, out int index);
         [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void cre2_named_groups_iter_delete(cre2_named_groups_iter_t_ptr iter);
+        public static extern void cre2_named_groups_iter_delete(IntPtr iter);
 
 
         /* invalidated by further re use */
@@ -275,7 +275,7 @@ namespace IronRe2
         /// RE2::Set destructor
         /// </summary>
         [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void cre2_set_delete(cre2_set_t_ptr set);
+        public static extern void cre2_set_delete(IntPtr set);
         /// <summary>
         /// Add a regex to the set. If invalid: store error message in error buffer.
         /// Returns the index associated to this regex, -1 on error
