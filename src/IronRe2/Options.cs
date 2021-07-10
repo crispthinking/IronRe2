@@ -2,14 +2,12 @@ using System;
 
 namespace IronRe2
 {
-    public class Options : UnmanagedResource
+    public class Options : UnmanagedResource<OptionsHandle>
     {
         public Options()
             : base(Re2Ffi.cre2_opt_new())
         {
         }
-
-        protected override void Free(IntPtr opt) => Re2Ffi.cre2_opt_delete(opt);
 
         /// <summary>
         /// restrict regexps to POSIX egrep syntax

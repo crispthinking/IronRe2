@@ -14,7 +14,7 @@ namespace IronRe2
     ///   matches a given search text in a single pass.
     /// </para>
     /// </summary>
-    public class RegexSet : UnmanagedResource
+    public class RegexSet : UnmanagedResource<RegexSetHandle>
     {
         /// <summary>
         /// Create a new regex set containing the given patterns
@@ -65,18 +65,11 @@ namespace IronRe2
         }
 
         /// <summary>
-        /// Called by <see cref="UnmanagedResource" /> whe the resource goes out
-        /// of scope.
-        /// </summary>
-        /// <param name="r">The handle to the regex set to free</param>
-        protected override void Free(IntPtr r) => Re2Ffi.cre2_set_delete(r);
-
-        /// <summary>
         ///  Compile a given set of patterns to a raw regex set handle
         /// </summary>
         /// <param name="patternsAsBytes">The collection of patterns</param>
         /// <returns>The raw set handle or throws an exception</returns>
-        private static IntPtr CompileSet(IReadOnlyCollection<byte[]> patternsAsBytes)
+        private static RegexSetHandle CompileSet(IReadOnlyCollection<byte[]> patternsAsBytes)
         {
             using (var opts = new Options())
             {
@@ -92,7 +85,7 @@ namespace IronRe2
         /// The regular expression options to use when compiling
         /// </param>
         /// <returns>The raw set handle or throws an exception</returns>
-        private static IntPtr CompileSetWithOptions(
+        private static RegexSetHandle CompileSetWithOptions(
             IReadOnlyCollection<byte[]> patternsAsBytes,
             Options options)
         {
@@ -112,7 +105,7 @@ namespace IronRe2
                 {
                     // If the regex failed to add then throw
                     var error = Encoding.UTF8.GetString(errBuff);
-                    Re2Ffi.cre2_set_delete(handle);
+                    handle.Dispose();
                     throw new RegexCompilationException(
                         error, Encoding.UTF8.GetString(pattern));
                 }
