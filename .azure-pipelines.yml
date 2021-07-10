@@ -3,7 +3,7 @@ jobs:
   pool:
     vmImage: 'ubuntu-latest'
   steps:
-  - script: ./build.sh -target=CI
+  - script: ./build.sh --target=CI
   - task: PublishTestResults@2
     condition: always()
     inputs:
@@ -14,7 +14,7 @@ jobs:
   pool:
     vmImage: 'macOS-latest'
   steps:
-  - script: ./build.sh -target=CI-pack
+  - script: ./build.sh --target=CI-pack
   - task: PublishTestResults@2
     condition: always()
     inputs:
@@ -28,7 +28,7 @@ jobs:
   pool:
     vmImage: 'windows-latest'
   steps:
-  - powershell: .\build.ps1  -target=CI
+  - powershell: .\build.ps1  --target=CI
   - task: PublishTestResults@2
     condition: always()
     inputs:
