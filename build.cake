@@ -1,4 +1,4 @@
-#tool nuget:?package=GitVersion.CommandLine&version=4.0.0
+#tool "dotnet:https://api.nuget.org/v3/index.json?package=GitVersion.Tool&version=5.6.10"
 
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
@@ -60,7 +60,7 @@ Task("Test")
       NoBuild = true,
       Logger = "trx",
       ArgumentCustomization = a => a
-        .Append("--logger:\"console;verbosity=normal\"") 
+        .Append("--logger:\"console;verbosity=normal\"")
     });
   });
 
