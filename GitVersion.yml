@@ -1,2 +1,4 @@
 mode: ContinuousDeployment
-branches: {}
+branches:
+  master:
+    regex: ^(main)|(master)$

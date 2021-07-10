@@ -57,7 +57,7 @@
                 "isDefault": true
             },
             "args": [
-                "-target=Test"
+                "--target=Test"
             ],
             "presentation": {
                 "reveal": "silent"
