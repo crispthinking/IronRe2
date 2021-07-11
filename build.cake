@@ -58,9 +58,11 @@ Task("Test")
       Configuration = configuration,
       NoRestore = true,
       NoBuild = true,
-      Logger = "trx",
-      ArgumentCustomization = a => a
-        .Append("--logger:\"console;verbosity=normal\"")
+      Loggers =
+      {
+        "trx",
+        "console;verbosity=normal"
+      }
     });
   });
 
