@@ -77,23 +77,19 @@ using (var re = new Regex(@"(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})"))
     Assert.True(captures[2].Matched);
     Assert.Equal("06", captures[2].ExtractedText);
 
-    // capture group indices can be looked up by name with th `Regex`
+    // capture group indices can be looked up by name from the `Regex`
     Assert.True(captures[re.FindNamedCapture("day")].Matched);
 }
 ```
 
-## 🐉 Here be Dragons 🐉
+## Related Resources
 
-This repository is under development. There are still many things TODO:
+This project depends on [pre-built pacakges][batteries] containing the native
+RE2 code. If you wish to target a runtime that isn't currently packaged then
+you can provide your own copy of `libcre2`.
 
- * [x] - Provide [pre-built pacakges][batteries] containing the native RE2 code
- * [x] - Provide a managed wrapper of the RE2 classes
-    * [x] - Regex - wrapping base pattern matches
-    * [x] - RegexSet - wrapping regex set operations
-    * [x] - Options - wrapping options object
- * [x] - Setup a CI pipeline to produce packages
- * [x] - Update README to include example usage
- * [ ] - Create some benchmarks with BenchmarkDotNet
+For performance benchmarks comparing this project to .NET regex see the
+[`IronRure` benchmarks][alice-bench].
 
 ## License
 
@@ -102,3 +98,4 @@ This repository is distributed under [the MIT license][mit-license].
  [re2]: https://github.com/google/re2
  [batteries]: https://github.com/crispthinking/IronRe2-Batteries
  [mit-license]: https://opensource.org/licenses/MIT
+ [alice-bench]: https://github.com/iwillspeak/IronRure/tree/main/bench/Alice
