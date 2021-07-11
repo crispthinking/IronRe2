@@ -11,6 +11,7 @@ namespace IronRe2
     /// </summary>
     public class Match
     {
+        /// <summary>The haystack this match was performed against</summary>
         protected readonly ReadOnlyMemory<byte> _haystack;
 
         internal Match()

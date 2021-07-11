@@ -432,7 +432,7 @@ namespace IronRe2
         /// Easy Find
         /// <para>Finds the extent of the match of <paramref name="pattern" /> in
         /// the given <paramref name="haystack" />. To check if a given pattern
-        /// matches without needing to find the rage use <see cref="IsMatch" />.
+        /// matches without needing to find the rage use <see cref="IsMatch(String)" />.
         /// </para>
         /// </summary>
         /// <param name="pattern">The regular expression to search for</param>
@@ -449,7 +449,7 @@ namespace IronRe2
         /// Easy Find
         /// <para>Finds the extent of the match of <paramref name="pattern" /> in
         /// the given <paramref name="haystack" />. To check if a given pattern
-        /// matches without needing to find the rage use <see cref="IsMatch" />.
+        /// matches without needing to find the rage use <see cref="IsMatch(ReadOnlySpan&lt;byte&gt;)" />.
         /// </para>
         /// </summary>
         /// <param name="pattern">The regular expression to search for</param>

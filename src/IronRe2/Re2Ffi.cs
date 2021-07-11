@@ -182,7 +182,7 @@ namespace IronRe2
             CRE2_ERROR_BAD_NAMED_CAPTURE,
             /// <summary>
             /// pattern too large (compile failed)
-            /// <summary>
+            /// </summary>
             CRE2_ERROR_PATTERN_TOO_LARGE,
         }
 

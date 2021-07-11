@@ -35,6 +35,7 @@ namespace IronRe2
         /// </summary>
         public int Count => _ranges?.Length ?? 0;
 
+        /// <inheritdoc />
         public IEnumerator<Match> GetEnumerator()
         {
             var len = Count;
