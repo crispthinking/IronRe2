@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -61,7 +61,7 @@ namespace IronRe2
         /// <returns>
         /// The raw handle to the Regex, or throws on compilation failure
         /// </returns>
-        private static RegexHandle Compile(ReadOnlySpan<byte> patternBytes, Options opts)
+        private static RegexHandle Compile(ReadOnlySpan<byte> patternBytes, Options? opts)
         {
             var handle = Re2Ffi.cre2_new(
                 in MemoryMarshal.GetReference(patternBytes), patternBytes.Length,
@@ -211,10 +211,9 @@ namespace IronRe2
         public IEnumerable<Match> FindAll(ReadOnlyMemory<byte> haystack)
         {
             var offset = 0;
-            Match match = null;
             while (true)
             {
-                match = Find(haystack, offset);
+                var match = Find(haystack, offset);
                 if (match.Matched)
                 {
                     offset = match.Start == match.End ?
@@ -320,10 +319,9 @@ namespace IronRe2
         public IEnumerable<Captures> CaptureAll(ReadOnlyMemory<byte> haystack)
         {
             var offset = 0;
-            Captures caps = null;
             while (true)
             {
-                caps = Captures(haystack, offset);
+                var caps = Captures(haystack, offset);
                 if (caps.Matched)
                 {
                     offset = caps.Start == caps.End ?

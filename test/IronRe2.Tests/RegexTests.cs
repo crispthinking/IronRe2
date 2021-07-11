@@ -398,6 +398,23 @@ namespace IronRe2.Tests
                 });
         }
 
+        [Fact]
+        public void CapturesOutOfBounds()
+        {
+        //Given
+            var re = new Regex("\\[([a-z]+)\\]");
+        
+        //When
+            var match = re.Captures("some [test] content");
+        
+        //Then
+            Assert.True(match.Matched);
+            Assert.True(match[0].Matched);
+            Assert.Equal("test", match[1].ExtractedText);
+            Assert.Throws<IndexOutOfRangeException>(() => match[2]);
+            Assert.Throws<IndexOutOfRangeException>(() => match[-2]);
+        }
+
         public static IEnumerable<object[]> IsMatchData()
         {
             yield return new object[] { ".+", "hello world", true };
