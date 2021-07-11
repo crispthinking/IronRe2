@@ -10,6 +10,8 @@ namespace IronRe2
     /// </summary>
     internal class NamedCaptureEnumerator : UnmanagedResource<NamedCaptureIteratorHandle>, IEnumerator<NamedCaptureGroup>
     {
+        private NamedCaptureGroup? _current = null;
+
         public NamedCaptureEnumerator(Regex regex)
             : base(Re2Ffi.cre2_named_groups_iter_new(regex.RawHandle))
         {
@@ -23,8 +25,9 @@ namespace IronRe2
         /// Named capture information, or null if the enumerator isn't pointing
         /// at a valid item.
         /// </value>
-        public NamedCaptureGroup Current { get; private set; }
+        public NamedCaptureGroup Current => _current ?? throw new InvalidOperationException();
 
+        /// <inheritdoc />
         object IEnumerator.Current => Current;
 
 
@@ -38,12 +41,12 @@ namespace IronRe2
             if (Re2Ffi.cre2_named_groups_iter_next(RawHandle, out var namePtr, out var index))
             {
                 var name = Marshal.PtrToStringAnsi(new IntPtr(namePtr));
-                Current = new NamedCaptureGroup(name, index);
+                _current = new NamedCaptureGroup(name, index);
                 return true;
             }
             else
             {
-                Current = null;
+                _current = null;
                 return false;
             }
         }

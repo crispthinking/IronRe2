@@ -9,7 +9,7 @@ namespace IronRe2
         /// <summary>
         /// Get the offending portion of the regular expression being compiled
         /// </summary>
-        public string OffendingPortion { get; }
+        public string? OffendingPortion { get; }
 
         public RegexCompilationException(string message, string badBit)
             : base(message)

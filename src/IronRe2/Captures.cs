@@ -9,7 +9,7 @@ namespace IronRe2
     /// </summary>
     public class Captures : Match, IReadOnlyList<Match>
     {
-        private ByteRange[] _ranges;
+        private ByteRange[]? _ranges;
 
         internal Captures()
             : base()
@@ -25,12 +25,15 @@ namespace IronRe2
         /// <summary>
         /// Access the match at the given capture group index
         /// </summary>
-        public Match this[int index] => new Match(_haystack, _ranges[index]);
+        public Match this[int index] =>
+            (index >= 0 && index < Count) ?
+                new Match(_haystack, _ranges![index]) :
+                throw new IndexOutOfRangeException($"No capture group at index {index}");
 
         /// <summary>
         /// Returns the number of groups in this set of captures.
         /// </summary>
-        public int Count => _ranges.Length;
+        public int Count => _ranges?.Length ?? 0;
 
         public IEnumerator<Match> GetEnumerator()
         {
