@@ -2,6 +2,9 @@ using System;
 
 namespace IronRe2
 {
+    /// <summary>
+    ///  Regex syntax and behaviour options.
+    /// </summary>
     public class Options : UnmanagedResource<OptionsHandle>
     {
         public Options()

@@ -1,6 +1,6 @@
 namespace IronRe2
 {
-    public class OptionsHandle : Re2Handle
+    public sealed class OptionsHandle : Re2Handle
     {
         protected override bool ReleaseHandle()
         {

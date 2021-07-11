@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 namespace IronRe2
 {
+    /// <summary>
+    /// Regex match with capture information.
+    /// </summary>
     public class Captures : Match, IReadOnlyList<Match>
     {
         private ByteRange[] _ranges;

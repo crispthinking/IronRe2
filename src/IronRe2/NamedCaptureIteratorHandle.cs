@@ -1,6 +1,6 @@
 namespace IronRe2
 {
-    public class NamedCaptureIteratorHandle : Re2Handle
+    internal sealed class NamedCaptureIteratorHandle : Re2Handle
     {
         protected override bool ReleaseHandle()
         {
