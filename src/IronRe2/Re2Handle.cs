@@ -10,11 +10,13 @@ namespace IronRe2
     /// </summary>
     public abstract class Re2Handle : SafeHandle
     {
+        /// <summary>Create a new handle instance, initialised with the default value</summary>
         protected Re2Handle()
             : base(IntPtr.Zero, true)
         {
         }
 
+        /// <summary>Returns true if the handle holds a valid pointer</summary>
         public override bool IsInvalid => handle == IntPtr.Zero;
     }
 }

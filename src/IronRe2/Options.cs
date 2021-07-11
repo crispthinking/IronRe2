@@ -7,6 +7,9 @@ namespace IronRe2
     /// </summary>
     public class Options : UnmanagedResource<OptionsHandle>
     {
+        /// <summary>
+        ///   Create a new <see cref="Options" /> instance with the defaults.
+        /// </summary> 
         public Options()
             : base(Re2Ffi.cre2_opt_new())
         {

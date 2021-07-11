@@ -2,6 +2,9 @@ using System.Runtime.InteropServices;
 
 namespace IronRe2
 {
+    /// <summary>
+    ///   Library version information.
+    /// </summary>
     public static class Meta
     {
         /// <summary>
