@@ -1,6 +1,6 @@
 namespace IronRe2
 {
-    public class RegexSetHandle : Re2Handle
+    public sealed class RegexSetHandle : Re2Handle
     {
         protected override bool ReleaseHandle()
         {

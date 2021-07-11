@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace IronRe2
 {
+    /// <summary>
+    ///   Match information for a <see cref="RegexSet" />.
+    /// </summary>
     public class SetMatch
     {
         internal SetMatch(UIntPtr matchCount, int[] matchingPatterns)
