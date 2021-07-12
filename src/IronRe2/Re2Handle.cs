@@ -16,7 +16,7 @@ namespace IronRe2
         {
         }
 
-        /// <summary>Returns true if the handle holds a valid pointer</summary>
+        /// <summary>Returns true if the handle holds an invalid pointer.</summary>
         public override bool IsInvalid => handle == IntPtr.Zero;
     }
 }
