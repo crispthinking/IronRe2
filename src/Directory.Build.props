@@ -3,6 +3,8 @@
         <LangVersion>Latest</LangVersion>
         <nullable>enable</nullable>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+        <!-- TEMPORARILY DISABLE -->
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <!-- Optional: Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
         <PublishRepositoryUrl>true</PublishRepositoryUrl>

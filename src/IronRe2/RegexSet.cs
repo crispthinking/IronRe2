@@ -104,7 +104,7 @@ namespace IronRe2
                 if (r < 0)
                 {
                     // If the regex failed to add then throw
-                    var error = Encoding.UTF8.GetString(errBuff);
+                    var error = Encoding.UTF8.GetString(errBuff).TrimEnd('\0');
                     handle.Dispose();
                     throw new RegexCompilationException(
                         error, Encoding.UTF8.GetString(pattern));
