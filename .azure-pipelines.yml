@@ -23,6 +23,8 @@ jobs:
     pool:
       vmImage: 'macOS-latest'
     steps:
+      - script: echo "GITHUB_USER=$(GITHUB_USER)"
+        displayName: "Check if GitHub User is Set"
       - script: |
           dotnet nuget add source "https://nuget.pkg.github.com/crispthinking/index.json" \
             --name github \
