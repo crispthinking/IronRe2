@@ -56,8 +56,8 @@ Task("Test")
   {
     DotNetTest(slnFile, new DotNetTestSettings{
       Configuration = configuration,
-      NoRestore = true,
-      NoBuild = true,
+      //NoRestore = true,
+      //NoBuild = true,
       Loggers =
       {
         "trx",
