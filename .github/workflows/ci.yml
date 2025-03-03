@@ -41,7 +41,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore IronRe2.sln
       env:
-          NuGetPackageSourceCredentials_github: Username=${{ github.actor }};Password=${{ secrets.GITHUB_TOKEN }}
+        NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Build
       run: dotnet build IronRe2.sln --configuration Release --no-restore
@@ -51,7 +51,6 @@ jobs:
 
     - name: Upload test results
       uses: actions/upload-artifact@v4
-      if: always()
       with:
         name: test-results-${{ matrix.os }}
         path: "**/*.trx"
