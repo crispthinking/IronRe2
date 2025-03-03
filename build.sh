@@ -11,7 +11,7 @@ export DOTNET_NOLOGO=1
 dotnet tool update Cake.Tool --global || true
 dotnet tool update Cake.Tool || true
 dotnet add package Cake.Core --version latest || true
-dotnet restore || true
+dotnet restore 
 
 # Restore tools (in case Cake needs dependencies)
 dotnet tool restore
