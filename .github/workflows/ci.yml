@@ -1,10 +1,19 @@
 name: CI
 
+# Trigger on pushes and pull requests to the main branch.
 on:
   push:
-    branches: [ main, master ]
+    branches:
+      - main
   pull_request:
-    branches: [ main, master ]
+    branches:
+      - main
+
+# Set permissions for the workflow.
+permissions:
+  contents: write
+  pull-requests: write
+  checks: write
 
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
@@ -45,11 +54,9 @@ jobs:
         path: "**/*.trx"
 
     - name: Pack
-      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
       run: dotnet pack IronRe2.sln --configuration Release --no-build --output Artifacts
 
     - name: Upload NuGet packages
-      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
       uses: actions/upload-artifact@v4
       with:
         name: nuget-packages
