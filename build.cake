@@ -14,10 +14,28 @@ Setup<GitVersion>(_ => GitVersion(new GitVersionSettings{
   NoFetch = true,
 }));
 
+
 Task("Restore")
   .Does(() =>
   {
     DotNetRestore(slnFile);
+
+    // Debug: List installed NuGet packages
+    Information("🔍 Checking Installed NuGet Packages:");
+    StartProcess("dotnet", new ProcessSettings {
+      Arguments = "list package",
+      RedirectStandardOutput = true
+    });
+
+    // Debug: Find cre2.so after restore
+    Information("🔍 Checking if cre2.so exists after restore:");
+    StartProcess("find", new ProcessSettings {
+      Arguments = "./ -name 'cre2.so'"
+    });
+
+    StartProcess("find", new ProcessSettings {
+      Arguments = "./ -name 'libcre2.so'"
+    });
   });
   
 Task("Build")
