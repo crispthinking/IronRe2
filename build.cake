@@ -68,6 +68,22 @@ Task("Build")
         .Append($"/p:InformationalVersion={versionInfo.InformationalVersion}")
     });
   });
+  
+  Task("Publish")
+    .IsDependentOn("Restore")
+    .Does(() =>
+    {
+      DotNetPublish(slnFile, new DotNetPublishSettings{
+        Configuration = configuration,
+        OutputDirectory = "./publish",
+        ArgumentCustomization = args => args.Append("/p:CopyLocalLockFileAssemblies=true")
+      });
+      
+      Information("🔍 Checking if cre2.so exists in publish output:");
+      StartProcess("find", new ProcessSettings {
+        Arguments = "./publish -name 'cre2.so'"
+      });
+    });
 
 // Remove the build artifacts
 Task("Clean")
