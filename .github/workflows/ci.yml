@@ -14,7 +14,6 @@ permissions:
   contents: write
   pull-requests: write
   checks: write
-  contents: read
   packages: read
 
 env:
@@ -41,6 +40,8 @@ jobs:
       
     - name: Restore dependencies
       run: dotnet restore IronRe2.sln
+      env:
+          NuGetPackageSourceCredentials_github: Username=${{ github.actor }};Password=${{ secrets.GITHUB_TOKEN }}
 
     - name: Build
       run: dotnet build IronRe2.sln --configuration Release --no-restore
