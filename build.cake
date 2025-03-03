@@ -59,7 +59,7 @@ Task("Build")
   .IsDependentOn("Restore")
   .Does<GitVersion>(versionInfo =>
   {
-     MSBuild(slnFile, new DotNetBuildSettings{
+     MSBuild(slnFile, new MSBuildSettings{
       Configuration = configuration,
       NoRestore = true,
       VersionSuffix = versionInfo.FullBuildMetaData,
