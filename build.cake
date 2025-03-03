@@ -61,7 +61,7 @@ Task("Build")
   {
      MSBuild(slnFile, new MSBuildSettings{
       Configuration = configuration,
-      NoRestore = true,
+      //NoRestore = true,
       VersionSuffix = versionInfo.FullBuildMetaData,
       ArgumentCustomization = args => args
         .Append($"/p:Version={versionInfo.AssemblySemVer}")
