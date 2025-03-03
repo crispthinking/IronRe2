@@ -15,6 +15,11 @@
     <ProjectReference Include="..\..\src\IronRe2\IronRe2.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="bin\Release\net9.0\BatteryPackage.Linux.dll" />
+    <Content Include="bin\Release\net9.0\IronRe2.dll" />
+    <Content Include="bin\Release\net9.0\runtimes\linux-x64\native\libcre2.so" />
+    <Content Include="bin\Release\net9.0\runtimes\osx\native\libcre2.dylib" />
+    <Content Include="bin\Release\net9.0\runtimes\win-x64\native\cre2.dll" />
     <Content Include="runtimes\**\*.*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
