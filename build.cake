@@ -100,7 +100,7 @@ Task("Clean")
   });
 
 Task("Test")
-  .IsDependentOn("Build")
+  .IsDependentOn("Publish")
   .Does(() =>
   {
     DotNetTest(slnFile, new DotNetTestSettings{
@@ -116,7 +116,7 @@ Task("Test")
   });
 
 Task("Pack")
-  .IsDependentOn("Build")
+  .IsDependentOn("Publish")
   .Does<GitVersion>(versionInfo =>
   {
     DotNetPack(slnFile, new DotNetPackSettings{
