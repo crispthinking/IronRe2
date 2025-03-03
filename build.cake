@@ -17,8 +17,7 @@ Setup<GitVersion>(_ => GitVersion(new GitVersionSettings{
 Task("Restore")
   .Does(() =>
   {
-    DotNetRestore(slnFile, new DotNetRestoreSettings{
-      ConfigFile = nugetConfigFile,
+    DotNetRestore(slnFile);
     });
   });
 
@@ -56,8 +55,8 @@ Task("Test")
   {
     DotNetTest(slnFile, new DotNetTestSettings{
       Configuration = configuration,
-      //NoRestore = true,
-      //NoBuild = true,
+      NoRestore = true,
+      NoBuild = true,
       Loggers =
       {
         "trx",
