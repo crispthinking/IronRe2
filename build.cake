@@ -18,9 +18,8 @@ Task("Restore")
   .Does(() =>
   {
     DotNetRestore(slnFile);
-    });
   });
-
+  
 Task("Build")
   .IsDependentOn("Restore")
   .Does<GitVersion>(versionInfo =>
