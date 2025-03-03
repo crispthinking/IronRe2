@@ -1,4 +1,4 @@
-#tool "dotnet:https://api.nuget.org/v3/index.json?package=GitVersion.Tool&version=5.6.10"
+#tool "dotnet:https://api.nuget.org/v3/index.json?package=GitVersion.Tool&version=6.1.0"
 
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
