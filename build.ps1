@@ -13,9 +13,6 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 dotnet tool update Cake.Tool
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-dotnet restore
-if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-
 # Find a .csproj file before adding package
 $projectFile = Get-ChildItem -Path . -Recurse -Filter "*.csproj" | Select-Object -First 1
 if ($projectFile) {
