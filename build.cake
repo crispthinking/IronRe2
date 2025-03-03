@@ -2,7 +2,10 @@
 
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
-var nugetConfigFile = Argument("nuget-config", "nuget.config");
+
+// Read GitHub credentials from arguments
+var githubUser = Argument("github-user", "");
+var githubPat = Argument("github-pat", "");
 
 var slnFile = File("IronRe2.sln");
 
@@ -14,29 +17,43 @@ Setup<GitVersion>(_ => GitVersion(new GitVersionSettings{
   NoFetch = true,
 }));
 
-
 Task("Restore")
   .Does(() =>
   {
-    DotNetRestore(slnFile);
+    // Add GitHub NuGet source using the passed credentials
+    if (!string.IsNullOrEmpty(githubUser) && !string.IsNullOrEmpty(githubPat))
+    {
+      Information("🔑 Authenticating NuGet with GitHub...");
+      StartProcess("dotnet", new ProcessSettings
+      {
+        Arguments = $"nuget add source \"https://nuget.pkg.github.com/crispthinking/index.json\" " +
+                    $"--name github --username {githubUser} --password {githubPat} --store-password-in-clear-text"
+      });
+    }
+    else
+    {
+      Warning("⚠️ GitHub credentials not provided. NuGet authentication may fail.");
+    }
 
-    // Debug: List installed NuGet packages
-    Information("🔍 Checking Installed NuGet Packages:");
+    // Restore dependencies
+    DotNetRestore(slnFile);
+    
     StartProcess("dotnet", new ProcessSettings {
       Arguments = "list package",
       RedirectStandardOutput = true
     });
-
+    
     // Debug: Find cre2.so after restore
     Information("🔍 Checking if cre2.so exists after restore:");
     StartProcess("find", new ProcessSettings {
       Arguments = "./ -name 'cre2.so'"
     });
-
+    
     StartProcess("find", new ProcessSettings {
       Arguments = "./ -name 'libcre2.so'"
     });
   });
+
   
 Task("Build")
   .IsDependentOn("Restore")

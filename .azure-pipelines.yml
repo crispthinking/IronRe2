@@ -7,12 +7,8 @@ jobs:
       vmImage: 'ubuntu-latest'
     steps:
       - script: |
-          dotnet nuget add source "https://nuget.pkg.github.com/crispthinking/index.json" \
-            --name github \
-            --username $(GITHUB_USER) \
-            --password $(GITHUB_PAT) \
-            --store-password-in-clear-text
-          ./build.sh --target=CI
+          ./build.sh --target=CI --github-user "$(GITHUB_USER)" --github-pat "$(GITHUB_PAT)"
+        displayName: "Run Cake with GitHub Authentication"
       - task: PublishTestResults@2
         condition: always()
         inputs:
@@ -26,12 +22,8 @@ jobs:
       - script: echo "GITHUB_USER=$(GITHUB_USER)"
         displayName: "Check if GitHub User is Set"
       - script: |
-          dotnet nuget add source "https://nuget.pkg.github.com/crispthinking/index.json" \
-            --name github \
-            --username $(GITHUB_USER) \
-            --password $(GITHUB_PAT) \
-            --store-password-in-clear-text
-          ./build.sh --target=CI-pack
+          ./build.sh --target=CI --github-user "$(GITHUB_USER)" --github-pat "$(GITHUB_PAT)"
+        displayName: "Run Cake with GitHub Authentication"
       - task: PublishTestResults@2
         condition: always()
         inputs:
@@ -46,12 +38,8 @@ jobs:
       vmImage: 'windows-latest'
     steps:
       - powershell: |
-          dotnet nuget add source "https://nuget.pkg.github.com/crispthinking/index.json" `
-            --name github `
-            --username $(GITHUB_USER) `
-            --password $(GITHUB_PAT) `
-            --store-password-in-clear-text
-          .\build.ps1 --target=CI
+          .\build.ps1 --target=CI --github-user "$(GITHUB_USER)" --github-pat "$(GITHUB_PAT)"
+        displayName: "Run Cake with GitHub Authentication"
       - task: PublishTestResults@2
         condition: always()
         inputs:
