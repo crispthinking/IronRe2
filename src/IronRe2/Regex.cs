@@ -79,7 +79,7 @@ namespace IronRe2
                     errorArg.data, errorArg.length);
                 // need to clean up the regex
                 handle.Dispose();
-                throw new RegexCompilationException(error, offendingPortion);
+                throw new RegexCompilationException(error ?? string.Empty, offendingPortion);
             }
 
             return handle;
@@ -93,7 +93,7 @@ namespace IronRe2
             get
             {
                 var pattern = Re2Ffi.cre2_pattern(RawHandle);
-                return Marshal.PtrToStringAnsi(pattern);
+                return Marshal.PtrToStringAnsi(pattern) ?? string.Empty;
             }
         }
 

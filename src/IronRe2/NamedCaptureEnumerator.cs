@@ -41,7 +41,7 @@ namespace IronRe2
             if (Re2Ffi.cre2_named_groups_iter_next(RawHandle, out var namePtr, out var index))
             {
                 var name = Marshal.PtrToStringAnsi(new IntPtr(namePtr));
-                _current = new NamedCaptureGroup(name, index);
+                if (name != null) _current = new NamedCaptureGroup(name, index);
                 return true;
             }
             else

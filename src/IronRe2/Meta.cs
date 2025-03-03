@@ -10,7 +10,7 @@ namespace IronRe2
         /// <summary>
         /// Get the version string from the native code
         /// </summary>
-        public static string VersionString =>
+        public static string? VersionString =>
             Marshal.PtrToStringAnsi(Re2Ffi.cre2_version_string());
 
         /// <summary>

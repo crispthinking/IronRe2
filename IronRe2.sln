@@ -1,15 +1,15 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{289627CF-0385-41AC-A6E1-9AE982AE356F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IronRe2", "src\IronRe2\IronRe2.csproj", "{45DE2B18-3F94-4E1B-8C93-7C7DA602437F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IronRe2", "src\IronRe2\IronRe2.csproj", "{45DE2B18-3F94-4E1B-8C93-7C7DA602437F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{314AD44D-494A-4E15-9558-ED28963688CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IronRe2.Tests", "test\IronRe2.Tests\IronRe2.Tests.csproj", "{D6DB2334-E2FF-4BBA-975F-2D611E52423A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IronRe2.Tests", "test\IronRe2.Tests\IronRe2.Tests.csproj", "{D6DB2334-E2FF-4BBA-975F-2D611E52423A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
