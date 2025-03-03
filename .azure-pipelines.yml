@@ -1,36 +1,54 @@
 jobs:
-- job: Linux
-  pool:
-    vmImage: 'ubuntu-latest'
-  steps:
-  - script: ./build.sh --target=CI
-  - task: PublishTestResults@2
-    condition: always()
-    inputs:
-      testRunner: VSTest
-      testResultsFiles: '**/*.trx'
+  - job: Linux
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - script: |
+          dotnet nuget add source "https://nuget.pkg.github.com/crispthinking/index.json" \
+            --name github \
+            --username $(GITHUB_USER) \
+            --password $(GITHUB_PAT) \
+            --store-password-in-clear-text
+          ./build.sh --target=CI
+      - task: PublishTestResults@2
+        condition: always()
+        inputs:
+          testRunner: VSTest
+          testResultsFiles: '**/*.trx'
 
-- job: macOS
-  pool:
-    vmImage: 'macOS-latest'
-  steps:
-  - script: ./build.sh --target=CI-pack
-  - task: PublishTestResults@2
-    condition: always()
-    inputs:
-      testRunner: VSTest
-      testResultsFiles: '**/*.trx'
-  - task: PublishBuildArtifacts@1
-    inputs:
-      pathtoPublish: Artifacts/
+  - job: macOS
+    pool:
+      vmImage: 'macOS-latest'
+    steps:
+      - script: |
+          dotnet nuget add source "https://nuget.pkg.github.com/crispthinking/index.json" \
+            --name github \
+            --username $(GITHUB_USER) \
+            --password $(GITHUB_PAT) \
+            --store-password-in-clear-text
+          ./build.sh --target=CI-pack
+      - task: PublishTestResults@2
+        condition: always()
+        inputs:
+          testRunner: VSTest
+          testResultsFiles: '**/*.trx'
+      - task: PublishBuildArtifacts@1
+        inputs:
+          pathtoPublish: Artifacts/
 
-- job: Windows
-  pool:
-    vmImage: 'windows-latest'
-  steps:
-  - powershell: .\build.ps1  --target=CI
-  - task: PublishTestResults@2
-    condition: always()
-    inputs:
-      testRunner: VSTest
-      testResultsFiles: '**/*.trx'
+  - job: Windows
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+      - powershell: |
+          dotnet nuget add source "https://nuget.pkg.github.com/crispthinking/index.json" `
+            --name github `
+            --username $(GITHUB_USER) `
+            --password $(GITHUB_PAT) `
+            --store-password-in-clear-text
+          .\build.ps1 --target=CI
+      - task: PublishTestResults@2
+        condition: always()
+        inputs:
+          testRunner: VSTest
+          testResultsFiles: '**/*.trx'
