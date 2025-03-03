@@ -17,7 +17,7 @@ Setup<GitVersion>(_ => GitVersion(new GitVersionSettings{
 Task("Restore")
   .Does(() =>
   {
-    DotNetCoreRestore(slnFile, new DotNetCoreRestoreSettings{
+    DotNetRestore(slnFile, new DotNetRestoreSettings{
       ConfigFile = nugetConfigFile,
     });
   });
@@ -26,7 +26,7 @@ Task("Build")
   .IsDependentOn("Restore")
   .Does<GitVersion>(versionInfo =>
   {
-    DotNetCoreBuild(slnFile, new DotNetCoreBuildSettings{
+    DotNetBuild(slnFile, new DotNetBuildSettings{
       Configuration = configuration,
       NoRestore = true,
       VersionSuffix = versionInfo.FullBuildMetaData,
@@ -54,7 +54,7 @@ Task("Test")
   .IsDependentOn("Build")
   .Does(() =>
   {
-    DotNetCoreTest(slnFile, new DotNetCoreTestSettings{
+    DotNetTest(slnFile, new DotNetTestSettings{
       Configuration = configuration,
       NoRestore = true,
       NoBuild = true,
@@ -70,7 +70,7 @@ Task("Pack")
   .IsDependentOn("Build")
   .Does<GitVersion>(versionInfo =>
   {
-    DotNetCorePack(slnFile, new DotNetCorePackSettings{
+    DotNetPack(slnFile, new DotNetPackSettings{
       Configuration = configuration,
       NoRestore = true,
       NoBuild = true,
