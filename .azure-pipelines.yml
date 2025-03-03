@@ -1,3 +1,6 @@
+variables:
+  - group: Secrets
+
 jobs:
   - job: Linux
     pool:
