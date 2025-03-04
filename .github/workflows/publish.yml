@@ -44,7 +44,7 @@ jobs:
 
     - name: Restore dependencies
       run: dotnet restore IronRe2.sln
-
+    
     - name: Build
       run: dotnet build IronRe2.sln --configuration Release --no-restore
 
@@ -54,17 +54,23 @@ jobs:
     - name: Upload test results
       uses: actions/upload-artifact@v4
       with:
-        name: test-results-${{ matrix.os }}
-        path: "**/*.trx"
+          name: test-results-${{ matrix.os }}
+          path: "**/*.trx"
 
     - name: Pack
-      run: dotnet pack IronRe2.sln --configuration Release --no-build --output Artifacts
+      run: |
+              if [ "${{ github.ref_name }}" == "main" ]; then
+                dotnet pack IronRe2.sln --configuration Release --no-build --output Artifacts
+              else
+                dotnet pack IronRe2.sln --configuration Release --no-build --output Artifacts /p:VersionSuffix=beta-${{ github.sha }}
+              fi
+      shell: bash
 
     - name: Upload NuGet packages
       uses: actions/upload-artifact@v4
       with:
-        name: nuget-packages
-        path: Artifacts/*.nupkg
+          name: nuget-packages
+          path: Artifacts/*.nupkg
 
   deploy:
     # Publish only when creating a GitHub Release
