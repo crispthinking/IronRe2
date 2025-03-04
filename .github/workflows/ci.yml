@@ -39,11 +39,17 @@ jobs:
         with:
           dotnet-version: '9.0.x'
 
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+    
+      - name: Add GitHub Packages NuGet Source
+        run: dotnet nuget add source --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/crispthinking/index.json"
+    
       - name: Restore dependencies
         run: dotnet restore IronRe2.sln
-        env:
-          NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+    
       - name: Build
         run: dotnet build IronRe2.sln --configuration Release --no-restore
 
