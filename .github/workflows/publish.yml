@@ -35,11 +35,6 @@ jobs:
         with:
           fetch-depth: 0
       
-      # Run GitVersion to get version information
-      - name: Get GitVersion Info
-        id: gitversion
-        uses: gittools/actions/gitversion/execute@v0.9.17
-
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
