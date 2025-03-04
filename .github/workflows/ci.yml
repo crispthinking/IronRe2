@@ -8,6 +8,7 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:
 
 # Set permissions for the workflow.
 permissions:
@@ -29,37 +30,37 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
 
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '9.0.x'
-      
-    - name: Restore dependencies
-      run: dotnet restore IronRe2.sln
-      env:
-        NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
 
-    - name: Build
-      run: dotnet build IronRe2.sln --configuration Release --no-restore
+      - name: Restore dependencies
+        run: dotnet restore IronRe2.sln
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Test
-      run: dotnet test IronRe2.sln --configuration Release --no-build --logger "trx" --logger "console;verbosity=normal"
+      - name: Build
+        run: dotnet build IronRe2.sln --configuration Release --no-restore
 
-    - name: Upload test results
-      uses: actions/upload-artifact@v4
-      with:
-        name: test-results-${{ matrix.os }}
-        path: "**/*.trx"
+      - name: Test
+        run: dotnet test IronRe2.sln --configuration Release --no-build --logger "trx" --logger "console;verbosity=normal"
 
-    - name: Pack
-      run: dotnet pack IronRe2.sln --configuration Release --no-build --output Artifacts
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.os }}
+          path: "**/*.trx"
 
-    - name: Upload NuGet packages
-      uses: actions/upload-artifact@v4
-      with:
-        name: nuget-packages
-        path: Artifacts/*.nupkg
+      - name: Pack
+        run: dotnet pack IronRe2.sln --configuration Release --no-build --output Artifacts
+
+      - name: Upload NuGet packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-packages
+          path: Artifacts/*.nupkg
