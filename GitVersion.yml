@@ -1,4 +1,9 @@
-mode: ContinuousDeployment
+mode: Mainline
+
 branches:
+  hotfix:
+    regex: ^hotfix(es)?[/-]
+    mode: ContinuousDelivery
+    increment: None
   master:
-    regex: ^(main)|(master)$
+    regex: ^main$
