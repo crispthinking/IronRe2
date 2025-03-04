@@ -8,7 +8,8 @@ branches:
     regex: ^hotfix(es)?[/-]
     mode: ContinuousDelivery
     increment: None
+    tag: beta         # Pre-release tag for hotfix branches.
   feature:
     regex: ^(feature|feat)[/-]
-    tag: alpha      # Pre-release tag for feature branches.
+    tag: beta        # Pre-release tag for feature branches.
     mode: ContinuousDelivery

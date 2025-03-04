@@ -214,3 +214,6 @@ tools/**
 CoverageResults/
 Artifacts/
 DeployArtifacts/
+.DS_Store
+.idea/.idea.IronRe2/.idea/projectSettingsUpdater.xml
+.idea/.idea.IronRe2/.idea/workspace.xml
