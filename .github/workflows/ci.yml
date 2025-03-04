@@ -10,7 +10,7 @@ on:
       - main
   workflow_dispatch:
 
-# Set permissions for the workflow.
+# Set permissions for the workflow. TEST
 permissions:
   contents: write
   pull-requests: write
