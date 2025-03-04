@@ -13,7 +13,3 @@ branches:
     regex: ^(feature|feat)[/-]
     tag: beta        # Pre-release tag for feature branches.
     mode: ContinuousDelivery
-  pull-request:
-    regex: ^(pull-request|pr)[/-]
-    tag: beta        # Pre-release tag for pull request branches.
-    mode: ContinuousDelivery
