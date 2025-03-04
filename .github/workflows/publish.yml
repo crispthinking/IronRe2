@@ -86,7 +86,7 @@ jobs:
 
       - name: Publish GitHub package
         run: |
-          dotnet nuget push bin/artifacts/**/*.nupkg --api-key "${{ secrets.GITHUB_TOKEN }}" --source "https://nuget.pkg.github.com/crispthinking/index.json" --skip-duplicate
+          run: dotnet pack IronRe2.sln --configuration Release --no-build --output Artifacts /p:PackageVersion=${{ steps.gitversion.outputs.NuGetVersionV2 }}
 
       - name: Publish NuGet package
         run: |
