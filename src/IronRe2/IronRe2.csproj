@@ -4,9 +4,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="IronRe2-Batteries.OSX" Version="0.1.1-PullRequest6.118" />
-    <PackageReference Include="IronRe2-Batteries.Linux" Version="0.1.1-PullRequest6.118" />
-    <PackageReference Include="IronRe2-Batteries.Windows" Version="0.1.1-PullRequest6.118" />
+    <PackageReference Include="IronRe2-Batteries.Linux" Version="0.1.1-PullRequest6.130" />
   </ItemGroup>
   <ItemGroup>
 <!--    <Content Include="bin\Release\net9.0\BatteryPackage.Linux.dll" CopyToOutputDirectory="PreserveNewest"/>-->
