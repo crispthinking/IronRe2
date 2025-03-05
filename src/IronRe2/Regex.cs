@@ -90,6 +90,11 @@ namespace IronRe2
                     errorArg.data, errorArg.length);
                 // Clean up the regex
                 handle.Dispose();
+                if (error == null)
+                {
+                    throw new RegexCompilationException(
+                        "Unknown error compiling regex", offendingPortion);
+                }
                 throw new RegexCompilationException(error, offendingPortion);
             }
 
