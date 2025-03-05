@@ -59,11 +59,11 @@ jobs:
 
     - name: Pack
       run: |
-              if [ "${{ github.ref_name }}" == "main" ]; then
-                dotnet pack IronRe2.sln --configuration Release --no-build --output Artifacts
-              else
-                dotnet pack IronRe2.sln --configuration Release --no-build --output Artifacts /p:VersionSuffix=beta-${{ github.sha }}
-              fi
+            if [ "${{ github.ref_name }}" == "main" ]; then
+              dotnet pack IronRe2.sln --configuration Release --no-build --output Artifacts /p:PackageVersion=2.1.1-beta
+            else
+              dotnet pack IronRe2.sln --configuration Release --no-build --output Artifacts /p:PackageVersion=2.1.1-beta-${{ github.sha }}
+            fi
       shell: bash
 
     - name: Upload NuGet packages
