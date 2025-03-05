@@ -63,10 +63,21 @@ namespace IronRe2
         /// </returns>
         private static RegexHandle Compile(ReadOnlySpan<byte> patternBytes, Options? opts)
         {
-            var handle = Re2Ffi.cre2_new(
-                in MemoryMarshal.GetReference(patternBytes), patternBytes.Length,
-                opts?.RawHandle ?? new OptionsHandle());
-            
+            RegexHandle handle;
+            if (opts == null)
+            {
+                using var tmpOpts = new OptionsHandle();
+                handle = Re2Ffi.cre2_new(
+                    in MemoryMarshal.GetReference(patternBytes), patternBytes.Length,
+                    tmpOpts);
+            }
+            else
+            {
+                handle = Re2Ffi.cre2_new(
+                    in MemoryMarshal.GetReference(patternBytes), patternBytes.Length,
+                    opts.RawHandle);
+            }
+
             // Check to see if there was an error compiling this expression
             var errorCode = Re2Ffi.cre2_error_code(handle);
             if (errorCode != Re2Ffi.cre2_error_code_t.CRE2_NO_ERROR)
@@ -77,9 +88,9 @@ namespace IronRe2
                 Re2Ffi.cre2_error_arg(handle, ref errorArg);
                 var offendingPortion = Marshal.PtrToStringAnsi(
                     errorArg.data, errorArg.length);
-                // need to clean up the regex
+                // Clean up the regex
                 handle.Dispose();
-                throw new RegexCompilationException(error ?? string.Empty, offendingPortion);
+                throw new RegexCompilationException(error, offendingPortion);
             }
 
             return handle;
