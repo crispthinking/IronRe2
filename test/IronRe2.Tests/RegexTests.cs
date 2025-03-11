@@ -226,7 +226,7 @@ public class RegexTests
     [Fact]
     public void FindWithCaptures()
     {
-        const string pattern = @"(?P<h>hello) (?P<w>world)";
+        const string pattern = "(?P<h>hello) (?P<w>world)";
         Regex re = new(pattern);
 
         Captures captures = re.Captures("hello world");
@@ -249,7 +249,7 @@ public class RegexTests
     [Fact]
     public void FindWithCapturesBytes()
     {
-        const string pattern = @"(?P<h>hello) (?P<w>world)";
+        const string pattern = "(?P<h>hello) (?P<w>world)";
         Regex re = new(Encoding.UTF8.GetBytes(pattern));
 
         Captures captures = re.Captures(
@@ -273,7 +273,7 @@ public class RegexTests
     [Fact]
     public void FindWithOptionalCaptures()
     {
-        const string pattern = @" (.)(.)? ";
+        const string pattern = " (.)(.)? ";
         Regex re = new(pattern);
 
         Captures captures = re.Captures(" a ");
@@ -401,11 +401,11 @@ public class RegexTests
 
     public static IEnumerable<object[]> FindData()
     {
-        yield return [@".+", "hello world", 0, 11];
+        yield return [".+", "hello world", 0, 11];
         yield return [@"\b[^\s]+\b", "hello world", 0, 5];
         yield return [@"\b[^\s]+\b$", "hello world", 6, 11];
         yield return [@".\b", "foo bar", 2, 3];
-        yield return [@"b", "foo bar", 4, 5];
-        yield return [@"b", "nothing to see here", -1, -1];
+        yield return ["b", "foo bar", 4, 5];
+        yield return ["b", "nothing to see here", -1, -1];
     }
 }

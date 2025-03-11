@@ -35,16 +35,16 @@ public class MemoryLeakTests
             }
 
             // Create a RegexSet instance and use it.
-            string[] patterns = [@"\d+", @"\w+", @"[a-z]+", @"[A-Z]+", @"\s+", @"\W+", @"\D+"];
+            string[] patterns = [@"\d+", @"\w+", "[a-z]+", "[A-Z]+", @"\s+", @"\W+", @"\D+"];
             RegexSet set = new(patterns);
             set.Match("123 abc");
 
             // Test with invalid regex patterns to simulate failed compilations.
             try
             {
-                Regex invalidRegex = new(@"[");
+                Regex invalidRegex = new("[");
             }
-            catch (RegexCompilationException e)
+            catch (RegexCompilationException)
             {
                 // Expected exception for invalid regex pattern.
             }
@@ -116,16 +116,16 @@ public class MemoryLeakTests
             }
 
             // Create a RegexSet instance and use it.
-            string[] patterns = [@"\d+", @"\w+", @"[a-z]+", @"[A-Z]+", @"\s+", @"\W+", @"\D+"];
+            string[] patterns = [@"\d+", @"\w+", "[a-z]+", "[A-Z]+", @"\s+", @"\W+", @"\D+"];
             RegexSet set = new(patterns);
             set.Match("123 abc");
 
             // Test with invalid regex patterns to simulate failed compilations.
             try
             {
-                Regex invalidRegex = new(@"[");
+                Regex invalidRegex = new("[");
             }
-            catch (RegexCompilationException e)
+            catch (RegexCompilationException)
             {
                 // Expected exception for invalid regex pattern.
             }

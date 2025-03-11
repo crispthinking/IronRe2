@@ -18,8 +18,8 @@ public class RegexSetTests
         //Given
         string[] patterns =
         [
-            @"hello world",
-            @".+",
+            "hello world",
+            ".+",
             @"(\d{2,4})"
         ];
 
