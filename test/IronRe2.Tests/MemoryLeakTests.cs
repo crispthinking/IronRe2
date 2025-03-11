@@ -20,6 +20,7 @@ public class MemoryLeakTests
     /// and finally compares the difference to assert that no additional instances remain.
     /// </summary>
     [Fact]
+    [DotMemoryUnit(FailIfRunWithoutSupport = false)]
     public void MemoryLeakTestWithDotMemoryUnit_UsingSnapshot()
     {
         // Capture an initial snapshot before running the workload.
