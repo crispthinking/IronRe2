@@ -1,8 +1,5 @@
 using System;
 using System.Runtime.InteropServices;
-using System.IO;
-using System.Reflection;
-
 using cre2_regexp_t_ptr = IronRe2.RegexHandle;
 using cre2_set_t_ptr = IronRe2.RegexSetHandle;
 using cre2_options_t_ptr = IronRe2.OptionsHandle;

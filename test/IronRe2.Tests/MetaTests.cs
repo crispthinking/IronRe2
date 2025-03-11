@@ -1,5 +1,4 @@
 using Xunit;
-using IronRe2;
 
 namespace IronRe2.Tests
 {

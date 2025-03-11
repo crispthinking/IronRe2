@@ -28,7 +28,6 @@ namespace IronRe2.Tests
             Assert.Equal(8 << 20, options.MaxMemory);
         }
 
-
         [Fact]
         public void OptionsSetValuesStoresValues()
         {

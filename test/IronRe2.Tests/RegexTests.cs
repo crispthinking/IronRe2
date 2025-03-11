@@ -1,6 +1,5 @@
 using System;
 using Xunit;
-using IronRe2;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
@@ -90,10 +89,8 @@ namespace IronRe2.Tests
         [MemberData(nameof(IsMatchData))]
         public void RegexIsMatch(string pattern, string haystack, bool match)
         {
-            using (var re = new Regex(pattern))
-            {
-                Assert.Equal(match, re.IsMatch(haystack));
-            }
+            using var re = new Regex(pattern);
+            Assert.Equal(match, re.IsMatch(haystack));
         }
 
         [Theory]
@@ -102,10 +99,8 @@ namespace IronRe2.Tests
         {
             var pattern = Encoding.UTF8.GetBytes(p);
             var haystack = Encoding.UTF8.GetBytes(h);
-            using (var re = new Regex(pattern))
-            {
-                Assert.Equal(match, re.IsMatch(haystack));
-            }
+            using var re = new Regex(pattern);
+            Assert.Equal(match, re.IsMatch(haystack));
         }
 
         [Theory]
@@ -129,19 +124,17 @@ namespace IronRe2.Tests
         [MemberData(nameof(FindData))]
         public void RegexFind(string pattern, string haystack, int start, int end)
         {
-            using (var re = new Regex(pattern))
+            using var re = new Regex(pattern);
+            var match = re.Find(haystack);
+            if (start != -1)
             {
-                var match = re.Find(haystack);
-                if (start != -1)
-                {
-                    Assert.True(match.Matched);
-                    Assert.Equal(start, match.Start);
-                    Assert.Equal(end, match.End);
-                }
-                else
-                {
-                    Assert.False(match.Matched);
-                }
+                Assert.True(match.Matched);
+                Assert.Equal(start, match.Start);
+                Assert.Equal(end, match.End);
+            }
+            else
+            {
+                Assert.False(match.Matched);
             }
         }
 
@@ -152,19 +145,17 @@ namespace IronRe2.Tests
         {
             var pattern = Encoding.UTF8.GetBytes(p);
             var haystack = Encoding.UTF8.GetBytes(h);
-            using (var re = new Regex(pattern))
+            using var re = new Regex(pattern);
+            var match = re.Find(haystack);
+            if (start != -1)
             {
-                var match = re.Find(haystack);
-                if (start != -1)
-                {
-                    Assert.True(match.Matched);
-                    Assert.Equal(start, match.Start);
-                    Assert.Equal(end, match.End);
-                }
-                else
-                {
-                    Assert.False(match.Matched);
-                }
+                Assert.True(match.Matched);
+                Assert.Equal(start, match.Start);
+                Assert.Equal(end, match.End);
+            }
+            else
+            {
+                Assert.False(match.Matched);
             }
         }
 
@@ -343,29 +334,27 @@ namespace IronRe2.Tests
         [Fact]
         public void CapturesWithExtractedText()
         {
-            using (var re = new Regex(@"(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})"))
-            {
-                var haystack = "The first woman in space launched on 1963-06-16 in Vostok 6";
+            using var re = new Regex(@"(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})");
+            var haystack = "The first woman in space launched on 1963-06-16 in Vostok 6";
 
-                var captures = re.Captures(haystack);
+            var captures = re.Captures(haystack);
 
-                Assert.True(captures.Matched);
+            Assert.True(captures.Matched);
 
-                // The first capture group is the whole match.
-                Assert.True(captures[0].Matched);
+            // The first capture group is the whole match.
+            Assert.True(captures[0].Matched);
 
-                // Each capture group has position information
-                Assert.True(captures[1].Matched);
-                Assert.Equal(37, captures[1].Start);
-                Assert.Equal(41, captures[1].End);
+            // Each capture group has position information
+            Assert.True(captures[1].Matched);
+            Assert.Equal(37, captures[1].Start);
+            Assert.Equal(41, captures[1].End);
 
-                /// As well as the UTF-8 indices the extracted text is available
-                Assert.True(captures[2].Matched);
-                Assert.Equal("06", captures[2].ExtractedText);
+            /// As well as the UTF-8 indices the extracted text is available
+            Assert.True(captures[2].Matched);
+            Assert.Equal("06", captures[2].ExtractedText);
 
-                // capture group indices can be looked up by name with th `Regex`
-                Assert.True(captures[re.FindNamedCapture("day")].Matched);
-            }
+            // capture group indices can be looked up by name with th `Regex`
+            Assert.True(captures[re.FindNamedCapture("day")].Matched);
         }
 
         [Fact]

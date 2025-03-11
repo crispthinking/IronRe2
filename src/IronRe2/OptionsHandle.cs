@@ -4,7 +4,7 @@ namespace IronRe2
     public sealed class OptionsHandle : Re2Handle
     {
         /// <inheritdoc />
-        protected override bool ReleaseHandle()
+        protected override bool ReleaseHandleCore()
         {
             Re2Ffi.cre2_opt_delete(handle);
             return true;

@@ -1,5 +1,3 @@
-using System;
-
 namespace IronRe2
 {
     /// <summary>

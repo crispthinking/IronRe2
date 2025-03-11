@@ -4,7 +4,7 @@ namespace IronRe2
     public sealed class RegexHandle : Re2Handle
     {
         /// <inheritdoc />
-        protected override bool ReleaseHandle()
+        protected override bool ReleaseHandleCore()
         {
             Re2Ffi.cre2_delete(handle);
             return true;
