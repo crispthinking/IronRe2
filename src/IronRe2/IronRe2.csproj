@@ -1,19 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="IronRe2-Batteries.Linux" Version="0.1.1-PullRequest6.131" />
-    <PackageReference Include="IronRe2-Batteries.OSX" Version="0.1.1-PullRequest6.131" />
+    <PackageReference Include="IronRe2-Batteries.Linux" Version="0.1.1-PullRequest6.144" />
+    <PackageReference Include="IronRe2-Batteries.OSX" Version="0.1.1-PullRequest6.144" />
+    <PackageReference Include="IronRe2-Batteries.Windows" Version="0.1.1-PullRequest6.144" />
   </ItemGroup>
   <ItemGroup>
-<!--    <Content Include="bin\Release\net9.0\BatteryPackage.Linux.dll" CopyToOutputDirectory="PreserveNewest"/>-->
-<!--    <Content Include="bin\Release\net9.0\IronRe2.dll" CopyToOutputDirectory="PreserveNewest"/>-->
-<!--    <Content Include="bin\Release\net9.0\runtimes\linux-x64\native\libcre2.so" CopyToOutputDirectory="PreserveNewest" />-->
-<!--    <Content Include="bin\Release\net9.0\runtimes\osx\native\libcre2.dylib" CopyToOutputDirectory="PreserveNewest"/>-->
-<!--    <Content Include="bin\Release\net9.0\runtimes\win-x64\native\cre2.dll" CopyToOutputDirectory="PreserveNewest"/>-->
-<!--    <Content Include="bin\Release\net9.0\IronRe2.dll" CopyToOutputDirectory="PreserveNewest"/>-->
     <Content Include="runtimes\**\*.*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
