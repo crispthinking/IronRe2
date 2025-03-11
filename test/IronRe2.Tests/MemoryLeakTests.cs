@@ -1,6 +1,7 @@
 ﻿using System;
 using Xunit;
 using JetBrains.dotMemoryUnit;
+using JetBrains.dotMemoryUnit.Kernel;
 using Xunit.Abstractions; // requires the dotMemory Unit package
 
 namespace IronRe2.Tests;
@@ -20,8 +21,14 @@ public class MemoryLeakTests
     /// and finally compares the difference to assert that no additional instances remain.
     /// </summary>
     [Fact]
+    [DotMemoryUnit(FailIfRunWithoutSupport = false)]
     public void MemoryLeakTestWithDotMemoryUnit_UsingSnapshot()
     {
+        if (!dotMemoryApi.IsEnabled)
+        {
+            return;
+        }
+
         // Capture an initial snapshot before running the workload.
         MemoryCheckPoint snapshot = dotMemory.Check();
 
