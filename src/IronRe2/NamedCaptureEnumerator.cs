@@ -42,11 +42,9 @@ internal class NamedCaptureEnumerator : UnmanagedResource<NamedCaptureIteratorHa
             if (name != null) _current = new NamedCaptureGroup(name, index);
             return true;
         }
-        else
-        {
-            _current = null;
-            return false;
-        }
+
+        _current = null;
+        return false;
     }
 
     /// <summary>

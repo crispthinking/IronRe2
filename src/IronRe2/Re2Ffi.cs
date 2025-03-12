@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using cre2_regexp_t_ptr = IronRe2.RegexHandle;
 using cre2_set_t_ptr = IronRe2.RegexSetHandle;
@@ -11,99 +12,147 @@ namespace IronRe2;
 /// This class contains the P/Invoke definitions for the cre2 library's
 /// public interface.
 /// </summary>
-static class Re2Ffi
+static unsafe partial class Re2Ffi
 {
-    /** --------------------------------------------------------------------
-     ** Version functions.
-     ** ----------------------------------------------------------------- */
+    // Version functions.
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial IntPtr cre2_version_string();
 
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern IntPtr cre2_version_string();
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial IntPtr cre2_version_interface_current();
 
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern IntPtr cre2_version_interface_current();
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial IntPtr cre2_version_interface_revision();
 
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern IntPtr cre2_version_interface_revision();
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial IntPtr cre2_version_interface_age();
 
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern IntPtr cre2_version_interface_age();
-
-    /** --------------------------------------------------------------------
-     ** Regular expressions configuration options.
-     ** ----------------------------------------------------------------- */
-
+    // Regular expressions configuration options.
     public enum cre2_encoding_t
     {
-        CRE2_UNKNOWN = 0,    /* should never happen */
+        CRE2_UNKNOWN = 0,    // should never happen
         CRE2_UTF8 = 1,
         CRE2_Latin1 = 2
     }
 
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern cre2_options_t_ptr cre2_opt_new();
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern void cre2_opt_delete(IntPtr opt);
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial cre2_options_t_ptr cre2_opt_new();
 
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern void cre2_opt_set_posix_syntax(cre2_options_t_ptr opt, int flag);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern void cre2_opt_set_longest_match(cre2_options_t_ptr opt, int flag);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern void cre2_opt_set_log_errors(cre2_options_t_ptr opt, int flag);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern void cre2_opt_set_literal(cre2_options_t_ptr opt, int flag);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern void cre2_opt_set_never_nl(cre2_options_t_ptr opt, int flag);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern void cre2_opt_set_dot_nl(cre2_options_t_ptr opt, int flag);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern void cre2_opt_set_never_capture(cre2_options_t_ptr opt, int flag);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern void cre2_opt_set_case_sensitive(cre2_options_t_ptr opt, int flag);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern void cre2_opt_set_perl_classes(cre2_options_t_ptr opt, int flag);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern void cre2_opt_set_word_boundary(cre2_options_t_ptr opt, int flag);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern void cre2_opt_set_one_line(cre2_options_t_ptr opt, int flag);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern void cre2_opt_set_max_mem(cre2_options_t_ptr opt, [MarshalAs(UnmanagedType.I8)] long m);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern void cre2_opt_set_encoding(cre2_options_t_ptr opt, cre2_encoding_t enc);
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial void cre2_opt_delete(IntPtr opt);
 
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int cre2_opt_posix_syntax(cre2_options_t_ptr opt);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int cre2_opt_longest_match(cre2_options_t_ptr opt);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int cre2_opt_log_errors(cre2_options_t_ptr opt);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int cre2_opt_literal(cre2_options_t_ptr opt);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int cre2_opt_never_nl(cre2_options_t_ptr opt);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int cre2_opt_dot_nl(cre2_options_t_ptr opt);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int cre2_opt_never_capture(cre2_options_t_ptr opt);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int cre2_opt_case_sensitive(cre2_options_t_ptr opt);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int cre2_opt_perl_classes(cre2_options_t_ptr opt);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int cre2_opt_word_boundary(cre2_options_t_ptr opt);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int cre2_opt_one_line(cre2_options_t_ptr opt);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial void cre2_opt_set_posix_syntax(cre2_options_t_ptr opt, int flag);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial void cre2_opt_set_longest_match(cre2_options_t_ptr opt, int flag);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial void cre2_opt_set_log_errors(cre2_options_t_ptr opt, int flag);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial void cre2_opt_set_literal(cre2_options_t_ptr opt, int flag);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial void cre2_opt_set_never_nl(cre2_options_t_ptr opt, int flag);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial void cre2_opt_set_dot_nl(cre2_options_t_ptr opt, int flag);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial void cre2_opt_set_never_capture(cre2_options_t_ptr opt, int flag);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial void cre2_opt_set_case_sensitive(cre2_options_t_ptr opt, int flag);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial void cre2_opt_set_perl_classes(cre2_options_t_ptr opt, int flag);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial void cre2_opt_set_word_boundary(cre2_options_t_ptr opt, int flag);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial void cre2_opt_set_one_line(cre2_options_t_ptr opt, int flag);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial void cre2_opt_set_max_mem(cre2_options_t_ptr opt, [MarshalAs(UnmanagedType.I8)] long m);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial void cre2_opt_set_encoding(cre2_options_t_ptr opt, cre2_encoding_t enc);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial int cre2_opt_posix_syntax(cre2_options_t_ptr opt);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial int cre2_opt_longest_match(cre2_options_t_ptr opt);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial int cre2_opt_log_errors(cre2_options_t_ptr opt);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial int cre2_opt_literal(cre2_options_t_ptr opt);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial int cre2_opt_never_nl(cre2_options_t_ptr opt);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial int cre2_opt_dot_nl(cre2_options_t_ptr opt);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial int cre2_opt_never_capture(cre2_options_t_ptr opt);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial int cre2_opt_case_sensitive(cre2_options_t_ptr opt);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial int cre2_opt_perl_classes(cre2_options_t_ptr opt);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial int cre2_opt_word_boundary(cre2_options_t_ptr opt);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial int cre2_opt_one_line(cre2_options_t_ptr opt);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I8)]
-    public static extern long cre2_opt_max_mem(cre2_options_t_ptr opt);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern cre2_encoding_t cre2_opt_encoding(cre2_options_t_ptr opt);
+    public static partial long cre2_opt_max_mem(cre2_options_t_ptr opt);
 
-    /** --------------------------------------------------------------------
-     ** Precompiled regular expressions.
-     ** ----------------------------------------------------------------- */
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial cre2_encoding_t cre2_opt_encoding(cre2_options_t_ptr opt);
 
+    // Precompiled regular expressions.
     [StructLayout(LayoutKind.Sequential)]
     public struct cre2_string_t
     {
@@ -177,49 +226,62 @@ static class Re2Ffi
         CRE2_ERROR_PATTERN_TOO_LARGE,
     }
 
-    /* construction and destruction */
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern cre2_regexp_t_ptr cre2_new(
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial cre2_regexp_t_ptr cre2_new(
         in byte pattern,
         int pattern_len,
         cre2_options_t_ptr opt);
 
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern void cre2_delete(IntPtr re);
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial void cre2_delete(IntPtr re);
 
-    /* regular expression inspection */
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern IntPtr cre2_pattern(cre2_regexp_t_ptr re);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern cre2_error_code_t cre2_error_code(cre2_regexp_t_ptr re);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int cre2_num_capturing_groups(cre2_regexp_t_ptr re);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int cre2_find_named_capturing_groups(
-        cre2_regexp_t_ptr re, [MarshalAs(UnmanagedType.LPStr)] string name);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int cre2_program_size(cre2_regexp_t_ptr re);
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial IntPtr cre2_pattern(cre2_regexp_t_ptr re);
 
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern cre2_named_groups_iter_t_ptr cre2_named_groups_iter_new(cre2_regexp_t_ptr re);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial cre2_error_code_t cre2_error_code(cre2_regexp_t_ptr re);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial int cre2_num_capturing_groups(cre2_regexp_t_ptr re);
+
+    // For string parameters, we now specify StringMarshalling = Utf8.
+    [LibraryImport("cre2", StringMarshalling = StringMarshalling.Utf8)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial int cre2_find_named_capturing_groups(cre2_regexp_t_ptr re, string name);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial int cre2_program_size(cre2_regexp_t_ptr re);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial cre2_named_groups_iter_t_ptr cre2_named_groups_iter_new(cre2_regexp_t_ptr re);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    public static extern unsafe bool cre2_named_groups_iter_next(cre2_named_groups_iter_t_ptr iter, out char* name, out int index);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern void cre2_named_groups_iter_delete(IntPtr iter);
+    public static unsafe partial bool cre2_named_groups_iter_next(cre2_named_groups_iter_t_ptr iter, out char* name, out int index);
 
-    /* invalidated by further re use */
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern IntPtr cre2_error_string(cre2_regexp_t_ptr re);
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern void cre2_error_arg(
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial void cre2_named_groups_iter_delete(IntPtr iter);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial IntPtr cre2_error_string(cre2_regexp_t_ptr re);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial void cre2_error_arg(
         cre2_regexp_t_ptr re,
-        [In, Out] ref cre2_string_t arg);
+        ref cre2_string_t arg);
 
-    /** --------------------------------------------------------------------
-     ** Main matching functions.
-     ** ----------------------------------------------------------------- */
-
+    // Main matching functions.
     public enum cre2_anchor_t
     {
         CRE2_UNANCHORED = 1,
@@ -227,67 +289,47 @@ static class Re2Ffi
         CRE2_ANCHOR_BOTH = 3
     }
 
-    /// <returns>
-    /// 0  for  no  match, 1 for  successful matching
-    /// </returns>
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern unsafe int cre2_match(cre2_regexp_t_ptr re,
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static unsafe partial int cre2_match(cre2_regexp_t_ptr re,
         byte* text, int textlen,
         int startpos, int endpos, cre2_anchor_t anchor,
-        [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 6)] cre2_string_t[] match, int nmatch);
+        cre2_string_t* match, int nmatch);
 
-    /// <returns>
-    /// 0  for  no  match, 1 for  successful
-    /// matching, 2 for wrong regexp
-    /// </returns>
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int cre2_easy_match(
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial int cre2_easy_match(
         in byte pattern, int pattern_len,
         in byte text, int text_len,
         [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 5)] cre2_string_t[] match, int nmatch);
 
-    /** --------------------------------------------------------------------
-     ** Set match.
-     ** ----------------------------------------------------------------- */
+    // Set match.
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial cre2_set_t_ptr cre2_set_new(cre2_options_t_ptr opt, cre2_anchor_t anchor);
 
-    /// <summary>
-    /// RE2::Set constructor
-    /// </summary>
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern cre2_set_t_ptr cre2_set_new(cre2_options_t_ptr opt, cre2_anchor_t anchor);
-    /// <summary>
-    /// RE2::Set destructor
-    /// </summary>
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern void cre2_set_delete(IntPtr set);
-    /// <summary>
-    /// Add a regex to the set. If invalid: store error message in error buffer.
-    /// Returns the index associated to this regex, -1 on error
-    /// </summary>
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int cre2_set_add(
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial void cre2_set_delete(IntPtr set);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial int cre2_set_add(
         cre2_set_t_ptr set,
         [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] byte[] pattern, UIntPtr pattern_len,
         [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 4)] byte[] error, UIntPtr error_len);
-    /// <summary>
-    /// Add pattern without NULL byte. Discard error message.
-    /// Returns the index associated to this regex, -1 on error
-    /// </summary>
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int cre2_set_add_simple(
-        cre2_set_t_ptr set, [MarshalAs(UnmanagedType.LPStr)] string pattern);
-    /// <summary>
-    /// Compile the regex set into a DFA. Must be called after add and before match.
-    /// Returns 1 on success, 0 on error
-    /// </summary>
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int cre2_set_compile(cre2_set_t_ptr set);
-    /// <summary>
-    /// Match the set of regex against text and store indices of matching regexes in match array.
-    /// Returns the number of regexes which match.
-    /// </summary>
-    [DllImport("cre2", CallingConvention = CallingConvention.Cdecl)]
-    public static extern UIntPtr cre2_set_match(
+
+    [LibraryImport("cre2", StringMarshalling = StringMarshalling.Utf8)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial int cre2_set_add_simple(cre2_set_t_ptr set, string pattern);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial int cre2_set_compile(cre2_set_t_ptr set);
+
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial UIntPtr cre2_set_match(
         cre2_set_t_ptr set, in byte text, UIntPtr text_len,
         [Out, MarshalAs(UnmanagedType.LPArray)] int[] match, UIntPtr match_len);
 }

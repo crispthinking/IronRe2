@@ -14,7 +14,6 @@ public class Regex : UnmanagedResource<RegexHandle>
     /// <summary>
     /// Create a regular expression from a given pattern
     /// </summary>
-    /// <param name="pattern">The pattern to match</param>
     public Regex(string pattern)
         : this(Encoding.UTF8.GetBytes(pattern))
     {
@@ -23,7 +22,6 @@ public class Regex : UnmanagedResource<RegexHandle>
     /// <summary>
     /// Create a regular expression from a given pattern, encoded as UTF8
     /// </summary>
-    /// <param name="pattern">The pattern to match, as bytes</param>
     public Regex(ReadOnlySpan<byte> pattern)
         : base(Compile(pattern, null))
     {
@@ -155,6 +153,7 @@ public class Regex : UnmanagedResource<RegexHandle>
         Re2Ffi.cre2_string_t[] captures = [];
 
         fixed (byte* hayBytesPtr = haystack)
+        fixed (Re2Ffi.cre2_string_t* capturesPtr = captures)
         {
             // TODO: Support anchor as a parameter
             int matchResult = Re2Ffi.cre2_match(
@@ -162,7 +161,7 @@ public class Regex : UnmanagedResource<RegexHandle>
                 hayBytesPtr, haystack.Length,
                 0, haystack.Length,
                 Re2Ffi.cre2_anchor_t.CRE2_UNANCHORED,
-                captures, 0);
+                capturesPtr, 0);
             return matchResult == 1;
         }
     }
@@ -370,14 +369,14 @@ public class Regex : UnmanagedResource<RegexHandle>
     {
         Re2Ffi.cre2_string_t[] captures = new Re2Ffi.cre2_string_t[numCaptures];
         fixed (byte* pinnedHayBytes = hayBytes)
+        fixed (Re2Ffi.cre2_string_t* capturesPtr = captures)
         {
-            // TODO: Support anchor as a parameter
             int matchResult = Re2Ffi.cre2_match(
                 RawHandle,
                 pinnedHayBytes, hayBytes.Length,
                 startByteIndex, hayBytes.Length,
                 Re2Ffi.cre2_anchor_t.CRE2_UNANCHORED,
-                captures, captures.Length);
+                capturesPtr, captures.Length);
             if (matchResult != 1)
             {
                 return [];
@@ -474,17 +473,13 @@ public class Regex : UnmanagedResource<RegexHandle>
     public static unsafe Match Find(
         ReadOnlySpan<byte> pattern, ReadOnlyMemory<byte> haystack)
     {
-        Re2Ffi.cre2_string_t[] captures =
-        [
-            new()
-        ];
-
+        // Use an explicit one-element array for captures.
+        Re2Ffi.cre2_string_t[] captures = new Re2Ffi.cre2_string_t[1];
         using MemoryHandle pin = haystack.Pin();
         int matchResult = Re2Ffi.cre2_easy_match(
             in MemoryMarshal.GetReference(pattern), pattern.Length,
             haystack.Span[0], haystack.Length,
-            captures, 1
-        );
+            captures, 1);
         if (matchResult != 1)
         {
             return Match.Empty;
