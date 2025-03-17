@@ -28,7 +28,7 @@ jobs:
     strategy:  
       fail-fast: false      # This allows the matrix jobs to run independently.
       matrix:  
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-22.04, windows-latest, macos-latest]
 
     steps:
       - uses: actions/checkout@v4
@@ -57,11 +57,11 @@ jobs:
           path: "**/*.trx"
 
       - name: Pack
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: ${{ matrix.os == 'ubuntu-22.04' }}
         run: dotnet pack IronRe2.sln --configuration Release --no-build --output Artifacts
 
       - name: Upload NuGet packages
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: ${{ matrix.os == 'ubuntu-22.04' }}
         uses: actions/upload-artifact@v4
         with:
           name: artifacts

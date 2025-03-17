@@ -19,7 +19,7 @@ jobs:
 
   publish:
     if: github.event_name == 'release'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: build
     steps:
       - name: Download Package
