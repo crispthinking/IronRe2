@@ -7,29 +7,31 @@ public abstract class UnmanagedResource<T> : IDisposable
     where T : Re2Handle
 {
     // Raw handle to the underlying unmanaged resource
-    private readonly T _rawHandle;
 
     /// <summary>
-    ///   Initialise the unmanaged resource with the given
-    ///   <paramref ref="rawHandle" />.
+    ///     Initialise the unmanaged resource with the given
+    ///     <paramref ref="rawHandle" />.
     /// </summary>
     /// <param name="rawHandle">The handle for this resource.</param>
     protected UnmanagedResource(T rawHandle)
     {
-        _rawHandle = rawHandle;
+        RawHandle = rawHandle;
     }
 
     /// <summary>
-    /// Get the handle to the underlying resource
+    ///     Get the handle to the underlying resource
     /// </summary>
-    internal T RawHandle => _rawHandle;
+    internal T RawHandle { get; }
 
     /// <inheritdoc />
-    public void Dispose() => Dispose(true);
+    public void Dispose()
+    {
+        Dispose(true);
+    }
 
     private void Dispose(bool disposing)
     {
-        _rawHandle.Dispose();
+        RawHandle.Dispose();
         GC.SuppressFinalize(this);
     }
 }

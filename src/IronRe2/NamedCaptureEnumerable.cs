@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace IronRe2;
 
 /// <summary>
-/// Enumerable of named capture groups
+///     Enumerable of named capture groups
 /// </summary>
 internal class NamedCaptureEnumerable(Regex regex) : IEnumerable<NamedCaptureGroup>
 {
@@ -13,5 +13,8 @@ internal class NamedCaptureEnumerable(Regex regex) : IEnumerable<NamedCaptureGro
         return new NamedCaptureEnumerator(regex);
     }
 
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
 }

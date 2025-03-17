@@ -1,7 +1,7 @@
 namespace IronRe2;
 
 /// <summary>
-///  Named Capture Group Information
+///     Named Capture Group Information
 /// </summary>
 public class NamedCaptureGroup
 {
@@ -12,12 +12,12 @@ public class NamedCaptureGroup
     }
 
     /// <summary>
-    ///  The name of the capture group
+    ///     The name of the capture group
     /// </summary>
     public string Name { get; }
 
     /// <summary>
-    /// The index in the captures array for this
+    ///     The index in the captures array for this
     /// </summary>
     public int Index { get; }
 }

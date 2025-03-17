@@ -1,12 +1,12 @@
 namespace IronRe2;
 
 /// <summary>
-///  Regex syntax and behaviour options.
+///     Regex syntax and behaviour options.
 /// </summary>
 public class Options : UnmanagedResource<OptionsHandle>
 {
     /// <summary>
-    ///   Create a new <see cref="Options" /> instance with the defaults.
+    ///     Create a new <see cref="Options" /> instance with the defaults.
     /// </summary>
     public Options()
         : base(Re2Ffi.cre2_opt_new())
@@ -14,7 +14,7 @@ public class Options : UnmanagedResource<OptionsHandle>
     }
 
     /// <summary>
-    /// restrict regexps to POSIX egrep syntax
+    ///     restrict regexps to POSIX egrep syntax
     /// </summary>
     public bool PosixSyntax
     {
@@ -23,7 +23,7 @@ public class Options : UnmanagedResource<OptionsHandle>
     }
 
     /// <summary>
-    ///  search for longest match, not first match
+    ///     search for longest match, not first match
     /// </summary>
     public bool LongestMatch
     {
@@ -32,7 +32,7 @@ public class Options : UnmanagedResource<OptionsHandle>
     }
 
     /// <summary>
-    ///  log syntax and execution errors to ERROR
+    ///     log syntax and execution errors to ERROR
     /// </summary>
     public bool LogErrors
     {
@@ -41,7 +41,7 @@ public class Options : UnmanagedResource<OptionsHandle>
     }
 
     /// <summary>
-    ///  interpret string as literal, not regexp
+    ///     interpret string as literal, not regexp
     /// </summary>
     public bool Literal
     {
@@ -50,7 +50,7 @@ public class Options : UnmanagedResource<OptionsHandle>
     }
 
     /// <summary>
-    ///  never match \n, even if it is in regexp
+    ///     never match \n, even if it is in regexp
     /// </summary>
     public bool NeverNewline
     {
@@ -59,7 +59,7 @@ public class Options : UnmanagedResource<OptionsHandle>
     }
 
     /// <summary>
-    ///  dot matches everything including new line
+    ///     dot matches everything including new line
     /// </summary>
     public bool DotNewline
     {
@@ -68,7 +68,7 @@ public class Options : UnmanagedResource<OptionsHandle>
     }
 
     /// <summary>
-    ///  parse all parens as non-capturing
+    ///     parse all parens as non-capturing
     /// </summary>
     public bool NeverCapture
     {
@@ -77,10 +77,10 @@ public class Options : UnmanagedResource<OptionsHandle>
     }
 
     /// <summary>
-    ///  match is case-sensitive
-    ///  <para>
-    ///  regexp can override with (?i) unless in posix_syntax mode
-    ///  </para>
+    ///     match is case-sensitive
+    ///     <para>
+    ///         regexp can override with (?i) unless in posix_syntax mode
+    ///     </para>
     /// </summary>
     public bool CaseSensitive
     {
@@ -89,7 +89,7 @@ public class Options : UnmanagedResource<OptionsHandle>
     }
 
     /// <summary>
-    ///  allow Perl's \d \s \w \D \S \W
+    ///     allow Perl's \d \s \w \D \S \W
     /// </summary>
     public bool PerlClasses
     {
@@ -98,7 +98,7 @@ public class Options : UnmanagedResource<OptionsHandle>
     }
 
     /// <summary>
-    ///  allow Perl's \b \B (word boundary and not)
+    ///     allow Perl's \b \B (word boundary and not)
     /// </summary>
     public bool WordBoundary
     {
@@ -107,7 +107,7 @@ public class Options : UnmanagedResource<OptionsHandle>
     }
 
     /// <summary>
-    ///  ^ and $ only match beginning and end of text
+    ///     ^ and $ only match beginning and end of text
     /// </summary>
     public bool OneLine
     {
@@ -116,19 +116,18 @@ public class Options : UnmanagedResource<OptionsHandle>
     }
 
     /// <summary>
-    ///  Regex memory budget
-    ///  <para>
-    ///  The RE2 memory budget is statically divided between the two
-    ///  Progs and then the DFAs: two thirds to the forward Prog
-    ///  and one third to the reverse Prog.  The forward Prog gives half
-    ///  of what it has left over to each of its DFAs.  The reverse Prog
-    ///  gives it all to its longest-match DFA.
-    ///  </para>
-    ///
-    ///  <para>
-    ///  Once a DFA fills its budget, it flushes its cache and starts over.
-    ///  If this happens too often, RE2 falls back on the NFA implementation.
-    ///  </para>
+    ///     Regex memory budget
+    ///     <para>
+    ///         The RE2 memory budget is statically divided between the two
+    ///         Progs and then the DFAs: two thirds to the forward Prog
+    ///         and one third to the reverse Prog.  The forward Prog gives half
+    ///         of what it has left over to each of its DFAs.  The reverse Prog
+    ///         gives it all to its longest-match DFA.
+    ///     </para>
+    ///     <para>
+    ///         Once a DFA fills its budget, it flushes its cache and starts over.
+    ///         If this happens too often, RE2 falls back on the NFA implementation.
+    ///     </para>
     /// </summary>
     public long MaxMemory
     {
@@ -137,23 +136,19 @@ public class Options : UnmanagedResource<OptionsHandle>
     }
 
     /// <summary>
-    ///  text and pattern are UTF-8; otherwise Latin-1
+    ///     text and pattern are UTF-8; otherwise Latin-1
     /// </summary>
     public RegexEncoding Encoding
     {
-        get
-        {
-            return Re2Ffi.cre2_opt_encoding(RawHandle) switch
+        get =>
+            Re2Ffi.cre2_opt_encoding(RawHandle) switch
             {
                 Re2Ffi.cre2_encoding_t.CRE2_Latin1 => RegexEncoding.Latin1,
                 Re2Ffi.cre2_encoding_t.CRE2_UTF8 or Re2Ffi.cre2_encoding_t.CRE2_UNKNOWN => RegexEncoding.Utf8,
                 _ => RegexEncoding.Utf8
             };
-        }
         set => Re2Ffi.cre2_opt_set_encoding(
             RawHandle,
-            value == RegexEncoding.Latin1 ?
-                Re2Ffi.cre2_encoding_t.CRE2_Latin1 :
-                Re2Ffi.cre2_encoding_t.CRE2_UTF8);
+            value == RegexEncoding.Latin1 ? Re2Ffi.cre2_encoding_t.CRE2_Latin1 : Re2Ffi.cre2_encoding_t.CRE2_UTF8);
     }
 }

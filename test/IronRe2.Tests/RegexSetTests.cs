@@ -40,7 +40,7 @@ public class RegexSetTests
             "."
         ], new Options
         {
-            Literal = true,
+            Literal = true
         });
 
         //When
@@ -64,7 +64,7 @@ public class RegexSetTests
             "."u8.ToArray()
         ], new Options
         {
-            Literal = true,
+            Literal = true
         });
 
         //When

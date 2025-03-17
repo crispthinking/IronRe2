@@ -1,7 +1,7 @@
 namespace IronRe2;
 
 /// <summary>
-/// Safe handle wrapper around <c>cre2_set_t_ptr</c>.
+///     Safe handle wrapper around <c>cre2_set_t_ptr</c>.
 /// </summary>
 public sealed class RegexSetHandle : Re2Handle
 {

@@ -1,8 +1,10 @@
 ﻿using System;
-using Xunit;
 using JetBrains.dotMemoryUnit;
 using JetBrains.dotMemoryUnit.Kernel;
-using Xunit.Abstractions; // requires the dotMemory Unit package
+using Xunit;
+using Xunit.Abstractions;
+
+// requires the dotMemory Unit package
 
 namespace IronRe2.Tests;
 
@@ -16,9 +18,9 @@ public class MemoryLeakTests
     }
 
     /// <summary>
-    /// This test creates many Regex and RegexSet objects.
-    /// It first captures a memory snapshot, then runs the workload,
-    /// and finally compares the difference to assert that no additional instances remain.
+    ///     This test creates many Regex and RegexSet objects.
+    ///     It first captures a memory snapshot, then runs the workload,
+    ///     and finally compares the difference to assert that no additional instances remain.
     /// </summary>
     [Fact]
     [DotMemoryUnit(FailIfRunWithoutSupport = false)]
@@ -60,16 +62,17 @@ public class MemoryLeakTests
             using Regex negativeRegex = new(@"\d+");
             negativeRegex.IsMatch("no digits here");
         }
+
         // Ensure any previous allocations are cleaned up.
         GC.Collect();
         GC.WaitForPendingFinalizers();
-        GC.Collect();   // Ensure any previous allocations are cleaned up.
+        GC.Collect(); // Ensure any previous allocations are cleaned up.
         GC.Collect();
         GC.WaitForPendingFinalizers();
-        GC.Collect();   // Ensure any previous allocations are cleaned up.
+        GC.Collect(); // Ensure any previous allocations are cleaned up.
         GC.Collect();
         GC.WaitForPendingFinalizers();
-        GC.Collect();   // Ensure any previous allocations are cleaned up.
+        GC.Collect(); // Ensure any previous allocations are cleaned up.
         GC.Collect();
         GC.WaitForPendingFinalizers();
         GC.Collect();

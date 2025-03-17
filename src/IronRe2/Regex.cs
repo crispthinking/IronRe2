@@ -1,5 +1,4 @@
 using System;
-using System.Buffers;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -7,12 +6,12 @@ using System.Text;
 namespace IronRe2;
 
 /// <summary>
-/// The main regular expression class
+///     The main regular expression class
 /// </summary>
 public class Regex : UnmanagedResource<RegexHandle>
 {
     /// <summary>
-    /// Create a regular expression from a given pattern
+    ///     Create a regular expression from a given pattern
     /// </summary>
     public Regex(string pattern)
         : this(Encoding.UTF8.GetBytes(pattern))
@@ -20,7 +19,7 @@ public class Regex : UnmanagedResource<RegexHandle>
     }
 
     /// <summary>
-    /// Create a regular expression from a given pattern, encoded as UTF8
+    ///     Create a regular expression from a given pattern, encoded as UTF8
     /// </summary>
     public Regex(ReadOnlySpan<byte> pattern)
         : base(Compile(pattern, null))
@@ -28,7 +27,7 @@ public class Regex : UnmanagedResource<RegexHandle>
     }
 
     /// <summary>
-    /// Create a regular expression from a given pattern
+    ///     Create a regular expression from a given pattern
     /// </summary>
     /// <param name="pattern">The pattern to match</param>
     /// <param name="options">The compilation options to use</param>
@@ -38,7 +37,7 @@ public class Regex : UnmanagedResource<RegexHandle>
     }
 
     /// <summary>
-    /// Create a regular expression from a given pattern, encoded as UTF8
+    ///     Create a regular expression from a given pattern, encoded as UTF8
     /// </summary>
     /// <param name="pattern">The pattern to match, as bytes</param>
     /// <param name="options">The compilation options to use</param>
@@ -48,16 +47,39 @@ public class Regex : UnmanagedResource<RegexHandle>
     }
 
     /// <summary>
-    /// Compile the regular expression
+    ///     Get the pattern for this regex instance
+    /// </summary>
+    public string Pattern
+    {
+        get
+        {
+            var pattern = Re2Ffi.cre2_pattern(RawHandle);
+            return Marshal.PtrToStringAnsi(pattern) ?? string.Empty;
+        }
+    }
+
+    /// <summary>
+    ///     Get the size of the compiled automata
+    /// </summary>
+    public int ProgramSize => Re2Ffi.cre2_program_size(RawHandle);
+
+    /// <summary>
+    ///     Get the number of capture groups in this pattern
+    /// </summary>
+    public int CaptureGroupCount =>
+        Re2Ffi.cre2_num_capturing_groups(RawHandle);
+
+    /// <summary>
+    ///     Compile the regular expression
     /// </summary>
     /// <param name="patternBytes">
-    /// The regex pattern, as a UTF-8 byte array
+    ///     The regex pattern, as a UTF-8 byte array
     /// </param>
     /// <param name="opts">
-    /// The regex compilation options, or <c>null</c> to use the default
+    ///     The regex compilation options, or <c>null</c> to use the default
     /// </param>
     /// <returns>
-    /// The raw handle to the Regex, or throws on compilation failure
+    ///     The raw handle to the Regex, or throws on compilation failure
     /// </returns>
     private static RegexHandle Compile(ReadOnlySpan<byte> patternBytes, Options? opts)
     {
@@ -93,6 +115,7 @@ public class Regex : UnmanagedResource<RegexHandle>
                 throw new RegexCompilationException(
                     "Unknown error compiling regex", offendingPortion);
             }
+
             throw new RegexCompilationException(error, offendingPortion);
         }
 
@@ -100,39 +123,18 @@ public class Regex : UnmanagedResource<RegexHandle>
     }
 
     /// <summary>
-    ///  Get the pattern for this regex instance
-    /// </summary>
-    public string Pattern
-    {
-        get
-        {
-            var pattern = Re2Ffi.cre2_pattern(RawHandle);
-            return Marshal.PtrToStringAnsi(pattern) ?? string.Empty;
-        }
-    }
-
-    /// <summary>
-    ///  Get the size of the compiled automata
-    /// </summary>
-    public int ProgramSize => Re2Ffi.cre2_program_size(RawHandle);
-
-    /// <summary>
-    ///  Get the number of capture groups in this pattern
-    /// </summary>
-    public int CaptureGroupCount =>
-        Re2Ffi.cre2_num_capturing_groups(RawHandle);
-
-    /// <summary>
-    ///  Find a capture group index by name
+    ///     Find a capture group index by name
     /// </summary>
     /// <param name="name">The named capture to search for</param>
     /// <returns>The capture group index, or -1 if no named group exists</returns>
-    public int FindNamedCapture(string name) =>
-        Re2Ffi.cre2_find_named_capturing_groups(RawHandle, name);
+    public int FindNamedCapture(string name)
+    {
+        return Re2Ffi.cre2_find_named_capturing_groups(RawHandle, name);
+    }
 
     /// <summary>
-    /// Checks if the pattern matches somewhere in the given
-    /// <paramref name="haystack" />.
+    ///     Checks if the pattern matches somewhere in the given
+    ///     <paramref name="haystack" />.
     /// </summary>
     /// <param name="haystack">The text to find the pattern in</param>
     /// <returns>True if the pattern matches, false otherwise.</returns>
@@ -143,8 +145,8 @@ public class Regex : UnmanagedResource<RegexHandle>
     }
 
     /// <summary>
-    /// Checks if the pattern matches somewhere in the given
-    /// <paramref name="haystack" />.
+    ///     Checks if the pattern matches somewhere in the given
+    ///     <paramref name="haystack" />.
     /// </summary>
     /// <param name="haystack">The text to find the pattern in</param>
     /// <returns>True if the pattern matches, false otherwise.</returns>
@@ -167,15 +169,18 @@ public class Regex : UnmanagedResource<RegexHandle>
     }
 
     /// <summary>
-    ///  Find the pattern and return the extent of the match
+    ///     Find the pattern and return the extent of the match
     /// </summary>
     /// <param name="haystack">The string to search for the pattern</param>
     /// <returns>The match data</returns>
-    public Match Find(string haystack) => Find(haystack, 0);
+    public Match Find(string haystack)
+    {
+        return Find(haystack, 0);
+    }
 
     /// <summary>
-    /// Find the pattern starting at the given offset and return the extent
-    /// of the match
+    ///     Find the pattern starting at the given offset and return the extent
+    ///     of the match
     /// </summary>
     /// <param name="haystack">The string to search for the pattern</param>
     /// <param name="offset">The offset to start the search at</param>
@@ -187,15 +192,18 @@ public class Regex : UnmanagedResource<RegexHandle>
     }
 
     /// <summary>
-    ///  Find the pattern and return the extent of the match
+    ///     Find the pattern and return the extent of the match
     /// </summary>
     /// <param name="hayBytes">The string to search for the pattern</param>
     /// <returns>The match data</returns>
-    public Match Find(ReadOnlyMemory<byte> hayBytes) => Find(hayBytes, 0);
+    public Match Find(ReadOnlyMemory<byte> hayBytes)
+    {
+        return Find(hayBytes, 0);
+    }
 
     /// <summary>
-    /// Find the pattern starting at the given offset and return the extent
-    /// of the match
+    ///     Find the pattern starting at the given offset and return the extent
+    ///     of the match
     /// </summary>
     /// <param name="hayBytes">The string to search for the pattern</param>
     /// <param name="offset">The offset to start the search at</param>
@@ -203,12 +211,11 @@ public class Regex : UnmanagedResource<RegexHandle>
     public Match Find(ReadOnlyMemory<byte> hayBytes, int offset)
     {
         var ranges = RawMatch(hayBytes.Span, offset, 1);
-        return (ranges.Length != 1) ?
-            Match.Empty : new Match(hayBytes, ranges[0]);
+        return ranges.Length != 1 ? Match.Empty : new Match(hayBytes, ranges[0]);
     }
 
     /// <summary>
-    /// Find all Non-Overlapping Occurrences of the Pattern
+    ///     Find all Non-Overlapping Occurrences of the Pattern
     /// </summary>
     /// <param name="haystack">The string to search for the pattern</param>
     /// <returns>An enumerable of the matches</returns>
@@ -219,7 +226,7 @@ public class Regex : UnmanagedResource<RegexHandle>
     }
 
     /// <summary>
-    /// Find all Non-Overlapping Occurrences of the Pattern
+    ///     Find all Non-Overlapping Occurrences of the Pattern
     /// </summary>
     /// <param name="haystack">The string to search for the pattern</param>
     /// <returns>An enumerable of the matches</returns>
@@ -231,8 +238,7 @@ public class Regex : UnmanagedResource<RegexHandle>
             var match = Find(haystack, offset);
             if (match.Matched)
             {
-                offset = match.Start == match.End ?
-                    (int)match.End + 1 : (int)match.End;
+                offset = match.Start == match.End ? (int)match.End + 1 : (int)match.End;
                 yield return match;
             }
             else
@@ -243,7 +249,7 @@ public class Regex : UnmanagedResource<RegexHandle>
     }
 
     /// <summary>
-    /// Get an Iterator over the Named Captures in the Pattern
+    ///     Get an Iterator over the Named Captures in the Pattern
     /// </summary>
     /// <returns>An enumerable of the named capture groups</returns>
     public IEnumerable<NamedCaptureGroup> NamedCaptures()
@@ -252,26 +258,29 @@ public class Regex : UnmanagedResource<RegexHandle>
     }
 
     /// <summary>
-    /// Find with Captures
-    /// <para>
-    /// This is the most expensive of the match options but provides the
-    /// richest information about the match. The returned
-    /// <see cref="IronRe2.Captures" /> object contains the match position
-    /// of each of the regex's capturing groups.
-    /// </para>
+    ///     Find with Captures
+    ///     <para>
+    ///         This is the most expensive of the match options but provides the
+    ///         richest information about the match. The returned
+    ///         <see cref="IronRe2.Captures" /> object contains the match position
+    ///         of each of the regex's capturing groups.
+    ///     </para>
     /// </summary>
     /// <param name="haystack">The string to search for the pattern</param>
     /// <returns>The captures data</returns>
-    public Captures Captures(string haystack) => Captures(haystack, 0);
+    public Captures Captures(string haystack)
+    {
+        return Captures(haystack, 0);
+    }
 
     /// <summary>
-    /// Find with Captures, starting from a given offset
-    /// <para>
-    /// This is the most expensive of the match options but provides the
-    /// richest information about the match. The returned
-    /// <see cref="IronRe2.Captures" /> object contains the match position
-    /// of each of the regex's capturing groups.
-    /// </para>
+    ///     Find with Captures, starting from a given offset
+    ///     <para>
+    ///         This is the most expensive of the match options but provides the
+    ///         richest information about the match. The returned
+    ///         <see cref="IronRe2.Captures" /> object contains the match position
+    ///         of each of the regex's capturing groups.
+    ///     </para>
     /// </summary>
     /// <param name="haystack">The string to search for the pattern</param>
     /// <param name="offset">The offest to start searching from</param>
@@ -283,27 +292,29 @@ public class Regex : UnmanagedResource<RegexHandle>
     }
 
     /// <summary>
-    /// Find with Captures
-    /// <para>
-    /// This is the most expensive of the match options but provides the
-    /// richest information about the match. The returned
-    /// <see cref="IronRe2.Captures" /> object contains the match position
-    /// of each of the regex's capturing groups.
-    /// </para>
+    ///     Find with Captures
+    ///     <para>
+    ///         This is the most expensive of the match options but provides the
+    ///         richest information about the match. The returned
+    ///         <see cref="IronRe2.Captures" /> object contains the match position
+    ///         of each of the regex's capturing groups.
+    ///     </para>
     /// </summary>
     /// <param name="haystack">The string to search for the pattern</param>
     /// <returns>The captures data</returns>
-    public Captures Captures(ReadOnlyMemory<byte> haystack) =>
-        Captures(haystack, 0);
+    public Captures Captures(ReadOnlyMemory<byte> haystack)
+    {
+        return Captures(haystack, 0);
+    }
 
     /// <summary>
-    /// Find with Captures, starting from a given offset
-    /// <para>
-    /// This is the most expensive of the match options but provides the
-    /// richest information about the match. The returned
-    /// <see cref="IronRe2.Captures" /> object contains the match position
-    /// of each of the regex's capturing groups.
-    /// </para>
+    ///     Find with Captures, starting from a given offset
+    ///     <para>
+    ///         This is the most expensive of the match options but provides the
+    ///         richest information about the match. The returned
+    ///         <see cref="IronRe2.Captures" /> object contains the match position
+    ///         of each of the regex's capturing groups.
+    ///     </para>
     /// </summary>
     /// <param name="haystack">The string to search for the pattern</param>
     /// <param name="offset">The offest to start searching from</param>
@@ -311,12 +322,11 @@ public class Regex : UnmanagedResource<RegexHandle>
     public Captures Captures(ReadOnlyMemory<byte> haystack, int offset)
     {
         var ranges = RawMatch(haystack.Span, offset, CaptureGroupCount + 1);
-        return (ranges.Length == 0) ?
-            IronRe2.Captures.Empty : new Captures(haystack, ranges);
+        return ranges.Length == 0 ? IronRe2.Captures.Empty : new Captures(haystack, ranges);
     }
 
     /// <summary>
-    /// Find all the non-overlapping sets of captures in the given text.
+    ///     Find all the non-overlapping sets of captures in the given text.
     /// </summary>
     /// <param name="haystack">The string to search for the pattern</param>
     /// <returns>An iterator of the captures at each match location</returns>
@@ -327,7 +337,7 @@ public class Regex : UnmanagedResource<RegexHandle>
     }
 
     /// <summary>
-    /// Find all the non-overlapping sets of captures in the given text.
+    ///     Find all the non-overlapping sets of captures in the given text.
     /// </summary>
     /// <param name="haystack">The string to search for the pattern</param>
     /// <returns>An iterator of the captures at each match location</returns>
@@ -339,8 +349,7 @@ public class Regex : UnmanagedResource<RegexHandle>
             var caps = Captures(haystack, offset);
             if (caps.Matched)
             {
-                offset = caps.Start == caps.End ?
-                    (int)caps.End + 1 : (int)caps.End;
+                offset = caps.Start == caps.End ? (int)caps.End + 1 : (int)caps.End;
                 yield return caps;
             }
             else
@@ -351,14 +360,15 @@ public class Regex : UnmanagedResource<RegexHandle>
     }
 
     /// <summary>
-    /// Managed wrapper around the raw match API.
-    /// <para>From the RE2 docs for the underlying function:
-    /// Don't ask for more match information than you will use:
-    /// runs much faster with nsubmatch == 1 than nsubmatch > 1, and
-    /// runs even faster if nsubmatch == 0.
-    /// Doesn't make sense to use nsubmatch > 1 + NumberOfCapturingGroups(),
-    /// but will be handled correctly.
-    /// </para>
+    ///     Managed wrapper around the raw match API.
+    ///     <para>
+    ///         From the RE2 docs for the underlying function:
+    ///         Don't ask for more match information than you will use:
+    ///         runs much faster with nsubmatch == 1 than nsubmatch > 1, and
+    ///         runs even faster if nsubmatch == 0.
+    ///         Doesn't make sense to use nsubmatch > 1 + NumberOfCapturingGroups(),
+    ///         but will be handled correctly.
+    ///     </para>
     /// </summary>
     /// <param name="hayBytes">The string to match the pattern against</param>
     /// <param name="startByteIndex">The byte offset to start at</param>
@@ -391,7 +401,7 @@ public class Regex : UnmanagedResource<RegexHandle>
     }
 
     /// <summary>
-    /// cre2 Strings to Byte Ranges
+    ///     cre2 Strings to Byte Ranges
     /// </summary>
     /// <param name="captures">The captures to convert to byte ranges</param>
     /// <param name="hayBasePtr">The base pointer of the search text.</param>
@@ -407,12 +417,13 @@ public class Regex : UnmanagedResource<RegexHandle>
             var start = c.data.ToInt64() - hayBase;
             ranges[i] = new ByteRange(start, start + c.length);
         }
+
         return ranges;
     }
 
     /// <summary>
-    /// Easy IsMatch
-    /// <para>Checks if the given pattern exists in the given haystack</para>
+    ///     Easy IsMatch
+    ///     <para>Checks if the given pattern exists in the given haystack</para>
     /// </summary>
     /// <param name="pattern">The regular expression to search for</param>
     /// <param name="haystack">The text to find the pattern in</param>
@@ -425,8 +436,8 @@ public class Regex : UnmanagedResource<RegexHandle>
     }
 
     /// <summary>
-    /// Easy IsMatch
-    /// <para>Checks if the given pattern exists in the given haystack</para>
+    ///     Easy IsMatch
+    ///     <para>Checks if the given pattern exists in the given haystack</para>
     /// </summary>
     /// <param name="pattern">The regular expression to search for</param>
     /// <param name="haystack">The text to find the pattern in</param>
@@ -443,11 +454,12 @@ public class Regex : UnmanagedResource<RegexHandle>
     }
 
     /// <summary>
-    /// Easy Find
-    /// <para>Finds the extent of the match of <paramref name="pattern" /> in
-    /// the given <paramref name="haystack" />. To check if a given pattern
-    /// matches without needing to find the rage use <see cref="IsMatch(String)" />.
-    /// </para>
+    ///     Easy Find
+    ///     <para>
+    ///         Finds the extent of the match of <paramref name="pattern" /> in
+    ///         the given <paramref name="haystack" />. To check if a given pattern
+    ///         matches without needing to find the rage use <see cref="IsMatch(String)" />.
+    ///     </para>
     /// </summary>
     /// <param name="pattern">The regular expression to search for</param>
     /// <param name="haystack">The text to find the pattern in</param>
@@ -460,11 +472,12 @@ public class Regex : UnmanagedResource<RegexHandle>
     }
 
     /// <summary>
-    /// Easy Find
-    /// <para>Finds the extent of the match of <paramref name="pattern" /> in
-    /// the given <paramref name="haystack" />. To check if a given pattern
-    /// matches without needing to find the rage use <see cref="IsMatch(ReadOnlySpan&lt;byte&gt;)" />.
-    /// </para>
+    ///     Easy Find
+    ///     <para>
+    ///         Finds the extent of the match of <paramref name="pattern" /> in
+    ///         the given <paramref name="haystack" />. To check if a given pattern
+    ///         matches without needing to find the rage use <see cref="IsMatch(ReadOnlySpan&lt;byte&gt;)" />.
+    ///     </para>
     /// </summary>
     /// <param name="pattern">The regular expression to search for</param>
     /// <param name="haystack">The text to find the pattern in</param>

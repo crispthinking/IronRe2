@@ -9,11 +9,107 @@ using cre2_named_groups_iter_t_ptr = IronRe2.NamedCaptureIteratorHandle;
 namespace IronRe2;
 
 /// <summary>
-/// This class contains the P/Invoke definitions for the cre2 library's
-/// public interface.
+///     This class contains the P/Invoke definitions for the cre2 library's
+///     public interface.
 /// </summary>
-static unsafe partial class Re2Ffi
+internal static unsafe partial class Re2Ffi
 {
+    // Main matching functions.
+    public enum cre2_anchor_t
+    {
+        CRE2_UNANCHORED = 1,
+        CRE2_ANCHOR_START = 2,
+        CRE2_ANCHOR_BOTH = 3
+    }
+
+    // Regular expressions configuration options.
+    public enum cre2_encoding_t
+    {
+        CRE2_UNKNOWN = 0, // should never happen
+        CRE2_UTF8 = 1,
+        CRE2_Latin1 = 2
+    }
+
+    /// <summary>
+    ///     This definition  must be  kept in sync  with the definition  of
+    ///     "enum ErrorCode" in the file "re2.h" of the original RE2
+    ///     distribution.
+    /// </summary>
+    public enum cre2_error_code_t
+    {
+        CRE2_NO_ERROR = 0,
+
+        /// <summary>
+        ///     unexpected error
+        /// </summary>
+        CRE2_ERROR_INTERNAL,
+
+        /// <summary>
+        ///     bad escape sequence
+        /// </summary>
+        CRE2_ERROR_BAD_ESCAPE,
+
+        /// <summary>
+        ///     bad character class
+        /// </summary>
+        CRE2_ERROR_BAD_CHAR_CLASS,
+
+        /// <summary>
+        ///     bad character class range
+        /// </summary>
+        CRE2_ERROR_BAD_CHAR_RANGE,
+
+        /// <summary>
+        ///     missing closing ]
+        /// </summary>
+        CRE2_ERROR_MISSING_BRACKET,
+
+        /// <summary>
+        ///     missing closing )
+        /// </summary>
+        CRE2_ERROR_MISSING_PAREN,
+
+        /// <summary>
+        ///     trailing \ at end of regexp
+        /// </summary>
+        CRE2_ERROR_TRAILING_BACKSLASH,
+
+        /// <summary>
+        ///     repeat argument missing, e.g. "*"
+        /// </summary>
+        CRE2_ERROR_REPEAT_ARGUMENT,
+
+        /// <summary>
+        ///     bad repetition argument
+        /// </summary>
+        CRE2_ERROR_REPEAT_SIZE,
+
+        /// <summary>
+        ///     bad repetition operator
+        /// </summary>
+        CRE2_ERROR_REPEAT_OP,
+
+        /// <summary>
+        ///     bad perl operator
+        /// </summary>
+        CRE2_ERROR_BAD_PERL_OP,
+
+        /// <summary>
+        ///     invalid UTF-8 in regexp
+        /// </summary>
+        CRE2_ERROR_BAD_UTF8,
+
+        /// <summary>
+        ///     bad named capture group
+        /// </summary>
+        CRE2_ERROR_BAD_NAMED_CAPTURE,
+
+        /// <summary>
+        ///     pattern too large (compile failed)
+        /// </summary>
+        CRE2_ERROR_PATTERN_TOO_LARGE
+    }
+
     // Version functions.
     [LibraryImport("cre2")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -30,14 +126,6 @@ static unsafe partial class Re2Ffi
     [LibraryImport("cre2")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial IntPtr cre2_version_interface_age();
-
-    // Regular expressions configuration options.
-    public enum cre2_encoding_t
-    {
-        CRE2_UNKNOWN = 0,    // should never happen
-        CRE2_UTF8 = 1,
-        CRE2_Latin1 = 2
-    }
 
     [LibraryImport("cre2")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -152,80 +240,6 @@ static unsafe partial class Re2Ffi
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial cre2_encoding_t cre2_opt_encoding(cre2_options_t_ptr opt);
 
-    // Precompiled regular expressions.
-    [StructLayout(LayoutKind.Sequential)]
-    public struct cre2_string_t
-    {
-        public IntPtr data;
-        public int length;
-    };
-
-    /// <summary>
-    /// This definition  must be  kept in sync  with the definition  of
-    /// "enum ErrorCode" in the file "re2.h" of the original RE2
-    /// distribution.
-    /// </summary>
-    public enum cre2_error_code_t
-    {
-        CRE2_NO_ERROR = 0,
-        /// <summary>
-        /// unexpected error
-        /// </summary>
-        CRE2_ERROR_INTERNAL,
-        /// <summary>
-        /// bad escape sequence
-        /// </summary>
-        CRE2_ERROR_BAD_ESCAPE,
-        /// <summary>
-        /// bad character class
-        /// </summary>
-        CRE2_ERROR_BAD_CHAR_CLASS,
-        /// <summary>
-        /// bad character class range
-        /// </summary>
-        CRE2_ERROR_BAD_CHAR_RANGE,
-        /// <summary>
-        /// missing closing ]
-        /// </summary>
-        CRE2_ERROR_MISSING_BRACKET,
-        /// <summary>
-        /// missing closing )
-        /// </summary>
-        CRE2_ERROR_MISSING_PAREN,
-        /// <summary>
-        /// trailing \ at end of regexp
-        /// </summary>
-        CRE2_ERROR_TRAILING_BACKSLASH,
-        /// <summary>
-        /// repeat argument missing, e.g. "*"
-        /// </summary>
-        CRE2_ERROR_REPEAT_ARGUMENT,
-        /// <summary>
-        /// bad repetition argument
-        /// </summary>
-        CRE2_ERROR_REPEAT_SIZE,
-        /// <summary>
-        /// bad repetition operator
-        /// </summary>
-        CRE2_ERROR_REPEAT_OP,
-        /// <summary>
-        /// bad perl operator
-        /// </summary>
-        CRE2_ERROR_BAD_PERL_OP,
-        /// <summary>
-        /// invalid UTF-8 in regexp
-        /// </summary>
-        CRE2_ERROR_BAD_UTF8,
-        /// <summary>
-        /// bad named capture group
-        /// </summary>
-        CRE2_ERROR_BAD_NAMED_CAPTURE,
-        /// <summary>
-        /// pattern too large (compile failed)
-        /// </summary>
-        CRE2_ERROR_PATTERN_TOO_LARGE,
-    }
-
     [LibraryImport("cre2")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial cre2_regexp_t_ptr cre2_new(
@@ -265,7 +279,8 @@ static unsafe partial class Re2Ffi
     [LibraryImport("cre2")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    public static unsafe partial bool cre2_named_groups_iter_next(cre2_named_groups_iter_t_ptr iter, out char* name, out int index);
+    public static unsafe partial bool cre2_named_groups_iter_next(cre2_named_groups_iter_t_ptr iter, out char* name,
+        out int index);
 
     [LibraryImport("cre2")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -281,14 +296,6 @@ static unsafe partial class Re2Ffi
         cre2_regexp_t_ptr re,
         ref cre2_string_t arg);
 
-    // Main matching functions.
-    public enum cre2_anchor_t
-    {
-        CRE2_UNANCHORED = 1,
-        CRE2_ANCHOR_START = 2,
-        CRE2_ANCHOR_BOTH = 3
-    }
-
     [LibraryImport("cre2")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static unsafe partial int cre2_match(cre2_regexp_t_ptr re,
@@ -301,7 +308,8 @@ static unsafe partial class Re2Ffi
     public static partial int cre2_easy_match(
         in byte pattern, int pattern_len,
         in byte text, int text_len,
-        [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 5)] cre2_string_t[] match, int nmatch);
+        [Out] [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 5)]
+        cre2_string_t[] match, int nmatch);
 
     // Set match.
     [LibraryImport("cre2")]
@@ -316,8 +324,10 @@ static unsafe partial class Re2Ffi
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial int cre2_set_add(
         cre2_set_t_ptr set,
-        [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] byte[] pattern, UIntPtr pattern_len,
-        [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 4)] byte[] error, UIntPtr error_len);
+        [In] [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)]
+        byte[] pattern, UIntPtr pattern_len,
+        [Out] [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 4)]
+        byte[] error, UIntPtr error_len);
 
     [LibraryImport("cre2", StringMarshalling = StringMarshalling.Utf8)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
@@ -331,5 +341,14 @@ static unsafe partial class Re2Ffi
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial UIntPtr cre2_set_match(
         cre2_set_t_ptr set, in byte text, UIntPtr text_len,
-        [Out, MarshalAs(UnmanagedType.LPArray)] int[] match, UIntPtr match_len);
+        [Out] [MarshalAs(UnmanagedType.LPArray)]
+        int[] match, UIntPtr match_len);
+
+    // Precompiled regular expressions.
+    [StructLayout(LayoutKind.Sequential)]
+    public struct cre2_string_t
+    {
+        public IntPtr data;
+        public int length;
+    }
 }

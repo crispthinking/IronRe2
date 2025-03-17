@@ -4,23 +4,24 @@ using System.Text;
 namespace IronRe2;
 
 /// <summary>
-///   Builder class for creating <see cref="RegexSet" /> instances.
+///     Builder class for creating <see cref="RegexSet" /> instances.
 /// </summary>
 public sealed class RegexSetBuilder
 {
-    private readonly List<byte[]> _patterns = [];
     private readonly Options _options;
+    private readonly List<byte[]> _patterns = [];
 
     /// <summary>
-    ///   Create a new <see cref="RegexSetBuilder" /> with the default
-    ///   options.
+    ///     Create a new <see cref="RegexSetBuilder" /> with the default
+    ///     options.
     /// </summary>
     public RegexSetBuilder()
         : this(new Options())
-    {}
+    {
+    }
 
     /// <summary>
-    ///   Create a new <see cref="RegexSetBuilder" /> with custom options.
+    ///     Create a new <see cref="RegexSetBuilder" /> with custom options.
     /// </summary>
     public RegexSetBuilder(Options options)
     {
@@ -28,7 +29,7 @@ public sealed class RegexSetBuilder
     }
 
     /// <summary>
-    ///   Complete the bild and get the resulting set.
+    ///     Complete the bild and get the resulting set.
     /// </summary>
     public RegexSet Build()
     {
@@ -36,14 +37,17 @@ public sealed class RegexSetBuilder
     }
 
     /// <summary>
-    ///   Add a pattern to the builder.
+    ///     Add a pattern to the builder.
     /// </summary>
     /// <param name="pattern">The pattern to add</param>
     /// <returns>The index of the pattern in the set.</returns>
-    public int Add(string pattern) => Add(Encoding.UTF8.GetBytes(pattern));
+    public int Add(string pattern)
+    {
+        return Add(Encoding.UTF8.GetBytes(pattern));
+    }
 
     /// <summary>
-    ///   Add a pattern to the builder.
+    ///     Add a pattern to the builder.
     /// </summary>
     /// <param name="pattern">The pattern to add</param>
     /// <returns>The index of the pattern in the set.</returns>

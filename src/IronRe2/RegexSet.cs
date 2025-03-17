@@ -7,16 +7,16 @@ using System.Text;
 namespace IronRe2;
 
 /// <summary>
-/// Regex Sets
-/// <para>
-///   A regex set offers an easy way to find which of a group of expressions
-///   matches a given search text in a single pass.
-/// </para>
+///     Regex Sets
+///     <para>
+///         A regex set offers an easy way to find which of a group of expressions
+///         matches a given search text in a single pass.
+///     </para>
 /// </summary>
 public class RegexSet : UnmanagedResource<RegexSetHandle>
 {
     /// <summary>
-    /// Create a new regex set containing the given patterns
+    ///     Create a new regex set containing the given patterns
     /// </summary>
     /// <param name="patterns">The patterns to include in the set</param>
     public RegexSet(IEnumerable<string> patterns)
@@ -25,13 +25,13 @@ public class RegexSet : UnmanagedResource<RegexSetHandle>
     }
 
     /// <summary>
-    /// Create a new regex set containing the given patterns
+    ///     Create a new regex set containing the given patterns
     /// </summary>
     /// <param name="patterns">
-    /// The patterns to include in the set
+    ///     The patterns to include in the set
     /// </param>
     /// <param name="opts">
-    /// The regular expression options to use when compiling
+    ///     The regular expression options to use when compiling
     /// </param>
     public RegexSet(IEnumerable<string> patterns, Options opts)
         : this(patterns.Select(Encoding.UTF8.GetBytes).ToArray(), opts)
@@ -39,7 +39,7 @@ public class RegexSet : UnmanagedResource<RegexSetHandle>
     }
 
     /// <summary>
-    /// Create a new regex set containing the given byte patterns
+    ///     Create a new regex set containing the given byte patterns
     /// </summary>
     /// <param name="patterns">The patterns to include in the set, as UTF8</param>
     public RegexSet(IReadOnlyCollection<byte[]> patterns)
@@ -49,13 +49,13 @@ public class RegexSet : UnmanagedResource<RegexSetHandle>
     }
 
     /// <summary>
-    /// Create a new regex set containing the given byte patterns
+    ///     Create a new regex set containing the given byte patterns
     /// </summary>
     /// <param name="patterns">
-    /// The patterns to include in the set, as UTF8
+    ///     The patterns to include in the set, as UTF8
     /// </param>
     /// <param name="opts">
-    /// The regular expression options to use when compiling
+    ///     The regular expression options to use when compiling
     /// </param>
     public RegexSet(IReadOnlyCollection<byte[]> patterns, Options opts)
         : base(CompileSetWithOptions(patterns, opts))
@@ -64,7 +64,12 @@ public class RegexSet : UnmanagedResource<RegexSetHandle>
     }
 
     /// <summary>
-    ///  Compile a given set of patterns to a raw regex set handle
+    ///     Returns the number of patterns in this set
+    /// </summary>
+    public int Count { get; }
+
+    /// <summary>
+    ///     Compile a given set of patterns to a raw regex set handle
     /// </summary>
     /// <param name="patternsAsBytes">The collection of patterns</param>
     /// <returns>The raw set handle or throws an exception</returns>
@@ -75,11 +80,11 @@ public class RegexSet : UnmanagedResource<RegexSetHandle>
     }
 
     /// <summary>
-    ///  Compile a given set of patterns to a raw regex set handle
+    ///     Compile a given set of patterns to a raw regex set handle
     /// </summary>
     /// <param name="patternsAsBytes">The collection of patterns</param>
     /// <param name="options">
-    /// The regular expression options to use when compiling
+    ///     The regular expression options to use when compiling
     /// </param>
     /// <returns>The raw set handle or throws an exception</returns>
     private static RegexSetHandle CompileSetWithOptions(
@@ -117,13 +122,8 @@ public class RegexSet : UnmanagedResource<RegexSetHandle>
     }
 
     /// <summary>
-    /// Returns the number of patterns in this set
-    /// </summary>
-    public int Count { get; }
-
-    /// <summary>
-    /// Match the patterns against he given search text and return
-    /// information about the matching patterns.
+    ///     Match the patterns against he given search text and return
+    ///     information about the matching patterns.
     /// </summary>
     /// <param name="haystack">The text to search</param>
     /// <returns>An object representing the state of the matches</returns>
@@ -134,8 +134,8 @@ public class RegexSet : UnmanagedResource<RegexSetHandle>
     }
 
     /// <summary>
-    /// Match the patterns against he given search text and return
-    /// information about the matching patterns.
+    ///     Match the patterns against he given search text and return
+    ///     information about the matching patterns.
     /// </summary>
     /// <param name="haystack">The text to search</param>
     /// <returns>An object representing the state of the matches</returns>

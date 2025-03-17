@@ -4,13 +4,18 @@ using System.Text;
 namespace IronRe2;
 
 /// <summary>
-/// Match Object
-/// <para>
-///  Represents the extent of a pattern's match in a given search string.
-/// </para>
+///     Match Object
+///     <para>
+///         Represents the extent of a pattern's match in a given search string.
+///     </para>
 /// </summary>
 public class Match
 {
+    /// <summary>
+    ///     A singleton match which represents all empty matches
+    /// </summary>
+    public static readonly Match Empty = new();
+
     /// <summary>The haystack this match was performed against</summary>
     protected readonly ReadOnlyMemory<byte> _haystack;
 
@@ -38,22 +43,22 @@ public class Match
     }
 
     /// <summary>
-    /// True if the pattern matched the string.
+    ///     True if the pattern matched the string.
     /// </summary>
     public bool Matched { get; }
 
     /// <summary>
-    ///  If the pattern matched the start index of the match, in bytes.
+    ///     If the pattern matched the start index of the match, in bytes.
     /// </summary>
     public long Start { get; }
 
     /// <summary>
-    ///  If the pattern matched the end index of the match, in bytes.
+    ///     If the pattern matched the end index of the match, in bytes.
     /// </summary>
     public long End { get; }
 
     /// <summary>
-    /// Get the text for this match
+    ///     Get the text for this match
     /// </summary>
     public unsafe string ExtractedText
     {
@@ -71,9 +76,4 @@ public class Match
             }
         }
     }
-
-    /// <summary>
-    ///  A singleton match which represents all empty matches
-    /// </summary>
-    public static readonly Match Empty = new();
 }
