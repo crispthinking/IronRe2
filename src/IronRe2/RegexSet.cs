@@ -88,20 +88,20 @@ public class RegexSet : UnmanagedResource<RegexSetHandle>
     {
         // TODO: we could maybe have a `RegexSetBuilder` to represent this
         // stage of regex set compilation.
-        RegexSetHandle? handle = Re2Ffi.cre2_set_new(
+        var handle = Re2Ffi.cre2_set_new(
             options.RawHandle, Re2Ffi.cre2_anchor_t.CRE2_UNANCHORED);
 
-        byte[]? errBuff = new byte[100];
-        foreach (byte[]? pattern in patternsAsBytes)
+        var errBuff = new byte[100];
+        foreach (var pattern in patternsAsBytes)
         {
-            int r = Re2Ffi.cre2_set_add(
+            var r = Re2Ffi.cre2_set_add(
                 handle,
                 pattern, new UIntPtr((uint)pattern.Length),
                 errBuff, new UIntPtr((uint)errBuff.Length));
             if (r < 0)
             {
                 // If the regex failed to add then throw
-                string? error = Encoding.UTF8.GetString(errBuff).TrimEnd('\0');
+                var error = Encoding.UTF8.GetString(errBuff).TrimEnd('\0');
                 handle.Dispose();
                 throw new RegexCompilationException(
                     error, Encoding.UTF8.GetString(pattern));
@@ -129,7 +129,7 @@ public class RegexSet : UnmanagedResource<RegexSetHandle>
     /// <returns>An object representing the state of the matches</returns>
     public SetMatch Match(string haystack)
     {
-        byte[]? hayBytes = Encoding.UTF8.GetBytes(haystack);
+        var hayBytes = Encoding.UTF8.GetBytes(haystack);
         return Match(hayBytes);
     }
 
@@ -141,8 +141,8 @@ public class RegexSet : UnmanagedResource<RegexSetHandle>
     /// <returns>An object representing the state of the matches</returns>
     public SetMatch Match(ReadOnlySpan<byte> haystack)
     {
-        int[]? matchIndices = new int[Count];
-        UIntPtr matchCount = Re2Ffi.cre2_set_match(
+        var matchIndices = new int[Count];
+        var matchCount = Re2Ffi.cre2_set_match(
             RawHandle,
             in MemoryMarshal.GetReference(haystack), new UIntPtr((uint)haystack.Length),
             matchIndices, new UIntPtr((uint)matchIndices.Length));

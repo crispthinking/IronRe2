@@ -49,7 +49,7 @@ public sealed class RegexSetBuilder
     /// <returns>The index of the pattern in the set.</returns>
     public int Add(byte[] pattern)
     {
-        int idx = _patterns.Count;
+        var idx = _patterns.Count;
         _patterns.Add(pattern);
         return idx;
     }

@@ -30,10 +30,10 @@ public class MemoryLeakTests
         }
 
         // Capture an initial snapshot before running the workload.
-        MemoryCheckPoint snapshot = dotMemory.Check();
+        var snapshot = dotMemory.Check();
 
         // Simulate workload by creating and disposing objects.
-        for (int i = 0; i < 1000; i++)
+        for (var i = 0; i < 1000; i++)
         {
             // Create a Regex instance, use it, and dispose.
             using (Regex regex = new(@"\w+"))
@@ -77,20 +77,20 @@ public class MemoryLeakTests
         // Capture the difference relative to the initial snapshot.
         dotMemory.Check(memory =>
         {
-            SnapshotDifference diff = memory.GetDifference(snapshot);
+            var diff = memory.GetDifference(snapshot);
 
             // Filter objects by type using the documented syntax.
-            ObjectSet regexInstances = diff.GetSurvivedObjects(where => where.Type.Is<Regex>());
-            ObjectSet setInstances = diff.GetSurvivedObjects(where => where.Type.Is<RegexSet>());
+            var regexInstances = diff.GetSurvivedObjects(where => where.Type.Is<Regex>());
+            var setInstances = diff.GetSurvivedObjects(where => where.Type.Is<RegexSet>());
 
-            ObjectSet regexInstancess = memory.GetObjects(where => where.Type.Is<Regex>());
-            ObjectSet setInstancess = memory.GetObjects(where => where.Type.Is<RegexSet>());
+            var regexInstancess = memory.GetObjects(where => where.Type.Is<Regex>());
+            var setInstancess = memory.GetObjects(where => where.Type.Is<RegexSet>());
 
             //ObjectSet re2Handle = memory.GetObjects(where => where.Type.Is<Re2Handle>());
             //ObjectSet reHandle = diff.GetSurvivedObjects(where => where.Type.Is<Re2Handle>());
 
-            ObjectSet regexHandle2 = memory.GetObjects(where => where.Type.Is<RegexHandle>());
-            ObjectSet regexHandle22 = diff.GetSurvivedObjects(where => where.Type.Is<RegexHandle>());
+            var regexHandle2 = memory.GetObjects(where => where.Type.Is<RegexHandle>());
+            var regexHandle22 = diff.GetSurvivedObjects(where => where.Type.Is<RegexHandle>());
 
             // Assert that no instances of Regex or RegexSet remain.
             Assert.Equal(0, regexInstancess.ObjectsCount);
@@ -111,10 +111,10 @@ public class MemoryLeakTests
         GC.Collect();
 
         // Record baseline memory usage.
-        long memoryBefore = GC.GetTotalMemory(true);
+        var memoryBefore = GC.GetTotalMemory(true);
 
         // Create and use objects in a loop.
-        for (int i = 0; i < 10_0000; i++)
+        for (var i = 0; i < 10_0000; i++)
         {
             // Create a Regex instance and use it. It will become unreachable after the using block.
             using (Regex regex = new(@"\w+"))
@@ -148,8 +148,8 @@ public class MemoryLeakTests
         GC.Collect();
 
         // Record memory usage after garbage collection.
-        long memoryAfter = GC.GetTotalMemory(true);
-        long memoryDifference = memoryAfter - memoryBefore;
+        var memoryAfter = GC.GetTotalMemory(true);
+        var memoryDifference = memoryAfter - memoryBefore;
 
         // Adjust the threshold as needed; here we use 10 MB as an example.
         Assert.True(memoryDifference < 10 * 1024 * 1024,

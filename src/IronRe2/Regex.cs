@@ -77,14 +77,14 @@ public class Regex : UnmanagedResource<RegexHandle>
         }
 
         // Check to see if there was an error compiling this expression
-        Re2Ffi.cre2_error_code_t errorCode = Re2Ffi.cre2_error_code(handle);
+        var errorCode = Re2Ffi.cre2_error_code(handle);
         if (errorCode != Re2Ffi.cre2_error_code_t.CRE2_NO_ERROR)
         {
-            IntPtr errorString = Re2Ffi.cre2_error_string(handle);
-            string? error = Marshal.PtrToStringAnsi(errorString);
+            var errorString = Re2Ffi.cre2_error_string(handle);
+            var error = Marshal.PtrToStringAnsi(errorString);
             Re2Ffi.cre2_string_t errorArg = new();
             Re2Ffi.cre2_error_arg(handle, ref errorArg);
-            string offendingPortion = Marshal.PtrToStringAnsi(
+            var offendingPortion = Marshal.PtrToStringAnsi(
                 errorArg.data, errorArg.length);
             // Clean up the regex
             handle.Dispose();
@@ -106,7 +106,7 @@ public class Regex : UnmanagedResource<RegexHandle>
     {
         get
         {
-            IntPtr pattern = Re2Ffi.cre2_pattern(RawHandle);
+            var pattern = Re2Ffi.cre2_pattern(RawHandle);
             return Marshal.PtrToStringAnsi(pattern) ?? string.Empty;
         }
     }
@@ -138,7 +138,7 @@ public class Regex : UnmanagedResource<RegexHandle>
     /// <returns>True if the pattern matches, false otherwise.</returns>
     public bool IsMatch(string haystack)
     {
-        byte[] hayBytes = Encoding.UTF8.GetBytes(haystack);
+        var hayBytes = Encoding.UTF8.GetBytes(haystack);
         return IsMatch(hayBytes);
     }
 
@@ -156,7 +156,7 @@ public class Regex : UnmanagedResource<RegexHandle>
         fixed (Re2Ffi.cre2_string_t* capturesPtr = captures)
         {
             // TODO: Support anchor as a parameter
-            int matchResult = Re2Ffi.cre2_match(
+            var matchResult = Re2Ffi.cre2_match(
                 RawHandle,
                 hayBytesPtr, haystack.Length,
                 0, haystack.Length,
@@ -182,7 +182,7 @@ public class Regex : UnmanagedResource<RegexHandle>
     /// <returns>The match data for the match</returns>
     public Match Find(string haystack, int offset)
     {
-        byte[] hayBytes = Encoding.UTF8.GetBytes(haystack);
+        var hayBytes = Encoding.UTF8.GetBytes(haystack);
         return Find(hayBytes, offset);
     }
 
@@ -202,7 +202,7 @@ public class Regex : UnmanagedResource<RegexHandle>
     /// <returns>The match data for the match</returns>
     public Match Find(ReadOnlyMemory<byte> hayBytes, int offset)
     {
-        ByteRange[] ranges = RawMatch(hayBytes.Span, offset, 1);
+        var ranges = RawMatch(hayBytes.Span, offset, 1);
         return (ranges.Length != 1) ?
             Match.Empty : new Match(hayBytes, ranges[0]);
     }
@@ -214,7 +214,7 @@ public class Regex : UnmanagedResource<RegexHandle>
     /// <returns>An enumerable of the matches</returns>
     public IEnumerable<Match> FindAll(string haystack)
     {
-        byte[] hayBytes = Encoding.UTF8.GetBytes(haystack);
+        var hayBytes = Encoding.UTF8.GetBytes(haystack);
         return FindAll(hayBytes);
     }
 
@@ -225,10 +225,10 @@ public class Regex : UnmanagedResource<RegexHandle>
     /// <returns>An enumerable of the matches</returns>
     public IEnumerable<Match> FindAll(ReadOnlyMemory<byte> haystack)
     {
-        int offset = 0;
+        var offset = 0;
         while (true)
         {
-            Match match = Find(haystack, offset);
+            var match = Find(haystack, offset);
             if (match.Matched)
             {
                 offset = match.Start == match.End ?
@@ -278,7 +278,7 @@ public class Regex : UnmanagedResource<RegexHandle>
     /// <returns>The captures data</returns>
     public Captures Captures(string haystack, int offset)
     {
-        byte[] hayBytes = Encoding.UTF8.GetBytes(haystack);
+        var hayBytes = Encoding.UTF8.GetBytes(haystack);
         return Captures(hayBytes, offset);
     }
 
@@ -310,7 +310,7 @@ public class Regex : UnmanagedResource<RegexHandle>
     /// <returns>The captures data</returns>
     public Captures Captures(ReadOnlyMemory<byte> haystack, int offset)
     {
-        ByteRange[] ranges = RawMatch(haystack.Span, offset, CaptureGroupCount + 1);
+        var ranges = RawMatch(haystack.Span, offset, CaptureGroupCount + 1);
         return (ranges.Length == 0) ?
             IronRe2.Captures.Empty : new Captures(haystack, ranges);
     }
@@ -322,7 +322,7 @@ public class Regex : UnmanagedResource<RegexHandle>
     /// <returns>An iterator of the captures at each match location</returns>
     public IEnumerable<Captures> CaptureAll(string haystack)
     {
-        byte[] hayBytes = Encoding.UTF8.GetBytes(haystack);
+        var hayBytes = Encoding.UTF8.GetBytes(haystack);
         return CaptureAll(hayBytes);
     }
 
@@ -333,10 +333,10 @@ public class Regex : UnmanagedResource<RegexHandle>
     /// <returns>An iterator of the captures at each match location</returns>
     public IEnumerable<Captures> CaptureAll(ReadOnlyMemory<byte> haystack)
     {
-        int offset = 0;
+        var offset = 0;
         while (true)
         {
-            Captures caps = Captures(haystack, offset);
+            var caps = Captures(haystack, offset);
             if (caps.Matched)
             {
                 offset = caps.Start == caps.End ?
@@ -367,11 +367,11 @@ public class Regex : UnmanagedResource<RegexHandle>
     private unsafe ByteRange[] RawMatch(
         ReadOnlySpan<byte> hayBytes, int startByteIndex, int numCaptures)
     {
-        Re2Ffi.cre2_string_t[] captures = new Re2Ffi.cre2_string_t[numCaptures];
+        var captures = new Re2Ffi.cre2_string_t[numCaptures];
         fixed (byte* pinnedHayBytes = hayBytes)
         fixed (Re2Ffi.cre2_string_t* capturesPtr = captures)
         {
-            int matchResult = Re2Ffi.cre2_match(
+            var matchResult = Re2Ffi.cre2_match(
                 RawHandle,
                 pinnedHayBytes, hayBytes.Length,
                 startByteIndex, hayBytes.Length,
@@ -399,14 +399,13 @@ public class Regex : UnmanagedResource<RegexHandle>
     private static ByteRange[] StringsToRanges(
         Re2Ffi.cre2_string_t[] captures, IntPtr hayBasePtr)
     {
-        long hayBase = hayBasePtr.ToInt64();
-        ByteRange[] ranges = new ByteRange[captures.Length];
-        for (int i = 0; i < ranges.Length; i++)
+        var hayBase = hayBasePtr.ToInt64();
+        var ranges = new ByteRange[captures.Length];
+        for (var i = 0; i < ranges.Length; i++)
         {
-            Re2Ffi.cre2_string_t c = captures[i];
-            long start = c.data.ToInt64() - hayBase;
-            ranges[i].start = start;
-            ranges[i].past = start + c.length;
+            var c = captures[i];
+            var start = c.data.ToInt64() - hayBase;
+            ranges[i] = new ByteRange(start, start + c.length);
         }
         return ranges;
     }
@@ -420,8 +419,8 @@ public class Regex : UnmanagedResource<RegexHandle>
     /// <returns>True if the pattern matches in the given text</returns>
     public static bool IsMatch(string pattern, string haystack)
     {
-        byte[] patternBytes = Encoding.UTF8.GetBytes(pattern);
-        byte[] hayBytes = Encoding.UTF8.GetBytes(haystack);
+        var patternBytes = Encoding.UTF8.GetBytes(pattern);
+        var hayBytes = Encoding.UTF8.GetBytes(haystack);
         return IsMatch(patternBytes, hayBytes);
     }
 
@@ -436,7 +435,7 @@ public class Regex : UnmanagedResource<RegexHandle>
         ReadOnlySpan<byte> pattern, ReadOnlySpan<byte> haystack)
     {
         Re2Ffi.cre2_string_t[] captures = [];
-        int matchResult = Re2Ffi.cre2_easy_match(
+        var matchResult = Re2Ffi.cre2_easy_match(
             in MemoryMarshal.GetReference(pattern), pattern.Length,
             in MemoryMarshal.GetReference(haystack), haystack.Length,
             captures, 0);
@@ -455,8 +454,8 @@ public class Regex : UnmanagedResource<RegexHandle>
     /// <returns>A match object summarising the match result</returns>
     public static Match Find(string pattern, string haystack)
     {
-        byte[] patternBytes = Encoding.UTF8.GetBytes(pattern);
-        byte[] hayBytes = Encoding.UTF8.GetBytes(haystack);
+        var patternBytes = Encoding.UTF8.GetBytes(pattern);
+        var hayBytes = Encoding.UTF8.GetBytes(haystack);
         return Find(patternBytes, hayBytes);
     }
 
@@ -474,9 +473,9 @@ public class Regex : UnmanagedResource<RegexHandle>
         ReadOnlySpan<byte> pattern, ReadOnlyMemory<byte> haystack)
     {
         // Use an explicit one-element array for captures.
-        Re2Ffi.cre2_string_t[] captures = new Re2Ffi.cre2_string_t[1];
-        using MemoryHandle pin = haystack.Pin();
-        int matchResult = Re2Ffi.cre2_easy_match(
+        var captures = new Re2Ffi.cre2_string_t[1];
+        using var pin = haystack.Pin();
+        var matchResult = Re2Ffi.cre2_easy_match(
             in MemoryMarshal.GetReference(pattern), pattern.Length,
             haystack.Span[0], haystack.Length,
             captures, 1);
@@ -489,7 +488,7 @@ public class Regex : UnmanagedResource<RegexHandle>
         // have the haystack pinned. We can't have the haystack move
         // between the `_match` and the conversion to byte ranges
         // otherwise the pointer arithmetic we do will be invalidated.
-        ByteRange[] ranges = StringsToRanges(captures, new IntPtr(pin.Pointer));
+        var ranges = StringsToRanges(captures, new IntPtr(pin.Pointer));
         return new Match(haystack, ranges[0]);
     }
 }

@@ -12,7 +12,7 @@ public sealed class RegexSetBuilderTests
         RegexSetBuilder builder = new();
 
         //When
-        RegexSet set = builder.Build();
+        var set = builder.Build();
 
         //Then
         Assert.Equal(0, set.Count);
@@ -25,9 +25,9 @@ public sealed class RegexSetBuilderTests
         RegexSetBuilder builder = new();
 
         //When
-        int first = builder.Add("hello");
-        int second = builder.Add("world"u8.ToArray());
-        RegexSet set = builder.Build();
+        var first = builder.Add("hello");
+        var second = builder.Add("world"u8.ToArray());
+        var set = builder.Build();
 
         //Then
         Assert.Equal(0, first);
@@ -40,16 +40,16 @@ public sealed class RegexSetBuilderTests
     {
         //Given
         RegexSetBuilder builder = new(new Options { Literal = true });
-        int squares = builder.Add("[]");
+        var squares = builder.Add("[]");
         builder.Add("()");
-        int curlies = builder.Add("{}");
-        int dot = builder.Add(".");
-        RegexSet set = builder.Build();
+        var curlies = builder.Add("{}");
+        var dot = builder.Add(".");
+        var set = builder.Build();
 
         //When
-        SetMatch parenMatches = set.Match("I have some {} and [] in");
-        SetMatch dotMatches = set.Match("I am the container of a . dot");
-        SetMatch bland = set.Match("boring");
+        var parenMatches = set.Match("I have some {} and [] in");
+        var dotMatches = set.Match("I am the container of a . dot");
+        var bland = set.Match("boring");
 
         //Then
         Assert.True(parenMatches.Matched);

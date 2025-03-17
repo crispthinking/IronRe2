@@ -44,9 +44,9 @@ public class RegexSetTests
         });
 
         //When
-        SetMatch parenMatches = set.Match("I have some () in");
-        SetMatch dotMatches = set.Match("I am the container of a . dot");
-        SetMatch bland = set.Match("boring");
+        var parenMatches = set.Match("I have some () in");
+        var dotMatches = set.Match("I am the container of a . dot");
+        var bland = set.Match("boring");
 
         //Then
         Assert.True(parenMatches.Matched);
@@ -68,9 +68,9 @@ public class RegexSetTests
         });
 
         //When
-        SetMatch parenMatches = set.Match("I have some () in");
-        SetMatch dotMatches = set.Match("I am the container of a . dot");
-        SetMatch bland = set.Match("boring");
+        var parenMatches = set.Match("I have some () in");
+        var dotMatches = set.Match("I am the container of a . dot");
+        var bland = set.Match("boring");
 
         //Then
         Assert.True(parenMatches.Matched);
@@ -81,7 +81,7 @@ public class RegexSetTests
     [Fact]
     public void RegexSetThrowsWithInvalidPattern()
     {
-        RegexCompilationException ex = Assert.Throws<RegexCompilationException>(() =>
+        var ex = Assert.Throws<RegexCompilationException>(() =>
         {
             new RegexSet([
                 "I'm OK",
@@ -110,7 +110,7 @@ public class RegexSetTests
         ]);
 
         //When
-        SetMatch matches = set.Match("I have 1 date: 1969-07-11");
+        var matches = set.Match("I have 1 date: 1969-07-11");
 
         //Then
         Assert.True(matches.Matched);
@@ -133,7 +133,7 @@ public class RegexSetTests
         ]);
 
         //When
-        SetMatch matches = set.Match(
+        var matches = set.Match(
             "I have 1 date: 1969-07-11"u8);
 
         //Then

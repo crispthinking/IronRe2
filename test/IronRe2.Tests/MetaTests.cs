@@ -10,7 +10,7 @@ public class MetaTests
         //Given
 
         //When
-        string version = Meta.VersionString;
+        var version = Meta.VersionString;
 
         //Then
         Assert.Equal("0.0.0", version);
@@ -22,7 +22,7 @@ public class MetaTests
         //Given
 
         //When
-        (int current, int revision, int age) version = Meta.Version;
+        var version = Meta.Version;
 
         //Then
         Assert.Equal(0, version.current);

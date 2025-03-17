@@ -40,7 +40,7 @@ public abstract class Re2Handle : SafeHandle
             Debug.WriteLine($"[Re2Handle] Releasing handle: {handle}");
             try
             {
-                bool result = ReleaseHandleCore();
+                var result = ReleaseHandleCore();
                 return result;
             }
             catch (Exception ex)

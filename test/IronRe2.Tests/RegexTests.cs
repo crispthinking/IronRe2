@@ -11,7 +11,7 @@ public class RegexTests
     [Fact]
     public void InvalidRegexThrowsException()
     {
-        RegexCompilationException ex = Assert.Throws<RegexCompilationException>(() => new Regex("foo (bar"));
+        var ex = Assert.Throws<RegexCompilationException>(() => new Regex("foo (bar"));
         Assert.Contains("missing )", ex.Message);
         Assert.Equal("foo (bar", ex.OffendingPortion);
     }
@@ -23,7 +23,7 @@ public class RegexTests
         Regex regex = new(".+");
 
         //When
-        string pattern = regex.Pattern;
+        var pattern = regex.Pattern;
 
         //Then
         Assert.Equal(".+", pattern);
@@ -36,7 +36,7 @@ public class RegexTests
         Regex regex = new(@"\n", new Options { NeverNewline = true });
 
         //When
-        bool match = regex.IsMatch("foo\nbar");
+        var match = regex.IsMatch("foo\nbar");
 
         //Then
         Assert.False(match);
@@ -50,8 +50,8 @@ public class RegexTests
         Regex emptyRe = new("");
 
         //When
-        int helloSize = helloRe.ProgramSize;
-        int emptySize = emptyRe.ProgramSize;
+        var helloSize = helloRe.ProgramSize;
+        var emptySize = emptyRe.ProgramSize;
 
         //Then
         Assert.Equal(15, helloSize);
@@ -65,9 +65,9 @@ public class RegexTests
         Regex regex = new("(.+) (?P<foo>.*)");
 
         //When
-        int numCaptures = regex.CaptureGroupCount;
-        int fooCaptureId = regex.FindNamedCapture("foo");
-        int invalidCaptureId = regex.FindNamedCapture("bar");
+        var numCaptures = regex.CaptureGroupCount;
+        var fooCaptureId = regex.FindNamedCapture("foo");
+        var invalidCaptureId = regex.FindNamedCapture("bar");
 
         //Then
         Assert.Equal(2, numCaptures);
@@ -94,8 +94,8 @@ public class RegexTests
     [MemberData(nameof(IsMatchData))]
     public void RegexBytesIsMatch(string p, string h, bool match)
     {
-        byte[] pattern = Encoding.UTF8.GetBytes(p);
-        byte[] haystack = Encoding.UTF8.GetBytes(h);
+        var pattern = Encoding.UTF8.GetBytes(p);
+        var haystack = Encoding.UTF8.GetBytes(h);
         using Regex re = new(pattern);
         Assert.Equal(match, re.IsMatch(haystack));
     }
@@ -104,7 +104,7 @@ public class RegexTests
     [MemberData(nameof(FindData))]
     public void RegexEasyFind(string pattern, string haystack, int start, int end)
     {
-        Match match = Regex.Find(pattern, haystack);
+        var match = Regex.Find(pattern, haystack);
         if (start != -1)
         {
             Assert.True(match.Matched);
@@ -122,7 +122,7 @@ public class RegexTests
     public void RegexFind(string pattern, string haystack, int start, int end)
     {
         using Regex re = new(pattern);
-        Match match = re.Find(haystack);
+        var match = re.Find(haystack);
         if (start != -1)
         {
             Assert.True(match.Matched);
@@ -139,10 +139,10 @@ public class RegexTests
     [MemberData(nameof(FindData))]
     public void RegexByteFind(string p, string h, int start, int end)
     {
-        byte[] pattern = Encoding.UTF8.GetBytes(p);
-        byte[] haystack = Encoding.UTF8.GetBytes(h);
+        var pattern = Encoding.UTF8.GetBytes(p);
+        var haystack = Encoding.UTF8.GetBytes(h);
         using Regex re = new(pattern);
-        Match match = re.Find(haystack);
+        var match = re.Find(haystack);
         if (start != -1)
         {
             Assert.True(match.Matched);
@@ -229,7 +229,7 @@ public class RegexTests
         const string pattern = "(?P<h>hello) (?P<w>world)";
         Regex re = new(pattern);
 
-        Captures captures = re.Captures("hello world");
+        var captures = re.Captures("hello world");
 
         Assert.Equal(3, captures.Count);
         Assert.True(captures.Matched);
@@ -252,7 +252,7 @@ public class RegexTests
         const string pattern = "(?P<h>hello) (?P<w>world)";
         Regex re = new(Encoding.UTF8.GetBytes(pattern));
 
-        Captures captures = re.Captures(
+        var captures = re.Captures(
             "hello world"u8.ToArray());
 
         Assert.Equal(3, captures.Count);
@@ -276,7 +276,7 @@ public class RegexTests
         const string pattern = " (.)(.)? ";
         Regex re = new(pattern);
 
-        Captures captures = re.Captures(" a ");
+        var captures = re.Captures(" a ");
 
         Assert.Equal(3, captures.Count);
         Assert.True(captures.Matched);
@@ -324,7 +324,7 @@ public class RegexTests
         using Regex re = new(@"(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})");
         const string haystack = "The first woman in space launched on 1963-06-16 in Vostok 6";
 
-        Captures captures = re.Captures(haystack);
+        var captures = re.Captures(haystack);
 
         Assert.True(captures.Matched);
 
@@ -379,7 +379,7 @@ public class RegexTests
         Regex re = new("\\[([a-z]+)\\]");
 
         //When
-        Captures match = re.Captures("some [test] content");
+        var match = re.Captures("some [test] content");
 
         //Then
         Assert.True(match.Matched);

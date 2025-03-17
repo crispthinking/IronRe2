@@ -23,7 +23,7 @@ public class Match
     {
         _haystack = haystack;
         // If the indexes on the range are invalid then we didn't match
-        if (range.start < 0 || range.past < 0)
+        if (range.Start < 0 || range.Past < 0)
         {
             Matched = false;
             Start = -1;
@@ -32,8 +32,8 @@ public class Match
         else
         {
             Matched = true;
-            Start = range.start;
-            End = range.past;
+            Start = range.Start;
+            End = range.Past;
         }
     }
 
@@ -64,7 +64,7 @@ public class Match
                 return string.Empty;
             }
 
-            ReadOnlySpan<byte> haySlice = _haystack.Span.Slice((int)Start, (int)(End - Start));
+            var haySlice = _haystack.Span.Slice((int)Start, (int)(End - Start));
             fixed (byte* haySlicePtr = haySlice)
             {
                 return Encoding.UTF8.GetString(haySlicePtr, haySlice.Length);

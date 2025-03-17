@@ -36,9 +36,9 @@ internal class NamedCaptureEnumerator : UnmanagedResource<NamedCaptureIteratorHa
     /// <see cref="NamedCaptureGroup" /></returns>
     public unsafe bool MoveNext()
     {
-        if (Re2Ffi.cre2_named_groups_iter_next(RawHandle, out char* namePtr, out int index))
+        if (Re2Ffi.cre2_named_groups_iter_next(RawHandle, out var namePtr, out var index))
         {
-            string? name = Marshal.PtrToStringAnsi(new IntPtr(namePtr));
+            var name = Marshal.PtrToStringAnsi(new IntPtr(namePtr));
             if (name != null) _current = new NamedCaptureGroup(name, index);
             return true;
         }

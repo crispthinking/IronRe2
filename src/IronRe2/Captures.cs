@@ -38,8 +38,8 @@ public class Captures : Match, IReadOnlyList<Match>
     /// <inheritdoc />
     public IEnumerator<Match> GetEnumerator()
     {
-        int len = Count;
-        for (int i = 0; i < len; i++)
+        var len = Count;
+        for (var i = 0; i < len; i++)
         {
             yield return this[i];
         }
