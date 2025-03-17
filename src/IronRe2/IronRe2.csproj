@@ -4,8 +4,8 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="IronRe2-Batteries.Linux" Version="0.1.1-PullRequest6.144" />
-    <PackageReference Include="IronRe2-Batteries.OSX" Version="0.1.1-PullRequest6.144" />
-    <PackageReference Include="IronRe2-Batteries.Windows" Version="0.1.1-PullRequest6.144" />
+    <PackageReference Include="IronRe2-Batteries.Linux" Version="3.0.0" />
+    <PackageReference Include="IronRe2-Batteries.OSX" Version="3.0.0" />
+    <PackageReference Include="IronRe2-Batteries.Windows" Version="3.0.0" />
   </ItemGroup>
 </Project>
