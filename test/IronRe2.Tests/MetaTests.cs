@@ -1,34 +1,32 @@
 using Xunit;
-using IronRe2;
 
-namespace IronRe2.Tests
+namespace IronRe2.Tests;
+
+public class MetaTests
 {
-    public class MetaTests
+    [Fact]
+    public void MetaGetVersionString()
     {
-        [Fact]
-        public void MetaGetVersionString()
-        {
-            //Given
+        //Given
 
-            //When
-            var version = Meta.VersionString;
+        //When
+        var version = Meta.VersionString;
 
-            //Then
-            Assert.Equal("0.0.0", version);
-        }
+        //Then
+        Assert.Equal("0.0.0", version);
+    }
 
-        [Fact]
-        public void MetaGetVersion()
-        {
-            //Given
+    [Fact]
+    public void MetaGetVersion()
+    {
+        //Given
 
-            //When
-            var version = Meta.Version;
+        //When
+        var version = Meta.Version;
 
-            //Then
-            Assert.Equal(0, version.current);
-            Assert.Equal(0, version.revision);
-            Assert.Equal(0, version.age);
-        }
+        //Then
+        Assert.Equal(0, version.current);
+        Assert.Equal(0, version.revision);
+        Assert.Equal(0, version.age);
     }
 }

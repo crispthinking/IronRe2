@@ -1,15 +1,29 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35825.156 d17.13
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{289627CF-0385-41AC-A6E1-9AE982AE356F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IronRe2", "src\IronRe2\IronRe2.csproj", "{45DE2B18-3F94-4E1B-8C93-7C7DA602437F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IronRe2", "src\IronRe2\IronRe2.csproj", "{45DE2B18-3F94-4E1B-8C93-7C7DA602437F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{314AD44D-494A-4E15-9558-ED28963688CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IronRe2.Tests", "test\IronRe2.Tests\IronRe2.Tests.csproj", "{D6DB2334-E2FF-4BBA-975F-2D611E52423A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IronRe2.Tests", "test\IronRe2.Tests\IronRe2.Tests.csproj", "{D6DB2334-E2FF-4BBA-975F-2D611E52423A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		GitVersion.yml = GitVersion.yml
+		nuget.config = nuget.config
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CI", "CI", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\ci.yml = .github\workflows\ci.yml
+		.github\workflows\publish.yml = .github\workflows\publish.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,9 +33,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{45DE2B18-3F94-4E1B-8C93-7C7DA602437F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -49,8 +60,15 @@ Global
 		{D6DB2334-E2FF-4BBA-975F-2D611E52423A}.Release|x86.ActiveCfg = Release|Any CPU
 		{D6DB2334-E2FF-4BBA-975F-2D611E52423A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{45DE2B18-3F94-4E1B-8C93-7C7DA602437F} = {289627CF-0385-41AC-A6E1-9AE982AE356F}
 		{D6DB2334-E2FF-4BBA-975F-2D611E52423A} = {314AD44D-494A-4E15-9558-ED28963688CE}
+		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {429509D1-DCDA-4911-9354-757964657299}
 	EndGlobalSection
 EndGlobal

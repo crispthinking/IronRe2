@@ -204,6 +204,9 @@ ModelManifest.xml
 .vs/**
 .vagrant/
 
+#Rider files
+/.idea/.idea.IronRe2/.idea/indexLayout.xml
+/.idea/.idea.IronRe2/.idea/vcs.xml
 
 # Cake tools
 tools/**
@@ -211,3 +214,6 @@ tools/**
 CoverageResults/
 Artifacts/
 DeployArtifacts/
+.DS_Store
+.idea/.idea.IronRe2/.idea/projectSettingsUpdater.xml
+.idea/.idea.IronRe2/.idea/workspace.xml

@@ -1,0 +1,68 @@
+name: CI
+
+# Trigger on pushes and pull requests to the main branch.
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+# Set permissions for the workflow. TEST
+permissions:
+  contents: write
+  pull-requests: write
+  checks: write
+  packages: read
+
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  DOTNET_NOLOGO: 1
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:  
+      fail-fast: false      # This allows the matrix jobs to run independently.
+      matrix:  
+        os: [ubuntu-22.04, windows-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+    
+      - name: Restore dependencies
+        run: dotnet restore IronRe2.sln
+    
+      - name: Build
+        run: dotnet build IronRe2.sln --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test IronRe2.sln --configuration Release --no-build --logger "trx" --logger "console;verbosity=normal"
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.os }}
+          path: "**/*.trx"
+
+      - name: Pack
+        if: ${{ matrix.os == 'ubuntu-22.04' }}
+        run: dotnet pack IronRe2.sln --configuration Release --no-build --output Artifacts
+
+      - name: Upload NuGet packages
+        if: ${{ matrix.os == 'ubuntu-22.04' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifacts
+          path: Artifacts/*.nupkg

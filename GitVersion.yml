@@ -1,4 +1,15 @@
-mode: ContinuousDeployment
+mode: ContinuousDelivery
+
 branches:
   master:
-    regex: ^(main)|(master)$
+    regex: ^main$
+    label: ''           # No pre-release tag for main branch.
+  hotfix:
+    regex: ^hotfix(es)?[/-]
+    mode: ContinuousDelivery
+    increment: None
+    label: beta         # Pre-release tag for hotfix branches.
+  feature:
+    regex: ^(feature|feat)[/-]
+    label: beta        # Pre-release tag for feature branches.
+    mode: ContinuousDelivery

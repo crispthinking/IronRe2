@@ -1,0 +1,32 @@
+name: Publish IronRe2
+
+on:
+  release:
+    types:
+      - published # Run the workflow when a new GitHub release is published
+  workflow_dispatch: # Allow manual triggering from the GitHub UI
+
+# Set permissions for the workflow.
+permissions:
+  contents: write
+  packages: write
+  checks: write          
+  pull-requests: write  
+
+jobs:
+  build:
+    uses: ./.github/workflows/ci.yml
+
+  publish:
+    if: github.event_name == 'release'
+    runs-on: ubuntu-22.04
+    needs: build
+    steps:
+      - name: Download Package
+        uses: actions/download-artifact@v4
+        with:
+          name: artifacts
+          path: bin/artifacts/
+
+      - name: Publish NuGet Packages to GitHub Packages
+        run: dotnet nuget push bin/artifacts/**/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --skip-duplicate
