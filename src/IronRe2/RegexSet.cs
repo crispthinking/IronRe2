@@ -91,8 +91,6 @@ public class RegexSet : UnmanagedResource<RegexSetHandle>
         IReadOnlyCollection<byte[]> patternsAsBytes,
         Options options)
     {
-        // TODO: we could maybe have a `RegexSetBuilder` to represent this
-        // stage of regex set compilation.
         var handle = Re2Ffi.cre2_set_new(
             options.RawHandle, Re2Ffi.cre2_anchor_t.CRE2_UNANCHORED);
 
