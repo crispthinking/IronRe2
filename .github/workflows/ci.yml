@@ -9,6 +9,7 @@ on:
     branches:
       - main
   workflow_dispatch:
+  workflow_call:  # Allows the workflow to be called by other workflows
 
 # Set permissions for the workflow. TEST
 permissions:
