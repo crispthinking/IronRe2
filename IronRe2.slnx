@@ -1,0 +1,19 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src\IronRe2\IronRe2.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test\IronRe2.Tests\IronRe2.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="GitVersion.yml" />
+    <File Path="nuget.config" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/CI/">
+    <File Path=".github\workflows\ci.yml" />
+    <File Path=".github\workflows\publish.yml" />
+  </Folder>
+</Solution>
