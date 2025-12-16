@@ -32,13 +32,13 @@ jobs:
         os: [ubuntu-22.04, windows-latest, macos-latest]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: true
           fetch-depth: 0
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '9.0.x'
     
@@ -52,7 +52,7 @@ jobs:
         run: dotnet test IronRe2.sln --configuration Release --no-build --logger "trx" --logger "console;verbosity=normal"
 
       - name: Upload test results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: test-results-${{ matrix.os }}
           path: "**/*.trx"
@@ -63,7 +63,7 @@ jobs:
 
       - name: Upload NuGet packages
         if: ${{ matrix.os == 'ubuntu-22.04' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: artifacts
           path: Artifacts/*.nupkg
