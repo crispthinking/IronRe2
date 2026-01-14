@@ -9,7 +9,7 @@
     <PackageVersion Include="IronRe2-Batteries.Windows" Version="3.1.0" />
     <!-- Build tools -->
     <PackageVersion Include="GitVersion.MsBuild" Version="6.5.1" />
-    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.102" />
     <!-- Test dependencies -->
     <PackageVersion Include="JetBrains.dotMemoryUnit" Version="3.2.20220510" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
