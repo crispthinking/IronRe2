@@ -389,6 +389,118 @@ public class RegexTests
         Assert.Throws<IndexOutOfRangeException>(() => match[-2]);
     }
 
+    [Fact]
+    public void FindWithCharacterOffsetInMultiByteString()
+    {
+        // This test verifies that the offset parameter in Find(string, int) is interpreted as
+        // a character offset, not a byte offset, when dealing with multi-byte UTF-8 characters
+        Regex re = new("world");
+
+        // String with multi-byte UTF-8 characters (emoji)
+        // "Hello 🌍 world" where 🌍 is a 4-byte UTF-8 character
+        const string haystack = "Hello 🌍 world";
+
+        // Character positions: H(0) e(1) l(2) l(3) o(4) (5) 🌍(6) (7) w(8) o(9) r(10) l(11) d(12)
+        // Byte positions: H(0) e(1) l(2) l(3) o(4) (5) 🌍(6-9) (10) w(11) o(12) r(13) l(14) d(15)
+
+        // Find starting at character offset 8 (character 'w')
+        var match = re.Find(haystack, 8);
+
+        Assert.True(match.Matched);
+        // The match should be at byte positions 11-16
+        Assert.Equal(11, match.Start);
+        Assert.Equal(16, match.End);
+        Assert.Equal("world", match.ExtractedText);
+    }
+
+    [Fact]
+    public void FindWithCharacterOffsetBeforeMultiByteCharacter()
+    {
+        Regex re = new("🌍");
+        const string haystack = "Hello 🌍 world";
+
+        // Find starting at character offset 6 (the emoji itself)
+        var match = re.Find(haystack, 6);
+
+        Assert.True(match.Matched);
+        Assert.Equal("🌍", match.ExtractedText);
+    }
+
+    [Fact]
+    public void CapturesWithCharacterOffsetInMultiByteString()
+    {
+        // Test that Captures(string, int) also respects character offsets
+        Regex re = new(@"(\w+)");
+
+        // String with multi-byte character
+        const string haystack = "Hello 🌍 world";
+
+        // Start searching at character offset 8 (character 'w')
+        var captures = re.Captures(haystack, 8);
+
+        Assert.True(captures.Matched);
+        Assert.Equal("world", captures[0].ExtractedText);
+        Assert.Equal("world", captures[1].ExtractedText);
+    }
+
+    [Fact]
+    public void FindWithZeroOffsetInMultiByteString()
+    {
+        // Verify that offset 0 still works correctly
+        Regex re = new("Hello");
+        const string haystack = "Hello 🌍 world";
+
+        var match = re.Find(haystack, 0);
+
+        Assert.True(match.Matched);
+        Assert.Equal("Hello", match.ExtractedText);
+        Assert.Equal(0, match.Start);
+        Assert.Equal(5, match.End);
+    }
+
+    [Fact]
+    public void FindAllWithMultiByteCharacters()
+    {
+        // Verify that FindAll still works correctly with multi-byte characters
+        Regex re = new(@"\w+");
+        const string haystack = "Hello 🌍 world";
+
+        List<Match> matches = [.. re.FindAll(haystack)];
+
+        Assert.Collection(matches,
+            m =>
+            {
+                Assert.Equal(0, m.Start);
+                Assert.Equal(5, m.End);
+                Assert.Equal("Hello", m.ExtractedText);
+            },
+            m =>
+            {
+                Assert.Equal(11, m.Start);
+                Assert.Equal(16, m.End);
+                Assert.Equal("world", m.ExtractedText);
+            });
+    }
+
+    [Fact]
+    public void FindWithCharacterOffsetInAsianCharacters()
+    {
+        // Test with Asian multi-byte characters (3-byte UTF-8)
+        Regex re = new("世界");
+        const string haystack = "你好世界"; // "Hello world" in Chinese
+
+        // Character positions: 你(0) 好(1) 世(2) 界(3)
+        // Byte positions: 你(0-2) 好(3-5) 世(6-8) 界(9-11)
+
+        // Find starting at character offset 2
+        var match = re.Find(haystack, 2);
+
+        Assert.True(match.Matched);
+        Assert.Equal(6, match.Start);  // Byte offset
+        Assert.Equal(12, match.End);   // Byte offset
+        Assert.Equal("世界", match.ExtractedText);
+    }
+
     public static IEnumerable<object[]> IsMatchData()
     {
         yield return [".+", "hello world", true];

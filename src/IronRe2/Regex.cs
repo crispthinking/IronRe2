@@ -183,12 +183,13 @@ public class Regex : UnmanagedResource<RegexHandle>
     ///     of the match
     /// </summary>
     /// <param name="haystack">The string to search for the pattern</param>
-    /// <param name="offset">The offset to start the search at</param>
+    /// <param name="offset">The character offset to start the search at (not byte offset)</param>
     /// <returns>The match data for the match</returns>
     public Match Find(string haystack, int offset)
     {
         var hayBytes = Encoding.UTF8.GetBytes(haystack);
-        return Find(hayBytes, offset);
+        var byteOffset = Encoding.UTF8.GetByteCount(haystack.AsSpan(0, offset));
+        return Find(hayBytes, byteOffset);
     }
 
     /// <summary>
@@ -205,8 +206,8 @@ public class Regex : UnmanagedResource<RegexHandle>
     ///     Find the pattern starting at the given offset and return the extent
     ///     of the match
     /// </summary>
-    /// <param name="hayBytes">The string to search for the pattern</param>
-    /// <param name="offset">The offset to start the search at</param>
+    /// <param name="hayBytes">The bytes to search for the pattern</param>
+    /// <param name="offset">The byte offset to start the search at</param>
     /// <returns>The match data for the match</returns>
     public Match Find(ReadOnlyMemory<byte> hayBytes, int offset)
     {
@@ -283,12 +284,13 @@ public class Regex : UnmanagedResource<RegexHandle>
     ///     </para>
     /// </summary>
     /// <param name="haystack">The string to search for the pattern</param>
-    /// <param name="offset">The offest to start searching from</param>
+    /// <param name="offset">The character offset to start searching from (not byte offset)</param>
     /// <returns>The captures data</returns>
     public Captures Captures(string haystack, int offset)
     {
         var hayBytes = Encoding.UTF8.GetBytes(haystack);
-        return Captures(hayBytes, offset);
+        var byteOffset = Encoding.UTF8.GetByteCount(haystack.AsSpan(0, offset));
+        return Captures(hayBytes, byteOffset);
     }
 
     /// <summary>
@@ -316,8 +318,8 @@ public class Regex : UnmanagedResource<RegexHandle>
     ///         of each of the regex's capturing groups.
     ///     </para>
     /// </summary>
-    /// <param name="haystack">The string to search for the pattern</param>
-    /// <param name="offset">The offest to start searching from</param>
+    /// <param name="haystack">The bytes to search for the pattern</param>
+    /// <param name="offset">The byte offset to start searching from</param>
     /// <returns>The captures data</returns>
     public Captures Captures(ReadOnlyMemory<byte> haystack, int offset)
     {
