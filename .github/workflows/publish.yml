@@ -22,7 +22,7 @@ jobs:
     needs: build
     steps:
       - name: Download Package
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: artifacts
           path: bin/artifacts/
