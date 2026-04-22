@@ -9,10 +9,10 @@
     <PackageVersion Include="IronRe2-Batteries.Windows" Version="3.1.0" />
     <!-- Build tools -->
     <PackageVersion Include="GitVersion.MsBuild" Version="6.7.0" />
-    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.201" />
+    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.203" />
     <!-- Test dependencies -->
     <PackageVersion Include="JetBrains.dotMemoryUnit" Version="3.2.20220510" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.4.0" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
   </ItemGroup>
