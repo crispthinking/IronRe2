@@ -393,50 +393,50 @@ public class RegexTests
     public void FindWithCharacterOffsetInMultiByteString()
     {
         // This test verifies that the offset parameter in Find(string, int) is interpreted as
-        // a character offset, not a byte offset, when dealing with multi-byte UTF-8 characters
+        // a UTF-16 code unit offset, not a byte offset, when dealing with multi-byte UTF-8 characters
         Regex re = new("world");
 
         // String with multi-byte UTF-8 characters (emoji)
-        // "Hello 🌍 world" where 🌍 is a 4-byte UTF-8 character
+        // "Hello 🌍 world" where 🌍 is a 4-byte UTF-8 character (surrogate pair in UTF-16)
         const string haystack = "Hello 🌍 world";
 
-        // Character positions: H(0) e(1) l(2) l(3) o(4) (5) 🌍(6) (7) w(8) o(9) r(10) l(11) d(12)
-        // Byte positions: H(0) e(1) l(2) l(3) o(4) (5) 🌍(6-9) (10) w(11) o(12) r(13) l(14) d(15)
+        // UTF-16 code unit positions: H(0) e(1) l(2) l(3) o(4) (5) 🌍-high(6) 🌍-low(7) (8) w(9) o(10) r(11) l(12) d(13)
+        // UTF-8 byte positions: H(0) e(1) l(2) l(3) o(4) (5) 🌍(6-9) (10) w(11) o(12) r(13) l(14) d(15)
 
-        // Find starting at character offset 8 (character 'w')
-        var match = re.Find(haystack, 8);
+        // Find starting at UTF-16 offset 9 (code unit 'w')
+        var match = re.Find(haystack, 9);
 
         Assert.True(match.Matched);
-        // The match should be at byte positions 11-16
+        // The match should be at UTF-8 byte positions 11-16
         Assert.Equal(11, match.Start);
         Assert.Equal(16, match.End);
         Assert.Equal("world", match.ExtractedText);
     }
 
     [Fact]
-    public void FindWithCharacterOffsetBeforeMultiByteCharacter()
+    public void FindWithOffsetAfterSurrogatePairDoesNotMatchPreviousCharacter()
     {
         Regex re = new("🌍");
         const string haystack = "Hello 🌍 world";
 
-        // Find starting at character offset 6 (the emoji itself)
-        var match = re.Find(haystack, 6);
+        // Start searching immediately after the emoji (UTF-16 offset 8, after the surrogate pair).
+        // The emoji should NOT be matched since we're starting after it.
+        var match = re.Find(haystack, 8);
 
-        Assert.True(match.Matched);
-        Assert.Equal("🌍", match.ExtractedText);
+        Assert.False(match.Matched);
     }
 
     [Fact]
     public void CapturesWithCharacterOffsetInMultiByteString()
     {
-        // Test that Captures(string, int) also respects character offsets
+        // Test that Captures(string, int) also respects UTF-16 code unit offsets
         Regex re = new(@"(\w+)");
 
-        // String with multi-byte character
+        // String with multi-byte UTF-8 character (surrogate pair in UTF-16)
         const string haystack = "Hello 🌍 world";
 
-        // Start searching at character offset 8 (character 'w')
-        var captures = re.Captures(haystack, 8);
+        // Start searching at UTF-16 offset 9 (after the emoji surrogate pair, space at 8, 'w' at 9)
+        var captures = re.Captures(haystack, 9);
 
         Assert.True(captures.Matched);
         Assert.Equal("world", captures[0].ExtractedText);
@@ -485,20 +485,56 @@ public class RegexTests
     [Fact]
     public void FindWithCharacterOffsetInAsianCharacters()
     {
-        // Test with Asian multi-byte characters (3-byte UTF-8)
+        // Test with Asian multi-byte characters (3-byte UTF-8, single UTF-16 code units)
         Regex re = new("世界");
         const string haystack = "你好世界"; // "Hello world" in Chinese
 
-        // Character positions: 你(0) 好(1) 世(2) 界(3)
-        // Byte positions: 你(0-2) 好(3-5) 世(6-8) 界(9-11)
+        // UTF-16 code unit positions: 你(0) 好(1) 世(2) 界(3)
+        // UTF-8 byte positions: 你(0-2) 好(3-5) 世(6-8) 界(9-11)
 
-        // Find starting at character offset 2
+        // Find starting at UTF-16 offset 2
         var match = re.Find(haystack, 2);
 
         Assert.True(match.Matched);
-        Assert.Equal(6, match.Start);  // Byte offset
-        Assert.Equal(12, match.End);   // Byte offset
+        Assert.Equal(6, match.Start);  // UTF-8 byte offset
+        Assert.Equal(12, match.End);   // UTF-8 byte offset
         Assert.Equal("世界", match.ExtractedText);
+    }
+
+    [Fact]
+    public void StringOverloadsRejectOffsetInsideSurrogatePair()
+    {
+        Regex re = new("world");
+        const string haystack = "Hello 🌍 world";
+
+        // In UTF-16, the emoji at visual position 6-7 is a surrogate pair:
+        // high surrogate at index 6, low surrogate at index 7.
+        // Passing offset 7 would split the surrogate pair and could otherwise
+        // map to a byte offset in the middle of the UTF-8 encoding.
+        const int lowSurrogateOffset = 7;
+
+        Assert.Throws<ArgumentException>(() => re.Find(haystack, lowSurrogateOffset));
+        Assert.Throws<ArgumentException>(() => re.Captures(haystack, lowSurrogateOffset));
+    }
+
+    [Fact]
+    public void StringOverloadsRejectNegativeOffset()
+    {
+        Regex re = new("world");
+        const string haystack = "Hello world";
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => re.Find(haystack, -1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => re.Captures(haystack, -1));
+    }
+
+    [Fact]
+    public void StringOverloadsRejectOffsetBeyondLength()
+    {
+        Regex re = new("world");
+        const string haystack = "Hello world";
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => re.Find(haystack, haystack.Length + 1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => re.Captures(haystack, haystack.Length + 1));
     }
 
     public static IEnumerable<object[]> IsMatchData()

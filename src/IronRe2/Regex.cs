@@ -183,12 +183,13 @@ public class Regex : UnmanagedResource<RegexHandle>
     ///     of the match
     /// </summary>
     /// <param name="haystack">The string to search for the pattern</param>
-    /// <param name="offset">The character offset to start the search at (not byte offset)</param>
+    /// <param name="offset">The UTF-16 code unit offset to start the search at (not byte offset)</param>
     /// <returns>The match data for the match</returns>
     public Match Find(string haystack, int offset)
     {
-        var hayBytes = Encoding.UTF8.GetBytes(haystack);
+        ValidateStringOffset(haystack, offset);
         var byteOffset = Encoding.UTF8.GetByteCount(haystack.AsSpan(0, offset));
+        var hayBytes = Encoding.UTF8.GetBytes(haystack);
         return Find(hayBytes, byteOffset);
     }
 
@@ -284,12 +285,13 @@ public class Regex : UnmanagedResource<RegexHandle>
     ///     </para>
     /// </summary>
     /// <param name="haystack">The string to search for the pattern</param>
-    /// <param name="offset">The character offset to start searching from (not byte offset)</param>
+    /// <param name="offset">The UTF-16 code unit offset to start searching from (not byte offset)</param>
     /// <returns>The captures data</returns>
     public Captures Captures(string haystack, int offset)
     {
-        var hayBytes = Encoding.UTF8.GetBytes(haystack);
+        ValidateStringOffset(haystack, offset);
         var byteOffset = Encoding.UTF8.GetByteCount(haystack.AsSpan(0, offset));
+        var hayBytes = Encoding.UTF8.GetBytes(haystack);
         return Captures(hayBytes, byteOffset);
     }
 
@@ -421,6 +423,37 @@ public class Regex : UnmanagedResource<RegexHandle>
         }
 
         return ranges;
+    }
+
+    /// <summary>
+    ///     Validates that a string offset is within bounds and does not split a UTF-16 surrogate pair
+    /// </summary>
+    /// <param name="haystack">The string to validate the offset against</param>
+    /// <param name="offset">The UTF-16 code unit offset to validate</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when offset is negative or greater than string length</exception>
+    /// <exception cref="ArgumentException">Thrown when offset splits a surrogate pair</exception>
+    private static void ValidateStringOffset(string haystack, int offset)
+    {
+        if (offset < 0 || offset > haystack.Length)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(offset),
+                offset,
+                $"Offset must be between 0 and {haystack.Length}");
+        }
+
+        // Check if offset points to a low surrogate (second half of a surrogate pair)
+        if (offset > 0 && offset < haystack.Length && char.IsLowSurrogate(haystack[offset]))
+        {
+            // Verify the previous character is a high surrogate
+            if (char.IsHighSurrogate(haystack[offset - 1]))
+            {
+                throw new ArgumentException(
+                    $"Offset {offset} splits a UTF-16 surrogate pair. " +
+                    "Offset must point to a valid UTF-16 code unit boundary.",
+                    nameof(offset));
+            }
+        }
     }
 
     /// <summary>
