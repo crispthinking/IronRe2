@@ -311,6 +311,10 @@ internal static unsafe partial class Re2Ffi
         [Out] [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 5)]
         cre2_string_t[] match, int nmatch);
 
+    [LibraryImport("cre2")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    public static partial void cre2_quote_meta(out cre2_string_t quoted, in cre2_string_t original);
+
     // Set match.
     [LibraryImport("cre2")]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
