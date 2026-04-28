@@ -430,10 +430,16 @@ public class Regex : UnmanagedResource<RegexHandle>
     /// </summary>
     /// <param name="haystack">The string to validate the offset against</param>
     /// <param name="offset">The UTF-16 code unit offset to validate</param>
+    /// <exception cref="ArgumentNullException">Thrown when haystack is null</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when offset is negative or greater than string length</exception>
-    /// <exception cref="ArgumentException">Thrown when offset splits a surrogate pair</exception>
+    /// <exception cref="ArgumentException">Thrown when offset points to the low surrogate of a surrogate pair</exception>
     private static void ValidateStringOffset(string haystack, int offset)
     {
+        if (haystack is null)
+        {
+            throw new ArgumentNullException(nameof(haystack));
+        }
+
         if (offset < 0 || offset > haystack.Length)
         {
             throw new ArgumentOutOfRangeException(
@@ -449,8 +455,7 @@ public class Regex : UnmanagedResource<RegexHandle>
             if (char.IsHighSurrogate(haystack[offset - 1]))
             {
                 throw new ArgumentException(
-                    $"Offset {offset} splits a UTF-16 surrogate pair. " +
-                    "Offset must point to a valid UTF-16 code unit boundary.",
+                    $"Offset {offset} must not point to the low surrogate of a surrogate pair.",
                     nameof(offset));
             }
         }
