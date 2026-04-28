@@ -443,6 +443,11 @@ public class RegexTests
         yield return ["[abc]", @"\[abc\]"];
         yield return ["a^b", @"a\^b"];
         yield return ["a$b", @"a\$b"];
+        yield return [@"a\b", @"a\\b"];
+        yield return ["a{2}", @"a\{2\}"];
+        yield return ["a?b", @"a\?b"];
+        yield return ["a|b", @"a\|b"];
+        yield return ["a\nb", "a\\\nb"];
         yield return ["", ""];
     }
 }

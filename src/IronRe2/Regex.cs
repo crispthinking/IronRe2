@@ -533,6 +533,11 @@ public class Regex : UnmanagedResource<RegexHandle>
     /// </returns>
     public static unsafe string Escape(ReadOnlySpan<byte> input)
     {
+        if (input.IsEmpty)
+        {
+            return string.Empty;
+        }
+
         fixed (byte* inputPtr = input)
         {
             var inputStr = new Re2Ffi.cre2_string_t
