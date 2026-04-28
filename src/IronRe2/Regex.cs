@@ -504,4 +504,51 @@ public class Regex : UnmanagedResource<RegexHandle>
         var ranges = StringsToRanges(captures, new IntPtr(pin.Pointer));
         return new Match(haystack, ranges[0]);
     }
+
+    /// <summary>
+    ///     Escapes all RE2 metacharacters in the input string so that it can be
+    ///     used as a literal pattern. This is equivalent to <c>Regex.Escape</c>
+    ///     from <c>System.Text.RegularExpressions</c>.
+    /// </summary>
+    /// <param name="str">The input string to escape</param>
+    /// <returns>
+    ///     A string with all RE2 metacharacters escaped so that the result
+    ///     matches the input literally when used as a regular expression.
+    /// </returns>
+    public static string Escape(string str)
+    {
+        var inputBytes = Encoding.UTF8.GetBytes(str);
+        return Escape(inputBytes);
+    }
+
+    /// <summary>
+    ///     Escapes all RE2 metacharacters in the input so that it can be used as
+    ///     a literal pattern. This is equivalent to <c>Regex.Escape</c> from
+    ///     <c>System.Text.RegularExpressions</c>.
+    /// </summary>
+    /// <param name="input">The input to escape, encoded as UTF-8</param>
+    /// <returns>
+    ///     A string with all RE2 metacharacters escaped so that the result
+    ///     matches the input literally when used as a regular expression.
+    /// </returns>
+    public static unsafe string Escape(ReadOnlySpan<byte> input)
+    {
+        fixed (byte* inputPtr = input)
+        {
+            var inputStr = new Re2Ffi.cre2_string_t
+            {
+                data = new IntPtr(inputPtr),
+                length = input.Length
+            };
+            Re2Ffi.cre2_quote_meta(out var quoted, in inputStr);
+            try
+            {
+                return Marshal.PtrToStringUTF8(quoted.data, quoted.length) ?? string.Empty;
+            }
+            finally
+            {
+                NativeMemory.Free(quoted.data.ToPointer());
+            }
+        }
+    }
 }

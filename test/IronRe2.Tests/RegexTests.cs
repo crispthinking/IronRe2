@@ -408,4 +408,41 @@ public class RegexTests
         yield return ["b", "foo bar", 4, 5];
         yield return ["b", "nothing to see here", -1, -1];
     }
+
+    [Theory]
+    [MemberData(nameof(EscapeData))]
+    public void RegexEscapeString(string input, string expected)
+    {
+        Assert.Equal(expected, Regex.Escape(input));
+    }
+
+    [Theory]
+    [MemberData(nameof(EscapeData))]
+    public void RegexEscapeBytes(string inputStr, string expected)
+    {
+        var input = Encoding.UTF8.GetBytes(inputStr);
+        Assert.Equal(expected, Regex.Escape(input));
+    }
+
+    [Fact]
+    public void RegexEscapedStringMatchesLiterally()
+    {
+        const string literal = "1+1=2 (really!)";
+        var escaped = Regex.Escape(literal);
+        using var re = new Regex(escaped);
+        Assert.True(re.IsMatch(literal));
+    }
+
+    public static IEnumerable<object[]> EscapeData()
+    {
+        yield return ["hello", "hello"];
+        yield return ["hello.world", @"hello\.world"];
+        yield return ["1+1", @"1\+1"];
+        yield return ["foo(bar)", @"foo\(bar\)"];
+        yield return ["a*b", @"a\*b"];
+        yield return ["[abc]", @"\[abc\]"];
+        yield return ["a^b", @"a\^b"];
+        yield return ["a$b", @"a\$b"];
+        yield return ["", ""];
+    }
 }
