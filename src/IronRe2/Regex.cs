@@ -183,12 +183,14 @@ public class Regex : UnmanagedResource<RegexHandle>
     ///     of the match
     /// </summary>
     /// <param name="haystack">The string to search for the pattern</param>
-    /// <param name="offset">The offset to start the search at</param>
+    /// <param name="offset">The UTF-16 code unit offset to start the search at (not byte offset)</param>
     /// <returns>The match data for the match</returns>
     public Match Find(string haystack, int offset)
     {
+        ValidateStringOffset(haystack, offset);
+        var byteOffset = Encoding.UTF8.GetByteCount(haystack.AsSpan(0, offset));
         var hayBytes = Encoding.UTF8.GetBytes(haystack);
-        return Find(hayBytes, offset);
+        return Find(hayBytes, byteOffset);
     }
 
     /// <summary>
@@ -205,8 +207,8 @@ public class Regex : UnmanagedResource<RegexHandle>
     ///     Find the pattern starting at the given offset and return the extent
     ///     of the match
     /// </summary>
-    /// <param name="hayBytes">The string to search for the pattern</param>
-    /// <param name="offset">The offset to start the search at</param>
+    /// <param name="hayBytes">The bytes to search for the pattern</param>
+    /// <param name="offset">The byte offset to start the search at</param>
     /// <returns>The match data for the match</returns>
     public Match Find(ReadOnlyMemory<byte> hayBytes, int offset)
     {
@@ -283,12 +285,14 @@ public class Regex : UnmanagedResource<RegexHandle>
     ///     </para>
     /// </summary>
     /// <param name="haystack">The string to search for the pattern</param>
-    /// <param name="offset">The offest to start searching from</param>
+    /// <param name="offset">The UTF-16 code unit offset to start searching from (not byte offset)</param>
     /// <returns>The captures data</returns>
     public Captures Captures(string haystack, int offset)
     {
+        ValidateStringOffset(haystack, offset);
+        var byteOffset = Encoding.UTF8.GetByteCount(haystack.AsSpan(0, offset));
         var hayBytes = Encoding.UTF8.GetBytes(haystack);
-        return Captures(hayBytes, offset);
+        return Captures(hayBytes, byteOffset);
     }
 
     /// <summary>
@@ -316,8 +320,8 @@ public class Regex : UnmanagedResource<RegexHandle>
     ///         of each of the regex's capturing groups.
     ///     </para>
     /// </summary>
-    /// <param name="haystack">The string to search for the pattern</param>
-    /// <param name="offset">The offest to start searching from</param>
+    /// <param name="haystack">The bytes to search for the pattern</param>
+    /// <param name="offset">The byte offset to start searching from</param>
     /// <returns>The captures data</returns>
     public Captures Captures(ReadOnlyMemory<byte> haystack, int offset)
     {
@@ -419,6 +423,42 @@ public class Regex : UnmanagedResource<RegexHandle>
         }
 
         return ranges;
+    }
+
+    /// <summary>
+    ///     Validates that a string offset is within bounds and does not split a UTF-16 surrogate pair
+    /// </summary>
+    /// <param name="haystack">The string to validate the offset against</param>
+    /// <param name="offset">The UTF-16 code unit offset to validate</param>
+    /// <exception cref="ArgumentNullException">Thrown when haystack is null</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when offset is negative or greater than string length</exception>
+    /// <exception cref="ArgumentException">Thrown when offset points to the low surrogate of a surrogate pair</exception>
+    private static void ValidateStringOffset(string haystack, int offset)
+    {
+        if (haystack is null)
+        {
+            throw new ArgumentNullException(nameof(haystack));
+        }
+
+        if (offset < 0 || offset > haystack.Length)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(offset),
+                offset,
+                $"Offset must be between 0 and {haystack.Length}");
+        }
+
+        // Check if offset points to a low surrogate (second half of a surrogate pair)
+        if (offset > 0 && offset < haystack.Length && char.IsLowSurrogate(haystack[offset]))
+        {
+            // Verify the previous character is a high surrogate
+            if (char.IsHighSurrogate(haystack[offset - 1]))
+            {
+                throw new ArgumentException(
+                    $"Offset {offset} must not point to the low surrogate of a surrogate pair.",
+                    nameof(offset));
+            }
+        }
     }
 
     /// <summary>
